@@ -37,43 +37,37 @@ final class MovieDetailViewController: UIViewController{
   
   private func loadData(){
     guard let movie = movie else {return}
-    
-    let url = "https://api.themoviedb.org/3/movie/\(movie.id)?api_key=4e7d627f53b0470f38e13533b907923c&language=ko-KR"
-    MovieNetwork().getData(endPoint: url) {[weak self] (result: MovieDetailModel?) in
-      guard let result,let self else { return }
       
-      DispatchQueue.main.async {
-        self.movieDetailView.nameLabel.text = result.title
-        self.movieDetailView.releaseData.text = {
-          var temp = "\(result.releaseDate)"
-          var chars = Array(temp)
-          chars[4] = "년"
-          chars[7] = "월"
-          chars.append("일")
-          temp = String(chars)
-          return temp
-        }()
-        
-        
-       
-        self.movieDetailView.movieDescription.text = result.overview
-        self.movieDetailView.ratingData.text =
-        String(format: "%.1f", result.voteAverage) + "점 / 10점"
-        
-
-
-          
-          self.posterPath = result.posterPath
-        
-
-        guard let imageUrl = URL(string: "https://image.tmdb.org/t/p/w500\(result.posterPath)") else { return }
-        self.movieDetailView.imgLabel.kf.setImage(with: imageUrl)
-        
-        
+      Task {
+          let data = await MovieNetwork().getData(movieId: movie.id)
+          await MainActor.run {
+              guard let data else { return }
+              self.movieDetailView.nameLabel.text = data.title
+                
+              self.movieDetailView.releaseData.text = {
+                var temp = "\(data.releaseDate)"
+                var chars = Array(temp)
+                chars[4] = "년"
+                chars[7] = "월"
+                chars.append("일")
+                temp = String(chars)
+                return temp
+              }()
+              self.movieDetailView.movieDescription.text = data.overview
+              self.movieDetailView.ratingData.text =
+              String(format: "%.1f", data.voteAverage) + "점 / 10점"
+                self.posterPath = data.posterPath
+              guard let imageUrl = URL(string: "https://image.tmdb.org/t/p/w500\(data.posterPath)") else { return }
+              self.movieDetailView.imgLabel.kf.setImage(with: imageUrl)
+          }
       }
       
+      
+
+      
     }
-  }
+    
+  
     
     // 하프모달 메서드
     func showModal(viewController: UIViewController) {

@@ -4,6 +4,7 @@
 //
 //  Created by 유민우 on 7/23/24.
 
+//pull to refresh ?
 
 import UIKit
 import SnapKit
@@ -36,6 +37,7 @@ final class MovieListViewController: UIViewController {
           async let nowPlayingMovies = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)now_playing", language: "ko-KR")
           async let popularMovies = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)popular", language: "ko-KR")
           
+      
           self.upcomingMovies = await upcomingMovies
           self.nowPlayingMovies = await nowPlayingMovies
           self.popularMovies = await popularMovies
@@ -55,6 +57,7 @@ final class MovieListViewController: UIViewController {
       }
   
 }
+
 extension MovieListViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return titles.count // 행 개수 설정
