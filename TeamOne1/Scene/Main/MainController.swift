@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 
+
+// 이부분은 TabBar 관련 부분 한번 읽어봐야함 
 final class MainController: UIViewController {
 
     private let logoView = UIView()
