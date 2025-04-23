@@ -22,9 +22,6 @@ final class MovieDetailViewController: UIViewController{
     loadData()
     movieDetailView.TicketingBtn.addTarget(self, action: #selector(changeView), for: .touchDown)
     
-    
-    
-    
   }
   
   private func configureUI() {
@@ -53,7 +50,8 @@ final class MovieDetailViewController: UIViewController{
                 temp = String(chars)
                 return temp
               }()
-              self.movieDetailView.movieDescription.text = data.overview
+              self.movieDetailView.movieDescription.text = data.overview == "" ? "줄거리 정보가 없습니다." : data.overview
+              
               self.movieDetailView.ratingData.text =
               String(format: "%.1f", data.voteAverage) + "점 / 10점"
                 self.posterPath = data.posterPath
