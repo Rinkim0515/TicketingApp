@@ -42,7 +42,6 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9F3274652DBA08FF0088CC70 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
-		9F3274682DBA0C5E0088CC70 /* Coordinator */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Coordinator; sourceTree = "<group>"; };
 		9FE995AC2DB8D770009564E5 /* Helper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Helper; sourceTree = "<group>"; };
 		9FE995B12DB8D791009564E5 /* Scene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scene; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -92,7 +91,6 @@
 		9F4CB9432C4DF9B000D4847F /* GGV */ = {
 			isa = PBXGroup;
 			children = (
-				9F3274682DBA0C5E0088CC70 /* Coordinator */,
 				9F3274652DBA08FF0088CC70 /* Extension */,
 				9FE995B12DB8D791009564E5 /* Scene */,
 				9FE995AC2DB8D770009564E5 /* Helper */,
@@ -133,7 +131,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				9F3274652DBA08FF0088CC70 /* Extension */,
-				9F3274682DBA0C5E0088CC70 /* Coordinator */,
 				9FE995AC2DB8D770009564E5 /* Helper */,
 				9FE995B12DB8D791009564E5 /* Scene */,
 			);
