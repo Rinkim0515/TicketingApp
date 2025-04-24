@@ -4,6 +4,8 @@
 //
 //  Created by bloom on 7/22/24.
 //
+// 로그인 창위에 signUP화면을 올리고 그것에 대한 권한은 로그인 VC에서 받아서 처리하고 회원가입이 되면 방금 가입한 아이디로 로그인 시켜주자
+
 
 import UIKit
 import SnapKit

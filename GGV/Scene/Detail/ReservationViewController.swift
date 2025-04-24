@@ -3,12 +3,14 @@
 //  TeamOne1
 //
 //  Created by 김동준 on 7/25/24.
-//
+// 좋아요 기능의 추가
+// 예매한 영화리스트 추가
+// 마이페이지 밑에 테이블 뷰로 차라리 구현하는게 나을듯 함. 
 
 import UIKit
 import SnapKit
 
-class ReservationViewController: UIViewController {
+final class ReservationViewController: UIViewController {
   var sss: MovieDetailViewController?
     var numberCount: Int = 1
     var price: Int = 14000

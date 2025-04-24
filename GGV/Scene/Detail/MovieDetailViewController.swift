@@ -20,7 +20,7 @@ final class MovieDetailViewController: UIViewController{
     super.viewDidLoad()
     configureUI()
     loadData()
-    movieDetailView.TicketingBtn.addTarget(self, action: #selector(changeView), for: .touchDown)
+    movieDetailView.TicketingButton.addTarget(self, action: #selector(changeView), for: .touchDown)
     
   }
   
@@ -39,7 +39,7 @@ final class MovieDetailViewController: UIViewController{
           let data = await MovieNetwork().getData(movieId: movie.id)
           await MainActor.run {
               guard let data else { return }
-              self.movieDetailView.nameLabel.text = data.title
+              self.movieDetailView.movieNameLabel.text = data.title
                 
               self.movieDetailView.releaseData.text = {
                 var temp = "\(data.releaseDate)"
@@ -52,11 +52,11 @@ final class MovieDetailViewController: UIViewController{
               }()
               self.movieDetailView.movieDescription.text = data.overview == "" ? "줄거리 정보가 없습니다." : data.overview
               
-              self.movieDetailView.ratingData.text =
+              self.movieDetailView.ratingScore.text =
               String(format: "%.1f", data.voteAverage) + "점 / 10점"
                 self.posterPath = data.posterPath
               guard let imageUrl = URL(string: "https://image.tmdb.org/t/p/w500\(data.posterPath)") else { return }
-              self.movieDetailView.imgLabel.kf.setImage(with: imageUrl)
+              self.movieDetailView.posterView.kf.setImage(with: imageUrl)
           }
       }
       

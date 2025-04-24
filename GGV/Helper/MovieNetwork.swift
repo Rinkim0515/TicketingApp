@@ -69,7 +69,7 @@ final class MovieNetwork {
     
     
     
-  func fetchMovies(from endpoint: String, language: String) async -> [MovieListModel] {
+  func fetchMovies(from endpoint: String, language: String = "ko-KR") async -> [MovieListModel] {
           let url = URL(string: endpoint)!
           var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
           components.queryItems = [

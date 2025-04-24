@@ -34,3 +34,12 @@ final class AuthVM {
         return password.count >= 6
     }
 }
+
+//MARK: - SingUp Validation
+extension AuthVM {
+    
+}
+//MARK: - Login Validation
+extension AuthVM {
+    
+}

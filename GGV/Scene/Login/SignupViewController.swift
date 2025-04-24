@@ -10,7 +10,7 @@ import SnapKit
 
 final class SignupViewController: UIViewController {
     let signUpView = SignUPView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white

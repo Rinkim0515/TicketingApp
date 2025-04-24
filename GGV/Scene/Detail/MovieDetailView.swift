@@ -11,196 +11,159 @@ import SnapKit
 
 
 final class MovieDetailView: UIView {
-  private let scrollView = UIScrollView()
-  private let scrollContentView = UIView()
-  
-   lazy var imgLabel = {
-    let lb = UIImageView()
-    lb.backgroundColor = .gray
-    return lb
-  }()
-   lazy var nameLabel = {
-    let lb = UILabel()
-    lb.text = "영화이름"
-     lb.numberOfLines = 2
-    lb.textAlignment = .center
-    lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
-    return lb
-  }()
-  lazy var movieDescription = {
-  let lb = UILabel()
-  lb.text = "영화 설명란"
-    lb.numberOfLines = 30
-    lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 19)
-  lb.textColor = .black
-  return lb
-}()
-  
-  let ratingView = {
-    let sv = UIStackView()
-    sv.axis = .horizontal
-    sv.distribution = .fillEqually
-    return sv
-  }()
-  let ratingLabel = {
-    let lb = UILabel()
-    lb.text = "평점:"
-    lb.textAlignment = .left
-    lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
-    return lb
-  }()
-  lazy var ratingData = {
-  let lb = UILabel()
-  lb.text = "별점: 7.8/10 점"
-  lb.textAlignment = .right
-  lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
-  return lb
-}()
-  
-  private let releaseView = {
-    let sv = UIStackView()
-    sv.axis = .horizontal
-    sv.distribution = .fillProportionally
-    return sv
-  }()
-  
-  let releaseLabel = {
-    let lb = UILabel()
-    lb.text = "출시일:"
-    lb.textAlignment = .left
-    lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
-    return lb
-  }()
-  
-  
-   lazy var releaseData = {
-    let lb = UILabel()
-    lb.text = "2021-07-07"
-    lb.textAlignment = .right
-    lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
-    return lb
-  }()
-  
-   let TicketingBtn = {
-    let btn = UIButton()
-    btn.setTitle("예매하기", for: .normal)
-    btn.setTitleColor(.white, for: .normal)
-    btn.titleLabel?.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
-    btn.backgroundColor = .red
-    return btn
-  }()
-  
-  
-
-  
-  
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    configureUI()
-    fixDescriptionSpacing()
+    private let scrollView = UIScrollView()
+    private let scrollContentView = UIView()
+    let posterView = {
+        let view = UIImageView()
+        view.backgroundColor = .gray
+        return view
+    }()
+    let movieNameLabel = {
+        let label = UILabel()
+        label.text = "영화이름"
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
+        return label
+    }()
+    let movieDescription = {
+        let label = UILabel()
+        label.text = "영화 설명란"
+        label.numberOfLines = 30
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 19)
+        label.textColor = .black
+        return label
+    }()
+    private let ratingStackView = {
+        let uIStackView = UIStackView()
+        uIStackView.axis = .horizontal
+        uIStackView.distribution = .fillEqually
+        return uIStackView
+    }()
+    let ratingLabel = {
+        let label = UILabel()
+        label.text = "평점:"
+        label.textAlignment = .left
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        return label
+    }()
+    let ratingScore = {
+        let label = UILabel()
+        label.text = "별점: 7.8/10 점"
+        label.textAlignment = .right
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        return label
+    }()
+    private let releaseStackView = {
+        let uIStackView = UIStackView()
+        uIStackView.axis = .horizontal
+        uIStackView.distribution = .fillProportionally
+        return uIStackView
+    }()
+    let releaseLabel = {
+        let label = UILabel()
+        label.text = "출시일:"
+        label.textAlignment = .left
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        return label
+    }()
+    let releaseData = {
+        let label = UILabel()
+        label.text = "2021-07-07"
+        label.textAlignment = .right
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        return label
+    }()
+    let TicketingButton = {
+        let button = UIButton()
+        button.setTitle("예매하기", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
+        button.backgroundColor = .red
+        return button
+    }()
     
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  private func fixDescriptionSpacing(){
-    let attrString = NSMutableAttributedString(string: movieDescription.text!)
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.lineSpacing = 4
-    attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
-    movieDescription.attributedText = attrString
-  }
-  
-  private func configureUI(){
-    
-    self.backgroundColor = .white
-    self.addSubview(TicketingBtn)
-    
-    self.addSubview(scrollView)
-    scrollView.snp.makeConstraints{
-      $0.top.leading.trailing.equalTo(safeAreaLayoutGuide)
-      $0.bottom.equalToSuperview().offset(-70)
-
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
+        configureUI()
+        fixDescriptionSpacing()
     }
     
-    scrollView.addSubview(scrollContentView)
-    
-    scrollContentView.snp.makeConstraints{
-      $0.edges.equalTo(scrollView)
-      $0.width.equalTo(scrollView)
-      $0.height.equalTo(1150)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    // 영화 설명란 줄 간격 확장처리
+    private func fixDescriptionSpacing(){
+        let attrString = NSMutableAttributedString(string: movieDescription.text!)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
+        movieDescription.attributedText = attrString
     }
     
-    [
-      imgLabel,
-      nameLabel,
-      movieDescription,
-      ratingView,
-      releaseView,
-      movieDescription,
-      
-    ].forEach{scrollContentView.addSubview($0)}
-    
-    [
-      ratingLabel,
-      ratingData
-    ].forEach{ratingView.addArrangedSubview($0)}
-    
-    
-    [
-      releaseLabel,
-      releaseData
-    ].forEach{releaseView.addArrangedSubview($0)}
-
-    
-    
-    
-    imgLabel.snp.makeConstraints{
-      $0.centerX.equalToSuperview()
-      $0.leading.trailing.equalTo(scrollContentView)
-      
-      $0.height.equalTo(550)
-      $0.top.equalTo(scrollContentView).offset(30)
-      $0.width.equalTo(380)
+    private func configureUI(){
+        self.backgroundColor = .white
+        self.addSubview(TicketingButton)
+        
+        self.addSubview(scrollView)
+        scrollView.addSubview(scrollContentView)
+        
+        [posterView,
+         movieNameLabel,
+         movieDescription,
+         ratingStackView,
+         releaseStackView,
+         movieDescription].forEach{scrollContentView.addSubview($0)}
+        [ratingLabel,
+         ratingScore].forEach{ratingStackView.addArrangedSubview($0)}
+        [releaseLabel,
+         releaseData].forEach{releaseStackView.addArrangedSubview($0)}
+        
+        scrollView.snp.makeConstraints{
+            $0.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-70)
+        }
+        scrollContentView.snp.makeConstraints{
+            $0.edges.equalTo(scrollView)
+            $0.width.equalTo(scrollView)
+            $0.height.equalTo(1150)
+        }
+        posterView.snp.makeConstraints{
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalTo(scrollContentView)
+            $0.height.equalTo(550)
+            $0.top.equalTo(scrollContentView).offset(30)
+            $0.width.equalTo(380)
+        }
+        movieNameLabel.snp.makeConstraints{
+            $0.top.equalTo(posterView.snp.bottom).offset(10)
+            $0.leading.equalTo(posterView.snp.leading)
+            $0.width.equalTo(posterView)
+            $0.height.equalTo(80)
+        }
+        movieDescription.snp.makeConstraints{
+            $0.top.equalTo(movieNameLabel.snp.bottom).offset(10)
+            $0.leading.equalTo(posterView.snp.leading).inset(10)
+            $0.trailing.equalTo(posterView.snp.trailing).offset(-10)
+            $0.height.equalTo(300)
+        }
+        ratingStackView.snp.makeConstraints{
+            $0.width.equalTo(posterView).inset(20)
+            $0.height.equalTo(50)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(movieDescription.snp.bottom).offset(20)
+        }
+        releaseStackView.snp.makeConstraints{
+            $0.width.equalTo(posterView).inset(20)
+            $0.height.equalTo(50)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(ratingStackView.snp.bottom).offset(20)
+        }
+        TicketingButton.snp.makeConstraints{
+            $0.bottom.equalTo(self)
+            $0.width.equalTo(self)
+            $0.height.equalTo(70)
+            $0.centerX.equalToSuperview()
+        }
     }
-    nameLabel.snp.makeConstraints{
-      $0.top.equalTo(imgLabel.snp.bottom).offset(10)
-      $0.leading.equalTo(imgLabel.snp.leading)
-      $0.width.equalTo(imgLabel)
-      $0.height.equalTo(80)
-    }
-    movieDescription.snp.makeConstraints{
-      
-      $0.top.equalTo(nameLabel.snp.bottom).offset(10)
-      $0.leading.equalTo(imgLabel.snp.leading).inset(10)
-      $0.trailing.equalTo(imgLabel.snp.trailing).offset(-10)
-      $0.height.equalTo(300)
-      
-    }
-    ratingView.snp.makeConstraints{
-      $0.width.equalTo(imgLabel).inset(20)
-      $0.height.equalTo(50)
-      $0.centerX.equalToSuperview()
-      $0.top.equalTo(movieDescription.snp.bottom).offset(20)
-    }
-    
-    releaseView.snp.makeConstraints{
-      $0.width.equalTo(imgLabel).inset(20)
-      $0.height.equalTo(50)
-      $0.centerX.equalToSuperview()
-      $0.top.equalTo(ratingView.snp.bottom).offset(20)
-    }
-    
-    
-    TicketingBtn.snp.makeConstraints{
-      $0.bottom.equalTo(self)
-      $0.width.equalTo(self)
-      $0.height.equalTo(70)
-      $0.centerX.equalToSuperview()
-    }
-
-    
-  }
 }

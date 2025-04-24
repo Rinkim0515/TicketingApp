@@ -3,7 +3,7 @@
 //  TeamOne1
 //
 //  Created by 내꺼다 on 7/24/24.
-//
+// 여기가 전체적인 흐름을 관리하는거 같은데 일단 내용자체의 파악이 우선인거 같음 
 
 import UIKit
 import SnapKit

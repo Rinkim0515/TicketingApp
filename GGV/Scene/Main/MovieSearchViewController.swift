@@ -4,6 +4,7 @@
 //
 //  Created by 유민우 on 7/25/24.
 //
+// 애초에 컨셉에 맞게 상영가능한 영화내에서 검색을 하는게 맞다고 생각함 
 
 import UIKit
 import SnapKit

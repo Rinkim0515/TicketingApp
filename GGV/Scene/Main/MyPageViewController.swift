@@ -3,7 +3,8 @@
 //  TeamOne1
 //
 //  Created by 내꺼다 on 7/25/24.
-//
+// tableView
+// 찜한 영화,  예매이력, 버전, 로그아웃, 개인정보 처리방침 , 회원탈퇴, 회원정보수정,
 
 import UIKit
 import SnapKit
