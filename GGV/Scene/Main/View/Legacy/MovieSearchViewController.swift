@@ -93,7 +93,7 @@ extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "movieCell", for: indexPath) as! SearchMovieCollectionViewCell
         let movie = isSearching ? filteredMoives[indexPath.item] : movies[indexPath.item]
-        cell.ptTitleLabel.text = movie.title
+        cell.titleLabel.text = movie.title
         if let posterPath = movie.posterPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
             cell.posterImageView.kf.setImage(with: url)

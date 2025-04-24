@@ -16,11 +16,11 @@ struct MovieListModel: Codable {
     let title: String // 영화 한글 이름
     let posterPath: String? // 영화 세로 포스터 이미지
     let backdropPath: String? // 영화 가로 포스터 이미지
+    let popularity: String? // 선호도
     let genres: [Int] = [] // 영화장르
     
     enum CodingKeys: String, CodingKey {
-        case id
-        case title
+        case id, title, popularity
         case posterPath = "poster_path"
         case backdropPath = "backdrop_path"
     }

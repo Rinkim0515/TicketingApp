@@ -71,14 +71,14 @@ final class SearchMovieCollectionViewCell: UICollectionViewCell {
     }()
     
     // 영화 제목을 표시할 라벨
-    let ptTitleLabel: UILabel = {
-        let lb = UILabel()
-        lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
-        lb.textColor = .white
-        lb.numberOfLines = 0
-        lb.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        lb.textAlignment = .center
-        return lb
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
+        label.textColor = .white
+        label.numberOfLines = 0
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        label.textAlignment = .center
+        return label
     }()
     
     override init(frame: CGRect) {
@@ -86,14 +86,14 @@ final class SearchMovieCollectionViewCell: UICollectionViewCell {
         
         [
             posterImageView,
-            ptTitleLabel].forEach { contentView.addSubview($0) }
+            titleLabel].forEach { contentView.addSubview($0) }
         
         posterImageView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        ptTitleLabel.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview()
             $0.height.equalTo(30)

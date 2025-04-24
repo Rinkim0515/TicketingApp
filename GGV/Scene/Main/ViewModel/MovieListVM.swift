@@ -20,7 +20,7 @@ final class MovieListVM {
         didSet { onUpdatePopular?() }
     }
 
-    var onUpdateNowPlaying: (() -> Void)?
+    var onUpdateNowPlaying: (() -> Void)? 
     var onUpdateUpcoming: (() -> Void)?
     var onUpdatePopular: (() -> Void)?
 
