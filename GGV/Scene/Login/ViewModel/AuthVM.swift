@@ -35,7 +35,7 @@ final class AuthVM {
     }
 }
 
-//MARK: - SingUp Validation
+//MARK: - SingIn Validation
 extension AuthVM {
     
 }

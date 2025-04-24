@@ -14,16 +14,19 @@ final class MainController: UIViewController {
 
     private let logoView = UIView()
     private let logoImageView = UIImageView()
+    
     private let customTabBar = UITabBar()
+    
     private var viewControllers: [UIViewController] = []
+    
     private let selectionIndicator = UIView()
     
     private let welcomeUser: UILabel = {
-        let lb = UILabel()
-        lb.textAlignment = .right
-        lb.textColor = .black
-        lb.font = UIFont(name: "NanumSquareNeo-cBd", size: 13)
-        return lb
+        let label = UILabel()
+        label.textAlignment = .right
+        label.textColor = .black
+        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 13)
+        return label
     }()
     
     // 생명주기 때문에 viewDidLoad로 해주면 디테일뷰컨에서 백버튼 눌렀을 때 네비게이션 바 노출됨 매번 똑같이 네비게이션 바 안보이는 뷰가 보여야 해서 viewWillAppear 사용
@@ -204,23 +207,4 @@ extension MainController: UITabBarDelegate {
     }
 }
 
-extension UIColor {
-    
-    convenience init(hexCode: String, alpha: CGFloat = 1.0) {
-        var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
-        
-        if hexFormatted.hasPrefix("#") {
-            hexFormatted = String(hexFormatted.dropFirst())
-        }
-        
-        assert(hexFormatted.count == 6, "Invalid hex code used.")
-        
-        var rgbValue: UInt64 = 0
-        Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
-        
-        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-                  alpha: alpha)
-    }
-}
+

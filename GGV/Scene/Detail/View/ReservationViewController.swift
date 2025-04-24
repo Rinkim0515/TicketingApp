@@ -19,7 +19,7 @@ final class ReservationViewController: UIViewController {
     var movieTitle: String?
     var movieId: Int = 0
     var posterPath: String?
-  
+    
     // 날짜
     let setDate: UIPickerView = {
         let pkv = UIPickerView()

@@ -45,14 +45,28 @@ final class LoginViewController: UIViewController {
             // 로그인 성공 시 아이디 저장
             UserDefaults.standard.set(userid, forKey: "loggedInUserID")
               showAlert(message: "로그인 성공") {
-                // 로그인 성공 시 메인화면 전환
-                let tabBarController = MainController()
-                  self.navigationController?.pushViewController(tabBarController, animated: true)
+                
+                  // 로그인 성공 시 메인화면 전환 rootViewController 전환
+                  
+                  guard let window = UIApplication.shared.connectedScenes
+                    .compactMap({ $0 as? UIWindowScene })
+                    .first?.windows.first else { return }
+                     let tabBarController = MainController()
+                  window.rootViewController = tabBarController
+                  window.makeKeyAndVisible()
+                  // 부드러운 화면 전환
+                  UIView.transition(with: window,
+                                    duration: 0.3,
+                                    options: [.transitionCrossDissolve],
+                                    animations: nil,
+                                    completion: nil)
               }
             } else {
               showAlert(message: "아이디 또는 비밀번호가 잘못되었습니다.")
             }
           }
+    
+    
 
     @objc private func signupTapped() {
         let signupViewController = SignupViewController()

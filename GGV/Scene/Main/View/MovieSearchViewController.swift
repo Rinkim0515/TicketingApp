@@ -4,7 +4,7 @@
 //
 //  Created by 유민우 on 7/25/24.
 //
-// 애초에 컨셉에 맞게 상영가능한 영화내에서 검색을 하는게 맞다고 생각함 
+// 애초에 컨셉에 맞게 상영가능한 영화내에서 검색을 하는게 맞다고 생각함
 
 import UIKit
 import SnapKit
@@ -16,31 +16,28 @@ final class MovieSearchViewController: UIViewController {
     let movieSearchView = MovieSearchView() // 무비 서치 뷰
     var movies = [MovieListModel]() // 데이터 저장 배열
     var filteredMoives = [MovieListModel]() // 필터링 된 영화 데이터 저장 배열
-  
-    var isSearching = false // 검색 상태를 나타내는 변수
     
+    var isSearching = false // 검색 상태를 나타내는 변수
     var currentPage = 1 // 현재 페이지 번호
     var isFetchingMovies = false // 데이터를 받아오는 중인지? 확인
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchView()
-        
         // searchBar 설정
         movieSearchView.searchBar.delegate = self
         movieSearchView.searchBar.placeholder = "영화 검색"
         
         // collectionView 설정
+        
         movieSearchView.movieCollectionView.delegate = self
         movieSearchView.movieCollectionView.dataSource = self
         movieSearchView.movieCollectionView.register(SearchMovieCollectionViewCell.self, forCellWithReuseIdentifier: "movieCell")
-
+        
         // 상영중인 영화 데이터를 가져오는 메서드 선언
         fetchNowPlayingMovies()
         // 상영예정인 영화 테이터를 가져오는 메서드 선언
         // fetchUpcomingMovies()
-
     }
     
     private func setupSearchView() {
@@ -52,6 +49,7 @@ final class MovieSearchViewController: UIViewController {
     
     // 현재 상영중인 영화 데이터를 가져오는 메서드
     private func fetchNowPlayingMovies() {
+        
         guard !isFetchingMovies else { return }
         isFetchingMovies = true
         
