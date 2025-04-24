@@ -29,7 +29,7 @@
 		56DAA71A2C53598300382203 /* NanumSquareNeoOTF-Rg.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Rg.otf"; sourceTree = "<group>"; };
 		56DAA71B2C53598300382203 /* NanumSquareNeoOTF-Hv.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Hv.otf"; sourceTree = "<group>"; };
 		56DAA71C2C53598300382203 /* NanumSquareNeoOTF-Lt.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Lt.otf"; sourceTree = "<group>"; };
-		9F4CB9412C4DF9B000D4847F /* TeamOne1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeamOne1.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F4CB9412C4DF9B000D4847F /* GGV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GGV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F4CB9442C4DF9B000D4847F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F4CB9462C4DF9B000D4847F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9F4CB94B2C4DF9B000D4847F /* TeamOne1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TeamOne1.xcdatamodel; sourceTree = "<group>"; };
@@ -74,7 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				56DAA7152C53589800382203 /* Fonts */,
-				9F4CB9432C4DF9B000D4847F /* TeamOne1 */,
+				9F4CB9432C4DF9B000D4847F /* GGV */,
 				9F4CB9422C4DF9B000D4847F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -82,12 +82,12 @@
 		9F4CB9422C4DF9B000D4847F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9F4CB9412C4DF9B000D4847F /* TeamOne1.app */,
+				9F4CB9412C4DF9B000D4847F /* GGV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9F4CB9432C4DF9B000D4847F /* TeamOne1 */ = {
+		9F4CB9432C4DF9B000D4847F /* GGV */ = {
 			isa = PBXGroup;
 			children = (
 				9FE995B12DB8D791009564E5 /* Scene */,
@@ -100,7 +100,7 @@
 				9F4CB9522C4DF9B100D4847F /* Info.plist */,
 				9F4CB94A2C4DF9B000D4847F /* TeamOne1.xcdatamodeld */,
 			);
-			path = TeamOne1;
+			path = GGV;
 			sourceTree = "<group>";
 		};
 		9F4CB95E2C4E5D9600D4847F /* Model */ = {
@@ -115,9 +115,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9F4CB9402C4DF9B000D4847F /* TeamOne1 */ = {
+		9F4CB9402C4DF9B000D4847F /* GGV */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9F4CB9552C4DF9B100D4847F /* Build configuration list for PBXNativeTarget "TeamOne1" */;
+			buildConfigurationList = 9F4CB9552C4DF9B100D4847F /* Build configuration list for PBXNativeTarget "GGV" */;
 			buildPhases = (
 				9F4CB93D2C4DF9B000D4847F /* Sources */,
 				9F4CB93E2C4DF9B000D4847F /* Frameworks */,
@@ -131,13 +131,13 @@
 				9FE995AC2DB8D770009564E5 /* Helper */,
 				9FE995B12DB8D791009564E5 /* Scene */,
 			);
-			name = TeamOne1;
+			name = GGV;
 			packageProductDependencies = (
 				9F4CB95B2C4E3F9B00D4847F /* SnapKit */,
 				E2237E102C50C8AB0006EF2A /* Kingfisher */,
 			);
 			productName = TeamOne1;
-			productReference = 9F4CB9412C4DF9B000D4847F /* TeamOne1.app */;
+			productReference = 9F4CB9412C4DF9B000D4847F /* GGV.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -155,7 +155,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9F4CB93C2C4DF9B000D4847F /* Build configuration list for PBXProject "TeamOne1" */;
+			buildConfigurationList = 9F4CB93C2C4DF9B000D4847F /* Build configuration list for PBXProject "GGV" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -172,7 +172,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9F4CB9402C4DF9B000D4847F /* TeamOne1 */,
+				9F4CB9402C4DF9B000D4847F /* GGV */,
 			);
 		};
 /* End PBXProject section */
@@ -349,7 +349,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2R8FU9V62;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TeamOne1/Info.plist;
+				INFOPLIST_FILE = GGV/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -377,7 +377,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2R8FU9V62;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TeamOne1/Info.plist;
+				INFOPLIST_FILE = GGV/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -399,7 +399,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9F4CB93C2C4DF9B000D4847F /* Build configuration list for PBXProject "TeamOne1" */ = {
+		9F4CB93C2C4DF9B000D4847F /* Build configuration list for PBXProject "GGV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9F4CB9532C4DF9B100D4847F /* Debug */,
@@ -408,7 +408,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9F4CB9552C4DF9B100D4847F /* Build configuration list for PBXNativeTarget "TeamOne1" */ = {
+		9F4CB9552C4DF9B100D4847F /* Build configuration list for PBXNativeTarget "GGV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9F4CB9562C4DF9B100D4847F /* Debug */,
