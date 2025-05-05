@@ -17,7 +17,9 @@ final class MovieListViewController: UIViewController {
     
     private var collectionView: UICollectionView!
     private let viewModel: MovieListVM
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>() // Disposable 같은 존재
+
+    
     
     
     init(viewModel: MovieListVM = MovieListVM()){
@@ -33,6 +35,9 @@ final class MovieListViewController: UIViewController {
         
         super.viewDidLoad()
         view.backgroundColor = .white
+
+
+        
         
         setupCollectionView()
         bindViewModel()
@@ -55,6 +60,7 @@ final class MovieListViewController: UIViewController {
 
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
     }
     
     private func bindViewModel() {
@@ -68,6 +74,8 @@ final class MovieListViewController: UIViewController {
             self?.collectionView.reloadData()
         }
         .store(in: &cancellables)
+        
+
     }
     
 
