@@ -89,7 +89,7 @@ final class MovieListViewController: UIViewController {
  
     func showMovieDetail(with movie: MovieListModel) {
         let detail = MovieDetailViewController()
-        detail.movie = movie
+        detail.movieId = movie.id
         navigationController?.pushViewController(detail, animated: true)
     }
     
@@ -109,7 +109,7 @@ extension MovieListViewController: UICollectionViewDelegate {
         }
         
         let detailVC = MovieDetailViewController()
-        detailVC.movie = selectedMovie
+        detailVC.movieId = selectedMovie.id
         navigationController?.pushViewController(detailVC, animated: true)
         
     }

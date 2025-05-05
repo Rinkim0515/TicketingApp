@@ -12,7 +12,7 @@ import Combine
 
 final class MovieDetailViewController: UIViewController{
     let movieDetailView = MovieDetailView()
-    var movie: MovieListModel?
+    var movieId = Int()
     weak var sss: ReservationViewController?
     private let viewModel: MovieDetailVM
     
@@ -45,10 +45,10 @@ final class MovieDetailViewController: UIViewController{
     }
     
     private func loadData() {
-        guard let movie = movie else { return }
+        
         
         Task {
-            await viewModel.fetchDetail(for: movie.id)
+            await viewModel.fetchDetail(for: movieId)
 
             guard let data = viewModel.movieDetail else { return }
             movieDetailView.configure(with: data)
@@ -78,13 +78,13 @@ final class MovieDetailViewController: UIViewController{
     }
     
     @objc func changeView(){
-        guard let movie else { return }
-        let reservationVC = ReservationViewController()
-        reservationVC.movieTitle = movie.title
-        reservationVC.movieId = movie.id
-        reservationVC.posterPath = posterPath
-        reservationVC.sss = self
-        showModal(viewController: reservationVC)
+//        guard let movie else { return }
+//        let reservationVC = ReservationViewController()
+//        reservationVC.movieTitle = movie.title
+//        reservationVC.movieId = movie.id
+//        reservationVC.posterPath = posterPath
+//        reservationVC.sss = self
+//        showModal(viewController: reservationVC)
         
         
     }

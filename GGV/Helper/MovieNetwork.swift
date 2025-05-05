@@ -20,25 +20,22 @@ final class MovieNetwork {
     
     //MARK: 현재 상영중인 영화 데이터 가져오기 얘 그냥 페이징이긴한데 다 때려박는 코드인거같음 모두 호출해서 페이징으로 늘리기만함
     // 어떻게 해결? -> 모든 영화검색기반으로 할것인지
-    func fetchNowPlayingMovies(page: Int, completion: @escaping (Result<[MovieListModel], Error>) -> Void) {
-        
+    func fetchNowPlayingMovies(page: Int) async throws -> [MovieListModel] {
         let urlString = "\(Constants.BASE_URL)now_playing?api_key=\(Constants.API_KEY)&language=ko-KR&page=\(page)&region=KR"
         
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
+        }
+        let (data, response) = try await URLSession.shared.data(from: url)
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else { return }
-            do {
-                let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
-                completion(.success(movieResponse.results))
-            } catch {
-                completion(.failure(error))
-            }
-        }.resume()
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
+        return movieResponse.results
+
+
     }
     
     func search (){}
@@ -92,5 +89,31 @@ final class MovieNetwork {
             print("Failed to fetch movies: \(error)")
             return []
         }
+    }
+    
+    // Async/await 기반 영화 검색 함수
+    func searchMovies(query: String, page: Int = 1) async throws -> [SearchMovie] {
+        let baseURL = "https://api.themoviedb.org/3/search/movie"
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "api_key", value: Constants.API_KEY),
+            URLQueryItem(name: "language", value: "ko-KR"),
+            URLQueryItem(name: "query", value: query),
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "region", value: "KR")
+        ]
+
+        guard let url = components?.url else {
+            throw URLError(.badURL)
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        let movieResponse = try JSONDecoder().decode(MovieSearchResponse.self, from: data)
+        return movieResponse.results
     }
 }
