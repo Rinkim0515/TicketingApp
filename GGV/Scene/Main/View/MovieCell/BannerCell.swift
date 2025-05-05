@@ -3,13 +3,13 @@
 //  GGV
 //
 //  Created by KimRin on 4/24/25.
-//
+// 헤더셀
 
 import UIKit
 import SnapKit
 import Kingfisher
 
-final class BannerCell: UICollectionViewCell {
+final class BannerCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
     let titleLabel: UILabel = {
         let label = UILabel()

@@ -9,14 +9,14 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-final class MovieCardCell: UICollectionViewCell {
+final class MovieCardCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        contentView.backgroundColor = .yellow
+        contentView.backgroundColor = .white
     }
     
     required init?(coder: NSCoder) {
@@ -25,7 +25,7 @@ final class MovieCardCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("🟡 MovieCardCell layoutSubviews → size:", self.frame.size)
+        
     }
     
     private func setupUI() {
@@ -34,7 +34,7 @@ final class MovieCardCell: UICollectionViewCell {
         
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        titleLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        titleLabel.font = .boldSystemFont(ofSize: 13)
         titleLabel.numberOfLines = 2
         titleLabel.textAlignment = .center
         

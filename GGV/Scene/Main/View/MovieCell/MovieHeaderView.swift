@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class HeaderView: UICollectionReusableView {
+final class HeaderView: UICollectionReusableView, ReusableView {
     private let titleLabel = UILabel()
 
     override init(frame: CGRect) {
