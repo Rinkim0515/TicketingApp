@@ -92,7 +92,7 @@ final class MovieNetwork {
     }
     
     // Async/await 기반 영화 검색 함수
-    func searchMovies(query: String, page: Int = 1) async throws -> [SearchMovie] {
+    func searchMovies(query: String, page: Int = 1) async throws -> [MovieListModel] {
         let baseURL = "https://api.themoviedb.org/3/search/movie"
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -113,7 +113,7 @@ final class MovieNetwork {
             throw URLError(.badServerResponse)
         }
 
-        let movieResponse = try JSONDecoder().decode(MovieSearchResponse.self, from: data)
+        let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
         return movieResponse.results
     }
 }

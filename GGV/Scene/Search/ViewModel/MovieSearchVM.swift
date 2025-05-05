@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 final class MovieSearchVM {
-    @Published private(set) var searchResults: [SearchMovie] = []
+    @Published private(set) var searchResults: [Movie] = []
     @Published private(set) var nowPlayingIDs: Set<Int> = []
     private let movieNetwork = MovieNetwork.shared
     
@@ -20,13 +20,12 @@ final class MovieSearchVM {
         }
         
         do {
-            let result = try await movieNetwork.searchMovies(query: query)
+            let resultRaw = try await movieNetwork.searchMovies(query: query)
+            let result = resultRaw.map { Movie(from: $0) }
             self.searchResults = result
         } catch {
             print("영화 검색 실패: \(error.localizedDescription)")
         }
-        
-        
     }
     
     func fetchNowPlayingIDs() async {

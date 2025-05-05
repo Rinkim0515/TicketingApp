@@ -10,20 +10,26 @@ import Combine
 
 final class MovieListVM: ObservableObject {
     @Published var isLoading: Bool = false // 데이터 플래그
-    @Published var nowPlaying: [MovieListModel] = []
-    @Published var upcoming: [MovieListModel] = []
-    @Published var popular: [MovieListModel] = []
+    @Published var nowPlaying: [Movie] = []
+    @Published var upcoming: [Movie] = []
+    @Published var popular: [Movie] = []
     
     func fetchAll() async {
         isLoading = true
         
-        async let now = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)now_playing")
-        async let upc = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)upcoming")
-        async let pop = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)popular")
+        async let nowRaw = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)now_playing")
+        async let upcRaw = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)upcoming")
+        async let popRaw = MovieNetwork.shared.fetchMovies(from: "\(Constants.BASE_URL)popular")
 
-        self.nowPlaying = await now
-        self.upcoming = await upc
-        self.popular = await pop
+        //DTO모델에서  Domain모델로 변경
+        let now = await nowRaw.map { Movie(from: $0, isNowPlaying: true) }
+        let upc = await upcRaw.map { Movie(from: $0, isNowPlaying: true) }
+        let pop = await popRaw.map { Movie(from: $0, isNowPlaying: true) }
+
+        self.nowPlaying = now
+        self.upcoming = upc
+        self.popular = pop
+        
         isLoading = false
     }
 }

@@ -92,7 +92,7 @@ extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewD
         let movie = viewModel.searchResults[indexPath.item]
         let detailVC = MovieDetailViewController()
         
-        detailVC.movieId = movie.id
+        detailVC.movie = movie
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

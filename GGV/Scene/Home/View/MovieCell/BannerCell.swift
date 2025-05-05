@@ -46,7 +46,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
         }
     }
 
-    func configure(with model: MovieListModel) {
+    func configure(with model: Movie) {
         
         if let backdropPath = model.backdropPath
           {

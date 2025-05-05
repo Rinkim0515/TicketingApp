@@ -49,7 +49,7 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
         }
     }
     
-    func configure(with model: MovieListModel) {
+    func configure(with model: Movie) {
         if let posterPath = model.posterPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)
             imageView.kf.setImage(with: url)

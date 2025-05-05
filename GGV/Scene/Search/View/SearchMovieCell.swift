@@ -15,16 +15,25 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 15
+        imageView.layer.cornerRadius = 8
         return imageView
     }()
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
         label.textColor = .white
-        label.numberOfLines = 0
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        label.numberOfLines = 2
+        label.textAlignment = .left
+        return label
+    }()
+    let statusLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
         label.textAlignment = .center
+        label.textColor = .white
+        label.layer.cornerRadius = 6
+        label.clipsToBounds = true
+        label.backgroundColor = .gray
         return label
     }()
     
@@ -32,27 +41,49 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         super.init(frame: .zero)
         [
             posterImageView,
-            titleLabel].forEach { contentView.addSubview($0) }
+            titleLabel,
+            statusLabel
+        ].forEach { contentView.addSubview($0) }
+        
+        
+        contentView.layer.cornerRadius = 10
+        contentView.clipsToBounds = true
         posterImageView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.equalToSuperview().offset(12)
+            $0.top.bottom.equalToSuperview().inset(12)
+            $0.width.equalTo(80)
         }
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview()
-            $0.height.equalTo(30)
-            $0.width.equalTo(90)
+            $0.leading.equalTo(posterImageView.snp.trailing).offset(12)
+            $0.centerY.equalToSuperview()
+            $0.trailing.lessThanOrEqualTo(statusLabel.snp.leading).offset(-8)
         }
-    }
-    func configure(with: SearchMovie, isNowPlaying: Bool) {
-        titleLabel.text = isNowPlaying ? "예매 가능" : "상영 종료"
+        
+        statusLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(70)
+            $0.height.equalTo(28)
+        }
+        
+        
 
-//        if let path = movie.posterPath {
-//            let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
-//            posterImageView.kf.setImage(with: url)
-//        } else {
-//            posterImageView.image = UIImage(named: "default_poster") // 기본 이미지 처리
-//        }
+
+
+
+
+    }
+    func configure(with movie: Movie, isNowPlaying: Bool) {
+        titleLabel.text = movie.title
+        statusLabel.text = isNowPlaying ? "예매 가능" : "예매 불가"
+        statusLabel.backgroundColor = isNowPlaying ? .systemGreen : .systemRed
+
+        if let path = movie.posterPath {
+            let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
+            posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = UIImage(named: "default_poster") // 기본 이미지 처리
+        }
 
         // 선택적으로 스타일 변경
         titleLabel.backgroundColor = isNowPlaying

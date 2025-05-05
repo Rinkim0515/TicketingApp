@@ -87,18 +87,14 @@ final class MovieListViewController: UIViewController {
     
 
  
-    func showMovieDetail(with movie: MovieListModel) {
-        let detail = MovieDetailViewController()
-        detail.movieId = movie.id
-        navigationController?.pushViewController(detail, animated: true)
-    }
+
     
 }
 extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let type = SectionType(rawValue: indexPath.section) else { return }
         
-        let selectedMovie: MovieListModel
+        let selectedMovie: Movie
         switch type {
         case .nowPlaying:
             selectedMovie = viewModel.nowPlaying[indexPath.row]
@@ -109,7 +105,7 @@ extension MovieListViewController: UICollectionViewDelegate {
         }
         
         let detailVC = MovieDetailViewController()
-        detailVC.movieId = selectedMovie.id
+        detailVC.movie = selectedMovie
         navigationController?.pushViewController(detailVC, animated: true)
         
     }

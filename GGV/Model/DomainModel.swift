@@ -18,6 +18,7 @@ struct Movie: Hashable {
     var isNowPlaying: Bool = false
     let genreNames: [String]
     
+    //MARK: - ListModel에서 변환 초기생성자
     init(from dto: MovieListModel, isNowPlaying: Bool = false) {
         self.id = dto.id
         self.title = dto.title
@@ -27,9 +28,10 @@ struct Movie: Hashable {
         self.overview = nil
         self.voteAverage = nil
         self.isNowPlaying = isNowPlaying
-        self.genreNames = dto.genres.genreNames()
+        self.genreNames = []
     }
     
+    //MARK: - DetailVC에서 변환 초기생성자
     init(from dto: MovieDetailModel, id: Int) {
         self.id = id
         self.title = dto.title

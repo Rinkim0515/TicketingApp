@@ -12,7 +12,7 @@ import Combine
 
 final class MovieDetailViewController: UIViewController{
     let movieDetailView = MovieDetailView()
-    var movieId = Int()
+    var movie: Movie?
     weak var sss: ReservationViewController?
     private let viewModel: MovieDetailVM
     
@@ -48,7 +48,8 @@ final class MovieDetailViewController: UIViewController{
         
         
         Task {
-            await viewModel.fetchDetail(for: movieId)
+            guard let movie = movie else { return }
+            await viewModel.fetchDetail(for: movie.id)
 
             guard let data = viewModel.movieDetail else { return }
             movieDetailView.configure(with: data)

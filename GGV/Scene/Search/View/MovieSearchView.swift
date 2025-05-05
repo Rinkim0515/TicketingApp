@@ -32,7 +32,7 @@ final class MovieSearchView: UIView {
         
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: (UIScreen.main.bounds.width / 3) - 15, height: 150)
+        layout.itemSize = CGSize(width: (UIScreen.main.bounds.width) - 15, height: UIScreen.main.bounds.height / 6)
         layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
         
