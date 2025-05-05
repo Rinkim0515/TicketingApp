@@ -81,8 +81,8 @@ extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell
         let movie = viewModel.searchResults[indexPath.item]
-        let isNowPlaying = viewModel.nowPlayingIDs.contains(movie.id)
-        cell.configure(with: movie, isNowPlaying: isNowPlaying)
+        
+        cell.configure(with: movie)
         return cell
     }
     

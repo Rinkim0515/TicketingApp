@@ -21,12 +21,29 @@ final class MovieNetwork {
     //MARK: 현재 상영중인 영화 데이터 가져오기 얘 그냥 페이징이긴한데 다 때려박는 코드인거같음 모두 호출해서 페이징으로 늘리기만함
     // 어떻게 해결? -> 모든 영화검색기반으로 할것인지
     func fetchNowPlayingMovies(page: Int) async throws -> [MovieListModel] {
-        let urlString = "\(Constants.BASE_URL)now_playing?api_key=\(Constants.API_KEY)&language=ko-KR&page=\(page)&region=KR"
         
-        guard let url = URL(string: urlString) else {
+        let urlString = "\(Constants.BASE_URL)now_playing"
+        var components = URLComponents(string: urlString)!
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "ko-KR"),
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "region", value: "KR")
+        ]
+        
+        guard let url = components.url else {
             throw URLError(.badURL)
         }
-        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZmMzMWE5MTc2MTBjNTM2MWQ4YTIyZWMxMmRjNWZlMyIsIm5iZiI6MTcyMTcwNzczNS41Mjc3MTIsInN1YiI6IjY2OWYyYWE1NGI0OTYxOGI0OTJlNzY3YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.waKjweehRkNo-6V380n0VBdkrGWv998aIu-2Zk82-Bw"
+        ]
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
         
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
@@ -62,6 +79,7 @@ final class MovieNetwork {
         }
         
     }
+    
     
     func fetchMovies(from endpoint: String, language: String = "ko-KR") async -> [MovieListModel] {
         let url = URL(string: endpoint)!

@@ -21,7 +21,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
-        label.textColor = .white
+        label.textColor = .black
         label.numberOfLines = 2
         label.textAlignment = .left
         return label
@@ -47,6 +47,8 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         
         
         contentView.layer.cornerRadius = 10
+        contentView.layer.borderColor = UIColor.gray.cgColor
+        contentView.layer.borderWidth = 0.5
         contentView.clipsToBounds = true
         posterImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(12)
@@ -73,10 +75,10 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
 
 
     }
-    func configure(with movie: Movie, isNowPlaying: Bool) {
+    func configure(with movie: Movie) {
         titleLabel.text = movie.title
-        statusLabel.text = isNowPlaying ? "예매 가능" : "예매 불가"
-        statusLabel.backgroundColor = isNowPlaying ? .systemGreen : .systemRed
+        statusLabel.text = movie.isNowPlaying ? "예매 가능" : "예매 불가"
+        statusLabel.backgroundColor = movie.isNowPlaying ? .systemGreen : .systemRed
 
         if let path = movie.posterPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
@@ -86,9 +88,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         }
 
         // 선택적으로 스타일 변경
-        titleLabel.backgroundColor = isNowPlaying
-            ? UIColor.green.withAlphaComponent(0.5)
-            : UIColor.red.withAlphaComponent(0.5)
+
     }
     
     required init?(coder: NSCoder) {
