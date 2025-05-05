@@ -53,6 +53,7 @@ final class MovieListViewController: UIViewController {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.dataSource = self
+        collectionView.delegate = self
 
         collectionView.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
         collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
@@ -92,6 +93,26 @@ final class MovieListViewController: UIViewController {
         navigationController?.pushViewController(detail, animated: true)
     }
     
+}
+extension MovieListViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let type = SectionType(rawValue: indexPath.section) else { return }
+        
+        let selectedMovie: MovieListModel
+        switch type {
+        case .nowPlaying:
+            selectedMovie = viewModel.nowPlaying[indexPath.row]
+        case .upcoming:
+            selectedMovie = viewModel.upcoming[indexPath.row]
+        case .popular:
+            selectedMovie = viewModel.popular[indexPath.row]
+        }
+        
+        let detailVC = MovieDetailViewController()
+        detailVC.movie = selectedMovie
+        navigationController?.pushViewController(detailVC, animated: true)
+        
+    }
 }
 
 

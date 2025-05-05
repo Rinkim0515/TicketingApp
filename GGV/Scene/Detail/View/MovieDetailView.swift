@@ -92,6 +92,32 @@ final class MovieDetailView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
+    func configure(with data: MovieDetailModel) {
+        movieNameLabel.text = data.title
+        
+        let dateFormatted = formatDate(data.releaseDate)
+        releaseData.text = dateFormatted
+        
+        movieDescription.text = data.overview.isEmpty ? "줄거리 정보가 없습니다." : data.overview
+        
+        ratingScore.text = String(format: "%.1f", data.voteAverage) + "점 / 10점"
+        
+        fixDescriptionSpacing()
+    }
+    
+    private func formatDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        if let date = formatter.date(from: dateString) {
+            formatter.dateFormat = "yyyy년 MM월 dd일"
+            return formatter.string(from: date)
+        }
+        return dateString
+    }
+    
+    
     // 영화 설명란 줄 간격 확장처리
     private func fixDescriptionSpacing(){
         let attrString = NSMutableAttributedString(string: movieDescription.text!)

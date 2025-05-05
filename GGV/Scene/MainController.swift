@@ -21,6 +21,8 @@ final class MainController: UIViewController {
     
     private let selectionIndicator = UIView()
     
+    private var hasInitialized = false
+    
     private let welcomeUser: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
@@ -36,10 +38,17 @@ final class MainController: UIViewController {
 
         
         view.backgroundColor = .white
-        
-      
-      
-      
+        if !hasInitialized {
+            hasInitialized = true
+            initializeView()
+        }
+    }
+    override func viewDidLoad() {
+        initializeView()
+        super.viewDidLoad()
+    }
+    
+    private func initializeView() {
         setupLogoView()
         loadUserInfo()
         setupViewControllers()
