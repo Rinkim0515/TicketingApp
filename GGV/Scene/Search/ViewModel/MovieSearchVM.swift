@@ -13,59 +13,49 @@ final class MovieSearchVM {
     @Published private(set) var nowPlayingIDs: Set<Int> = []
     @Published private(set) var nowPlayingMovies: [MovieListModel] = []
     private let movieNetwork = MovieNetwork.shared
+    private var currentQuery: String = ""
+    private var currentPage: Int = 1
+    private var isLoadingMore = false
     
+    //Search
     func search(query: String) async {
-        guard !query.isEmpty else {
-            self.searchResults = []
-            return
-        }
-        if nowPlayingIDs.isEmpty {
-            await fetchNowPlayingIDs()
-        }
-        
+        currentQuery = query
+        currentPage = 1
+        guard !query.isEmpty else { self.searchResults = []; return }
+        if nowPlayingIDs.isEmpty { await fetchNowPlayingIDs()   }
         do {
-            let resultRaw = try await movieNetwork.searchMovies(query: query)
-            let nowPlayingTitles = Set(nowPlayingMovies.map { $0.title })
-            
+            let resultRaw = try await movieNetwork.searchMovies(query: query, page: currentPage)
             let result = resultRaw.map { dto in
-                let isNowPlaying = isNowPlayingLike(dto: dto, nowPlayingTitles: nowPlayingTitles)
-                print("🔍 \(dto.title): \(dto.id) → \(isNowPlaying ? "예매 가능" : "예매 불가")")
+                let isNowPlaying = nowPlayingIDs.contains(dto.id)
                 return Movie(from: dto, isNowPlaying: isNowPlaying)
             }
-
             self.searchResults = result
         } catch {
             print("영화 검색 실패: \(error.localizedDescription)")
         }
-        
-        func isNowPlaying(_ days: Int) -> Bool {
-            return (0...90).contains(days)
-        }
-        
-        
-        
-        
-        
     }
     
-    private func isNowPlayingLike(dto: MovieListModel, nowPlayingTitles: Set<String>) -> Bool {
-        print("🎬 검색된 제목: \(dto.title)")
-        print("🎬 상영중 제목 목록: \(nowPlayingTitles)")
-        print("🎬 제목 매칭 결과: \(nowPlayingTitles.contains(dto.title))")
-        print("📅 출시일: \(dto.releaseDate)")
-        
-        if nowPlayingIDs.contains(dto.id) {
-            return true
+    func loadMoreSearchResults() async {
+        guard !currentQuery.isEmpty, !isLoadingMore else { return }
+        isLoadingMore = true
+        currentPage += 1
+
+        do {
+            let resultRaw = try await movieNetwork.searchMovies(query: currentQuery, page: currentPage)
+
+            let result = resultRaw.map { dto in
+                let isNowPlaying = nowPlayingIDs.contains(dto.id)
+                return Movie(from: dto, isNowPlaying: isNowPlaying)
+            }
+
+            self.searchResults += result
+        } catch {
+            print("추가 검색 실패: \(error.localizedDescription)")
         }
 
-        if nowPlayingTitles.contains(dto.title) {
-            if let releaseDate = dto.releaseDate.toDate(format: "yyyy-MM-dd") {
-                let days = Calendar.current.dateComponents([.day], from: releaseDate, to: Date()).day ?? 999
-                return (0...30).contains(days)
-            }
-        }
-        return false
+        isLoadingMore = false
     }
+
     
     func fetchNowPlayingIDs() async {
         var page = 1
