@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-
 import SnapKit
 
 final class SearchMovieCell: UICollectionViewCell, ReusableView {

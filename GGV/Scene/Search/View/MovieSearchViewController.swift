@@ -4,7 +4,7 @@
 //
 //  Created by 유민우 on 7/25/24.
 //
-// 애초에 컨셉에 맞게 상영가능한 영화내에서 검색을 하는게 맞다고 생각함
+
 
 import UIKit
 import SnapKit
@@ -25,17 +25,14 @@ final class MovieSearchViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupSearchView()
-        movieSearchView.searchBar.delegate = self
-        movieSearchView.searchBar.placeholder = "영화 검색"
-        movieSearchView.movieCollectionView.delegate = self
-        movieSearchView.movieCollectionView.dataSource = self
-        movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
+        configureUI()
         bindViewModel()
         Task {
             await viewModel.fetchNowPlayingIDs()
         }
     }
+    
+    
     
     private func bindViewModel() {
         viewModel.$searchResults
@@ -45,26 +42,38 @@ final class MovieSearchViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
-    
-    private func setupSearchView() {
+    private func configureUI() {
         view.addSubview(movieSearchView)
         movieSearchView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        movieSearchView.searchBar.delegate = self
+        movieSearchView.searchBar.placeholder = "영화 검색"
+        movieSearchView.movieCollectionView.delegate = self
+        movieSearchView.movieCollectionView.dataSource = self
+        movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
+        movieSearchView.searchButton.addAction(
+            UIAction { [weak self] _ in
+                self?.startSearch()
+            }, for: .touchUpInside)
     }
+    private func startSearch(){
+        guard let query = movieSearchView.searchBar.text else { return }
+        movieSearchView.movieCollectionView.setContentOffset(.zero, animated: false)
+        Task {
+            await viewModel.search(query: query)
+        }
+    }
+    
 }
 
 //MARK: - UISearchBar
 extension MovieSearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        Task {
-            await viewModel.search(query: query)
-        }
+        startSearch()
     }
 }
-
-//MARK: - CollectionView
+//MARK: - UICollectionView
 extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.searchResults.count
@@ -75,22 +84,19 @@ extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewD
         cell.configure(with: movie)
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = viewModel.searchResults[indexPath.item]
         let detailVC = MovieDetailViewController()
-        
         detailVC.movie = movie
         navigationController?.pushViewController(detailVC, animated: true)
     }
-    
+    //스크롤 감지 -> 데이터 추가 호출
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
-
-        // 콘텐츠 높이보다 화면이 큰 경우는 제외하고 조건 재설정
         if contentHeight > height && offsetY > contentHeight - height * 1.5 {
-            print("📦 loadMore 조건 만족")
             Task {
                 await viewModel.loadMoreSearchResults()
             }
