@@ -93,32 +93,7 @@ final class MovieDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    func configure(with data: MovieDetailModel) {
-        movieNameLabel.text = data.title
-        
-        let dateFormatted = formatDate(data.releaseDate)
-        releaseData.text = dateFormatted
-        
-        movieDescription.text = data.overview.isEmpty ? "줄거리 정보가 없습니다." : data.overview
-        
-        ratingScore.text = String(format: "%.1f", data.voteAverage) + "점 / 10점"
-        
-        fixDescriptionSpacing()
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        if let date = formatter.date(from: dateString) {
-            formatter.dateFormat = "yyyy년 MM월 dd일"
-            return formatter.string(from: date)
-        }
-        return dateString
-    }
-    
-    
-    // 영화 설명란 줄 간격 확장처리
+
     private func fixDescriptionSpacing(){
         let attrString = NSMutableAttributedString(string: movieDescription.text!)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -127,6 +102,12 @@ final class MovieDetailView: UIView {
         movieDescription.attributedText = attrString
     }
     
+
+    
+    
+    // 영화 설명란 줄 간격 확장처리
+
+    
     private func configureUI(){
         self.backgroundColor = .white
         self.addSubview(TicketingButton)
@@ -134,16 +115,22 @@ final class MovieDetailView: UIView {
         self.addSubview(scrollView)
         scrollView.addSubview(scrollContentView)
         
-        [posterView,
+        [
+            posterView,
          movieNameLabel,
          movieDescription,
          ratingStackView,
          releaseStackView,
-         movieDescription].forEach{scrollContentView.addSubview($0)}
-        [ratingLabel,
-         ratingScore].forEach{ratingStackView.addArrangedSubview($0)}
-        [releaseLabel,
-         releaseData].forEach{releaseStackView.addArrangedSubview($0)}
+         movieDescription
+        ].forEach{scrollContentView.addSubview($0)}
+        [
+            ratingLabel,
+         ratingScore
+        ].forEach{ratingStackView.addArrangedSubview($0)}
+        [
+            releaseLabel,
+         releaseData
+        ].forEach{releaseStackView.addArrangedSubview($0)}
         
         scrollView.snp.makeConstraints{
             $0.top.leading.trailing.equalTo(safeAreaLayoutGuide)

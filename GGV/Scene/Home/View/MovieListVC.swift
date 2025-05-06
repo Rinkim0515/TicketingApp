@@ -94,7 +94,7 @@ extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let type = SectionType(rawValue: indexPath.section) else { return }
         
-        let selectedMovie: Movie
+        var selectedMovie: Movie
         switch type {
         case .nowPlaying:
             selectedMovie = viewModel.nowPlaying[indexPath.row]
@@ -103,11 +103,9 @@ extension MovieListViewController: UICollectionViewDelegate {
         case .popular:
             selectedMovie = viewModel.popular[indexPath.row]
         }
-        
-        let detailVC = MovieDetailViewController()
-        detailVC.movie = selectedMovie
+        selectedMovie.isNowPlaying = true
+        let detailVC = MovieDetailViewController(movie: selectedMovie)
         navigationController?.pushViewController(detailVC, animated: true)
-        
     }
 }
 

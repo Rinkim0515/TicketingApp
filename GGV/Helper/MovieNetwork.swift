@@ -14,14 +14,9 @@ struct Constants {
 }
 
 final class MovieNetwork {
-    
     static let shared = MovieNetwork() // 싱글톤 패턴
-    
-    
-    //MARK: 현재 상영중인 영화 데이터 가져오기 얘 그냥 페이징이긴한데 다 때려박는 코드인거같음 모두 호출해서 페이징으로 늘리기만함
     // 어떻게 해결? -> 모든 영화검색기반으로 할것인지
     func fetchNowPlayingMovies(page: Int) async throws -> [MovieListModel] {
-        
         let urlString = "\(Constants.BASE_URL)now_playing"
         var components = URLComponents(string: urlString)!
         components.queryItems = [
@@ -61,12 +56,9 @@ final class MovieNetwork {
     //MARK: MovieDetailView에서 쓸
     
     func getData(movieId: Int) async -> MovieDetailModel? {
-        
-        let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=4e7d627f53b0470f38e13533b907923c&language=ko-KR")
-        
+        let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")
         do {
             let (data, response) = try await URLSession.shared.data(from: detailurl!)
-            
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 print("서버 응답 에러")
                 return nil
@@ -84,7 +76,6 @@ final class MovieNetwork {
     func fetchMovies(from endpoint: String, language: String = "ko-KR") async -> [MovieListModel] {
         let url = URL(string: endpoint)!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-        
         components.queryItems = [
             URLQueryItem(name: "language", value: language),
             URLQueryItem(name: "page", value: "1"),
@@ -102,6 +93,7 @@ final class MovieNetwork {
             let (data, _) = try await URLSession.shared.data(for: request)
             let decoder = JSONDecoder()
             let response = try decoder.decode(MovieResponse.self, from: data)
+            
             return response.results
         } catch {
             print("Failed to fetch movies: \(error)")

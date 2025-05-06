@@ -19,6 +19,7 @@ final class MovieSearchVM {
     
     //Search
     func search(query: String) async {
+        
         currentQuery = query
         currentPage = 1
         guard !query.isEmpty else { self.searchResults = []; return }
@@ -30,6 +31,7 @@ final class MovieSearchVM {
                 return Movie(from: dto, isNowPlaying: isNowPlaying)
             }
             self.searchResults = result
+            print(searchResults)
         } catch {
             print("영화 검색 실패: \(error.localizedDescription)")
         }

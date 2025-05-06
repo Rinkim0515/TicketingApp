@@ -3,7 +3,7 @@
 //  TeamOne1
 //
 //  Created by 유민우 on 7/25/24.
-//
+// 마지막 검수일 240506
 
 
 import UIKit
@@ -12,7 +12,7 @@ import Kingfisher
 import Combine
 
 final class MovieSearchViewController: UIViewController {
-    let movieSearchView = MovieSearchView()
+    private let movieSearchView = MovieSearchView()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: MovieSearchVM
     //MARK: - lifeCycle
@@ -33,7 +33,6 @@ final class MovieSearchViewController: UIViewController {
     }
     
     
-    
     private func bindViewModel() {
         viewModel.$searchResults
             .receive(on: RunLoop.main)
@@ -43,10 +42,6 @@ final class MovieSearchViewController: UIViewController {
             .store(in: &cancellables)
     }
     private func configureUI() {
-        view.addSubview(movieSearchView)
-        movieSearchView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
         movieSearchView.searchBar.delegate = self
         movieSearchView.searchBar.placeholder = "영화 검색"
         movieSearchView.movieCollectionView.delegate = self
@@ -56,6 +51,10 @@ final class MovieSearchViewController: UIViewController {
             UIAction { [weak self] _ in
                 self?.startSearch()
             }, for: .touchUpInside)
+        view.addSubview(movieSearchView)
+        movieSearchView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     private func startSearch(){
         guard let query = movieSearchView.searchBar.text else { return }
@@ -64,7 +63,6 @@ final class MovieSearchViewController: UIViewController {
             await viewModel.search(query: query)
         }
     }
-    
 }
 
 //MARK: - UISearchBar
@@ -73,6 +71,7 @@ extension MovieSearchViewController: UISearchBarDelegate {
         startSearch()
     }
 }
+
 //MARK: - UICollectionView
 extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -87,8 +86,7 @@ extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = viewModel.searchResults[indexPath.item]
-        let detailVC = MovieDetailViewController()
-        detailVC.movie = movie
+        let detailVC = MovieDetailViewController(movie: movie)
         navigationController?.pushViewController(detailVC, animated: true)
     }
     //스크롤 감지 -> 데이터 추가 호출

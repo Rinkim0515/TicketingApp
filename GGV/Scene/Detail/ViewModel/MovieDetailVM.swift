@@ -8,16 +8,25 @@
 //
 
 import Foundation
+import Combine
 
 final class MovieDetailVM {
-    @Published private(set) var movieDetail: MovieDetailModel?
-    @Published private(set) var isLoading: Bool = false
+    @Published var movie: Movie
+    @Published var isNowPlaying: Bool
+    @Published var isLoading: Bool = false
+
+    init(movie: Movie) {
+        self.movie = movie
+        self.isNowPlaying = movie.isNowPlaying
+    }
     
-    func fetchDetail(for movieId: Int) async {
+    func fetchDetail() async {
         isLoading = true
-        let result = await MovieNetwork().getData(movieId: movieId)
+        let result = await MovieNetwork().getData(movieId: movie.id)
         await MainActor.run {
-            self.movieDetail = result
+            if let dto = result {
+                self.movie = Movie(from: dto, base: self.movie)
+            }
             self.isLoading = false
         }
     }
