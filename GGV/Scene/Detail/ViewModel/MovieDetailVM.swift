@@ -22,7 +22,7 @@ final class MovieDetailVM {
     
     func fetchDetail() async {
         isLoading = true
-        let result = await MovieNetwork().getData(movieId: movie.id)
+        let result = await MovieNetwork().fetchMovieDetailInfo(movieId: movie.id)
         await MainActor.run {
             if let dto = result {
                 self.movie = Movie(from: dto, base: self.movie)

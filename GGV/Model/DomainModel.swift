@@ -32,10 +32,10 @@ struct Movie: Hashable {
     }
     
     //MARK: - DetailVC에서 변환 초기생성자
-    init(from dto: MovieDetailModel, base: Movie) {
-        self.id = base.id
-        self.title = base.title
-        self.posterPath = base.posterPath
+    init(from dto: MovieDetailModel) {
+        self.id = dto.id
+        self.title = dto.title
+        self.posterPath = dto.posterPath
         self.backdropPath = nil
         self.releaseDate = dto.releaseDate
         self.overview = dto.overview

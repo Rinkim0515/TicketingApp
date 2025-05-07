@@ -65,7 +65,7 @@ final class MovieSearchVM {
         var hasMore = true
         while hasMore {
             do {
-                let movies = try await movieNetwork.fetchNowPlayingMovies(page: page)
+                let movies = try await movieNetwork.fetchMovies(page: page)
                 if movies.isEmpty {
                     hasMore = false
                 } else {
