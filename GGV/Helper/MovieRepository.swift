@@ -6,3 +6,23 @@
 //
 
 import Foundation
+
+class MovieRepository {
+    static let movieRepository = MovieRepository()
+    let movieNetwork = MovieNetwork.shared
+    
+    private init() {}
+    
+   
+    
+    
+    func fetchDetailMovieInfo(from movieID: Int) -> Movie {
+        
+    }
+    
+    func searchMovies(from query: String) -> [Movie] {
+        
+    }
+    
+    
+}
