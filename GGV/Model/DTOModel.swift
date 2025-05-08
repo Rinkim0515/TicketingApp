@@ -10,13 +10,14 @@ import Foundation
 //MARK: - 목록 용도
 struct MovieResponse: Codable {
     let page: Int
-    let totalPages: Int
+    let totalPages: Int?
+    let totalResults: Int?
     let results: [MovieListModel]
     
     enum CodingKeys: String, CodingKey {
-        case page
+        case page, results
         case totalPages = "total_pages"
-        case results
+        case totalResults = "total_results"
     }
 }
 struct MovieListModel: Codable {

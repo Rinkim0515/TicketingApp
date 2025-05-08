@@ -22,28 +22,34 @@ final class MovieNetwork {
     
     
     //MARK: - TotalPage를 위한
-    func fetchMovies(from url: String) async throws -> MovieResponse {
-        var components = URLComponents(string: url)!
+    func fetchMovieList(page: Int, type: MovieRequestType) async throws -> MovieResponse {
+        guard var components = URLComponents(string: type.endpoint) else {
+            throw URLError(.badURL)
+        }
         components.queryItems = [
             URLQueryItem(name: "api_key", value: Constants.API_KEY),
             URLQueryItem(name: "language", value: "ko-KR"),
-            URLQueryItem(name: "region", value: "KR")
+            URLQueryItem(name: "region", value: "KR"),
+            URLQueryItem(name: "page", value: "\(page)")
         ]
         guard let url = components.url else {
             throw URLError(.badURL)
         }
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
+        
         let (data, response) = try await URLSession.shared.data(for: request)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
         let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
+        
         return movieResponse
     }
     
-
+    
     
     
     //MARK: MovieDetailView에서 쓸
@@ -66,7 +72,7 @@ final class MovieNetwork {
     }
     
     
-
+    
     
     // Async/await 기반 영화 검색 함수
     func searchMovies(query: String, page: Int = 1) async throws -> [MovieListModel] {
@@ -79,17 +85,17 @@ final class MovieNetwork {
             URLQueryItem(name: "page", value: "\(page)"),
             URLQueryItem(name: "region", value: "KR")
         ]
-
+        
         guard let url = components?.url else {
             throw URLError(.badURL)
         }
-
+        
         let (data, response) = try await URLSession.shared.data(from: url)
-
+        
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-
+        
         let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
         return movieResponse.results
     }
