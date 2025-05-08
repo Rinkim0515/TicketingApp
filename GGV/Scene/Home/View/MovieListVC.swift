@@ -35,8 +35,6 @@ final class MovieListViewController: UIViewController {
         
         super.viewDidLoad()
         view.backgroundColor = .white
-
-
         
         
         setupCollectionView()

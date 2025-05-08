@@ -5,12 +5,19 @@
 //  Created by KimRin on 5/5/25.
 // 검색을 요청하는 방식을 바꿔야 할듯하다. 입력이 없는채로 2초 이상 두면 검색이 돌수 있도록 하는방식
 // 상영중인 영화는 어떻게 처리를 할것인가 에대한 고민 그니까 검색을 하는것을 감지를해서 검색을 하는도중에 검색창이
-// 
+// 상영중인 영화의 요청을 계속 비동기로 보내줘야할거같음 
 
 import Foundation
 
 @MainActor
 final class MovieSearchVM {
+    
+    enum SearchMode {
+        case all
+        case nowPlayingOnly
+    }
+    
+    @Published var searchMode: SearchMode = .nowPlayingOnly
     @Published private(set) var searchResults: [Movie] = []
     private let repository = MovieRepository.shared
     private var currentQuery: String = ""
@@ -33,6 +40,7 @@ final class MovieSearchVM {
     }
     
     func loadMoreSearchResults() async {
+        
         guard !currentQuery.isEmpty, !isLoadingMore else { return }
         isLoadingMore = true
         currentPage += 1

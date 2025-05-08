@@ -20,7 +20,7 @@ final class MovieSearchView: UIView {
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     let segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["전체 영화", "상영 영화"])
+        let segmentedControl = UISegmentedControl(items: ["상영 영화", "전체 영화"])
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         segmentedControl.setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
@@ -63,25 +63,25 @@ final class MovieSearchView: UIView {
         searchBar.backgroundImage = UIImage() // 하단의 구분선 없애기 위한 용도
         movieCollectionView.backgroundColor = .white
         self.backgroundColor = .white
-
+        segmentedControl.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(20)
+        }
         searchBar.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(3)
+            $0.top.equalTo(segmentedControl.snp.bottom)
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(searchButton.snp.leading).offset(-8)
             $0.height.equalTo(50)
         }
         searchButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(3)
+            $0.top.equalTo(segmentedControl.snp.bottom)
             $0.trailing.equalToSuperview().inset(10)
             $0.height.equalTo(50)
         }
-        segmentedControl.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(30)
-        }
+
         movieCollectionView.snp.makeConstraints {
-            $0.top.equalTo(segmentedControl.snp.bottom)
+            $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }

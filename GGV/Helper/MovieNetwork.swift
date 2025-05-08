@@ -21,33 +21,26 @@ final class MovieNetwork {
     
     
     
-    //MARK: - 상영중, 상영예정작, 인기영화 호출을 위한 메서드
-    func fetchMovies(from url: String) async throws -> [MovieListModel] {
+    //MARK: - TotalPage를 위한
+    func fetchMovies(from url: String) async throws -> MovieResponse {
         var components = URLComponents(string: url)!
         components.queryItems = [
             URLQueryItem(name: "api_key", value: Constants.API_KEY),
             URLQueryItem(name: "language", value: "ko-KR"),
             URLQueryItem(name: "region", value: "KR")
         ]
-        
         guard let url = components.url else {
             throw URLError(.badURL)
         }
-        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
-
-        
         let (data, response) = try await URLSession.shared.data(for: request)
-        
-        
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-        
         let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
-        return movieResponse.results
+        return movieResponse
     }
     
 

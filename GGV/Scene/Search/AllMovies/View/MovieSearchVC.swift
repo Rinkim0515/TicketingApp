@@ -11,7 +11,7 @@ import SnapKit
 import Kingfisher
 import Combine
 
-final class MovieSearchViewController: UIViewController {
+final class MovieSearchVC: UIViewController {
     private let movieSearchView = MovieSearchView()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: MovieSearchVM
@@ -63,14 +63,14 @@ final class MovieSearchViewController: UIViewController {
 }
 
 //MARK: - UISearchBar
-extension MovieSearchViewController: UISearchBarDelegate {
+extension MovieSearchVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         startSearch()
     }
 }
 
 //MARK: - UICollectionView
-extension MovieSearchViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.searchResults.count
     }
