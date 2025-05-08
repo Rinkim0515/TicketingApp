@@ -10,7 +10,8 @@ import Foundation
 class MovieRepository {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
-    var nowPlayingMovieIds: Set<Int> = []
+    
+    var nowPlayingMovies: [Movie] = []
     
     private init() {
         
@@ -22,7 +23,7 @@ class MovieRepository {
             let movies = dtos.map { Movie(from: $0, isNowPlaying: isNowPlaying) }
             //상영중이라면 ID를 저장하고 있기
             if isNowPlaying {
-//                nowPlayingMovieIds.formUnion(movies.map(\.id))
+
             }
             return .success(movies)
         } catch {
