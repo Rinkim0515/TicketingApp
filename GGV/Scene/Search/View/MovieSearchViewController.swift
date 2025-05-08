@@ -27,9 +27,6 @@ final class MovieSearchViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         bindViewModel()
-        Task {
-            await viewModel.fetchNowPlayingIDs()
-        }
     }
     
     

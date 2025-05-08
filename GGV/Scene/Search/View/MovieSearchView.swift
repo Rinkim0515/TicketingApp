@@ -19,6 +19,26 @@ final class MovieSearchView: UIView {
         layout.minimumLineSpacing = 5
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
+    let segmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl(items: ["전체 영화", "상영 영화"])
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
+        segmentedControl.setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
+        segmentedControl.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 14, weight: .regular)
+        ]
+        let selectedAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.systemBlue,
+            .font: UIFont.systemFont(ofSize: 14, weight: .bold)
+        ]
+
+        segmentedControl.setTitleTextAttributes(normalAttributes, for: .normal)
+        segmentedControl.setTitleTextAttributes(selectedAttributes, for: .selected)
+        return segmentedControl
+    }()
+
     //MARK: - lifeCycle
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,26 +54,34 @@ final class MovieSearchView: UIView {
         [
             searchBar,
             movieCollectionView,
+            segmentedControl,
             searchButton
+            
         ].forEach { addSubview($0) }
         
         searchButton.setTitle("검색", for: .normal)
         searchBar.backgroundImage = UIImage() // 하단의 구분선 없애기 위한 용도
         movieCollectionView.backgroundColor = .white
         self.backgroundColor = .white
+
         searchBar.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().offset(3)
             $0.leading.equalToSuperview()
             $0.trailing.equalTo(searchButton.snp.leading).offset(-8)
             $0.height.equalTo(50)
         }
         searchButton.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().offset(3)
             $0.trailing.equalToSuperview().inset(10)
             $0.height.equalTo(50)
         }
-        movieCollectionView.snp.makeConstraints {
+        segmentedControl.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(30)
+        }
+        movieCollectionView.snp.makeConstraints {
+            $0.top.equalTo(segmentedControl.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }

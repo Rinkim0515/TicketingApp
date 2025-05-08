@@ -10,13 +10,20 @@ import Foundation
 class MovieRepository {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
+    var nowPlayingMovieIds: Set<Int> = []
     
-    private init() {}
+    private init() {
+        
+    }
     
     func requestData(type: MovieRequestType, isNowPlaying: Bool = false) async -> Result<[Movie],Error> {
         do {
             let dtos = try await movieNetwork.fetchMovies(from: type.endpoint)
             let movies = dtos.map { Movie(from: $0, isNowPlaying: isNowPlaying) }
+            //상영중이라면 ID를 저장하고 있기
+            if isNowPlaying {
+//                nowPlayingMovieIds.formUnion(movies.map(\.id))
+            }
             return .success(movies)
         } catch {
             return .failure(error)
@@ -38,9 +45,9 @@ class MovieRepository {
     }
     
     // MARK: - 영화 검색
-    func requestData(from query: String) async -> Result<[Movie], Error> {
+    func requestData(from query: String, page: Int) async -> Result<[Movie], Error> {
         do {
-            let searchResults = try await movieNetwork.searchMovies(query: query)
+            let searchResults = try await movieNetwork.searchMovies(query: query, page: page)
             let movies = searchResults.map { Movie(from: $0) }
             return .success(movies)
         } catch {

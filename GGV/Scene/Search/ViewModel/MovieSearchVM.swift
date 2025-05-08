@@ -10,8 +10,6 @@ import Foundation
 @MainActor
 final class MovieSearchVM {
     @Published private(set) var searchResults: [Movie] = []
-    @Published private(set) var nowPlayingIDs: Set<Int> = []
-    @Published private(set) var nowPlayingMovies: [MovieListModel] = []
     private let repository = MovieRepository.shared
     private var currentQuery: String = ""
     private var currentPage: Int = 1
@@ -19,21 +17,16 @@ final class MovieSearchVM {
     
     //Search
     func search(query: String) async {
-        
         currentQuery = query
         currentPage = 1
         guard !query.isEmpty else { self.searchResults = []; return }
-        if nowPlayingIDs.isEmpty { await fetchNowPlayingIDs()   }
-        do {
-            let resultRaw = try await repository.requestData(from: query).searchMovies(query: query, page: currentPage)
-            let result = resultRaw.map { dto in
-                let isNowPlaying = nowPlayingIDs.contains(dto.id)
-                return Movie(from: dto, isNowPlaying: isNowPlaying)
-            }
-            self.searchResults = result
-            print(searchResults)
-        } catch {
-            print("영화 검색 실패: \(error.localizedDescription)")
+        
+        let resultRaw = await repository.requestData(from: query,page: currentPage)
+        switch resultRaw {
+        case .success(let movies):
+            self.searchResults = movies
+        case .failure(let error):
+            print("검색 실패: \(error.localizedDescription)")
         }
     }
     
@@ -41,49 +34,18 @@ final class MovieSearchVM {
         guard !currentQuery.isEmpty, !isLoadingMore else { return }
         isLoadingMore = true
         currentPage += 1
-
-        do {
-            let resultRaw = try await movieNetwork.searchMovies(query: currentQuery, page: currentPage)
-
-            let result = resultRaw.map { dto in
-                let isNowPlaying = nowPlayingIDs.contains(dto.id)
-                return Movie(from: dto, isNowPlaying: isNowPlaying)
-            }
-
-            self.searchResults += result
-        } catch {
+        
+        let resultRaw = await repository.requestData(from: currentQuery, page: currentPage)
+        
+        switch resultRaw {
+        case .success(let movies):
+            self.searchResults += movies
+        case .failure(let error):
             print("추가 검색 실패: \(error.localizedDescription)")
         }
-
         isLoadingMore = false
     }
 
-    
-    func fetchNowPlayingIDs() async {
-        var page = 1
-        var allMovies: [Movie] = []
-        var hasMore = true
-        while hasMore {
-            do {
-                let movies = try await movieNetwork.fetchMovies(page: page)
-                if movies.isEmpty {
-                    hasMore = false
-                } else {
-                    allMovies.append(contentsOf: movies)
-                    page += 1
-                }
-            } catch {
-                print("로딩 실패: \(error.localizedDescription)")
-                hasMore = false
-                
-            }
-            
-
-        }
-        
-        self.nowPlayingMovies = allMovies
-        self.nowPlayingIDs = Set(allMovies.map { $0.id })
-    }
 }
 
 extension String {
