@@ -12,7 +12,7 @@ final class MovieSearchVM {
     @Published private(set) var searchResults: [Movie] = []
     @Published private(set) var nowPlayingIDs: Set<Int> = []
     @Published private(set) var nowPlayingMovies: [MovieListModel] = []
-    private let movieNetwork = MovieNetwork.shared
+    private let repository = MovieRepository.shared
     private var currentQuery: String = ""
     private var currentPage: Int = 1
     private var isLoadingMore = false
@@ -25,7 +25,7 @@ final class MovieSearchVM {
         guard !query.isEmpty else { self.searchResults = []; return }
         if nowPlayingIDs.isEmpty { await fetchNowPlayingIDs()   }
         do {
-            let resultRaw = try await movieNetwork.searchMovies(query: query, page: currentPage)
+            let resultRaw = try await repository.requestData(from: query).searchMovies(query: query, page: currentPage)
             let result = resultRaw.map { dto in
                 let isNowPlaying = nowPlayingIDs.contains(dto.id)
                 return Movie(from: dto, isNowPlaying: isNowPlaying)
@@ -61,7 +61,7 @@ final class MovieSearchVM {
     
     func fetchNowPlayingIDs() async {
         var page = 1
-        var allMovies: [MovieListModel] = []
+        var allMovies: [Movie] = []
         var hasMore = true
         while hasMore {
             do {

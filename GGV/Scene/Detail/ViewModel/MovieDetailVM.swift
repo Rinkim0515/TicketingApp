@@ -14,6 +14,7 @@ final class MovieDetailVM {
     @Published var movie: Movie
     @Published var isNowPlaying: Bool
     @Published var isLoading: Bool = false
+    private let repository = MovieRepository.shared
 
     init(movie: Movie) {
         self.movie = movie
@@ -22,12 +23,16 @@ final class MovieDetailVM {
     
     func fetchDetail() async {
         isLoading = true
-        let result = await MovieNetwork().fetchMovieDetailInfo(movieId: movie.id)
+//        let result = await MovieNetwork().fetchMovieDetailInfo(movieId: movie.id)
+        let result = await repository.requestData(for: movie.id)
         await MainActor.run {
-            if let dto = result {
-                self.movie = Movie(from: dto, base: self.movie)
+            switch result {
+            case .success(let movie):
+                self.movie = movie
+            case .failure(let error):
+                print("❗️영화 상세 로딩 실패: \(error.localizedDescription)")
             }
-            self.isLoading = false
         }
+        self.isLoading = false
     }
 }
