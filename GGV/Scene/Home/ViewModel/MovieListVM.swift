@@ -45,7 +45,7 @@ final class MovieListVM: ObservableObject {
         isLoadingNowPlaying = true
         await repository.fetchNowplayingMovies(loadMore: true)
         await MainActor.run {
-            nowPlaying = repository.nowPlayingMovies
+            nowPlaying += repository.nowPlayingMovies
             isLoadingNowPlaying = false
         }
 
@@ -54,9 +54,9 @@ final class MovieListVM: ObservableObject {
     private func loadMoreUpcoming() async {
         guard !isLoadingUpcoming else { return }
         isLoadingUpcoming = true
-        await repository.fetchUpcomingMovies(loadMore: true)
+        let newItem = await repository.fetchUpcomingMovies(loadMore: true)
         await MainActor.run {
-            upcoming = repository.upcomingMovies
+            upcoming += newItem
             isLoadingUpcoming = false
         }
 
@@ -67,7 +67,7 @@ final class MovieListVM: ObservableObject {
         isLoadingPopular = true
         await repository.fetchPopularMovies(loadMore: true)
         await MainActor.run {
-            popular = repository.popularMovies
+            popular += repository.popularMovies
             isLoadingPopular = false
         }
     }

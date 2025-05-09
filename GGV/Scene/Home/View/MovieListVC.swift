@@ -41,7 +41,7 @@ final class MovieListViewController: UIViewController {
         bindViewModel()
         
         Task {
-            await viewModel.fetchAllFromCache()
+            viewModel.fetchAllFromCache()
         }
     }
         
@@ -102,7 +102,6 @@ final class MovieListViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-
     }
     
 
@@ -111,12 +110,24 @@ final class MovieListViewController: UIViewController {
         self.collectionView.reloadData()
     }
     
+    
+
 
  
 
     
 }
 extension MovieListViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let type = SectionType(rawValue: indexPath.section) else { return }
+
+        let items = collectionView.numberOfItems(inSection: indexPath.section)
+        if indexPath.item == items - 1 {
+            Task {
+                await viewModel.loadMoreIfNeeded(for: type)
+            }
+        }
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let type = SectionType(rawValue: indexPath.section) else { return }
         

@@ -35,7 +35,7 @@ class DataController {
         UserDefaults.standard.set(reservations, forKey: key)
         UserDefaults.standard.synchronize()
     }
-
+    
     // 모든 예약 정보를 불러오는 메서드
     static func loadReservationsFromUserDefaults(key: String) -> [[String: Any]]? {
         return UserDefaults.standard.array(forKey: key) as? [[String: Any]]

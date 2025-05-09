@@ -105,6 +105,7 @@ class MovieRepository: ObservableObject {
         let result = await requestData(type: .popular, page: nextPage)
         switch result {
         case .success(let (movies, totalPages)):
+            print("📦 loadMore: \(loadMore), currentPage: \(popularCurrentPage)")
             popularMovies = loadMore ? popularMovies + movies : movies
             popularCurrentPage = nextPage
             popularTotalPages = totalPages

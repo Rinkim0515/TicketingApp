@@ -14,19 +14,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 // FireBase  넣을 예정
-    guard let windowScene = (scene as? UIWindowScene) else { return }
-    window = UIWindow(windowScene: windowScene)
+      guard let windowScene = (scene as? UIWindowScene) else { return }
+      window = UIWindow(windowScene: windowScene)
       
-    
+      let launchVC = LaunchScreenViewController()
+      window?.rootViewController = launchVC
+      window?.makeKeyAndVisible()
+
       Task {
-          _ = MovieRepository.shared
-          
+          try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 유지
           await MainActor.run {
-              window?.rootViewController = UINavigationController(rootViewController: MainController())
-              window?.makeKeyAndVisible()
+              let mainVC = UINavigationController(rootViewController: MainController())
+              self.window?.rootViewController = mainVC
           }
-      }
-  }
+      }  }
 
   func sceneDidDisconnect(_ scene: UIScene) {
     // Called as the scene is being released by the system.
