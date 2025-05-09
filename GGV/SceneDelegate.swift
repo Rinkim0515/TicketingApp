@@ -16,9 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // FireBase  넣을 예정
     guard let windowScene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: windowScene)
-      window?.rootViewController = UINavigationController(rootViewController: MainController())
-    window?.makeKeyAndVisible()
       
+    
+      Task {
+          _ = MovieRepository.shared
+          
+          await MainActor.run {
+              window?.rootViewController = UINavigationController(rootViewController: MainController())
+              window?.makeKeyAndVisible()
+          }
+      }
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {

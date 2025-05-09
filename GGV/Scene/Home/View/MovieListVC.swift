@@ -41,7 +41,7 @@ final class MovieListViewController: UIViewController {
         bindViewModel()
         
         Task {
-            await viewModel.fetchAll()
+            await viewModel.fetchAllFromCache()
         }
     }
         
@@ -63,16 +63,44 @@ final class MovieListViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        Publishers.CombineLatest3(
-            viewModel.$nowPlaying,
-            viewModel.$upcoming,
-            viewModel.$popular
-        )
-        .receive(on: RunLoop.main)
-        .sink { [weak self] _, _, _ in
-            self?.collectionView.reloadData()
-        }
-        .store(in: &cancellables)
+        viewModel.$nowPlaying
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self, self.collectionView.window != nil else { return }
+                // Only call reloadData on initial load (empty section)
+                if self.collectionView.numberOfSections > 0,
+                   self.collectionView.numberOfItems(inSection: 0) == 0 {
+                    self.collectionView.reloadData()
+                } else if self.collectionView.numberOfSections > 0 {
+                    self.collectionView.reloadSections(IndexSet(integer: 0))
+                }
+            }
+            .store(in: &cancellables)
+        viewModel.$upcoming
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self, self.collectionView.window != nil else { return }
+                if self.collectionView.numberOfSections > 1,
+                   self.collectionView.numberOfItems(inSection: 1) == 0 {
+                    self.collectionView.reloadData()
+                } else if self.collectionView.numberOfSections > 1 {
+                    self.collectionView.reloadSections(IndexSet(integer: 1))
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$popular
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self, self.collectionView.window != nil else { return }
+                if self.collectionView.numberOfSections > 2,
+                   self.collectionView.numberOfItems(inSection: 2) == 0 {
+                    self.collectionView.reloadData()
+                } else if self.collectionView.numberOfSections > 2 {
+                    self.collectionView.reloadSections(IndexSet(integer: 2))
+                }
+            }
+            .store(in: &cancellables)
         
 
     }

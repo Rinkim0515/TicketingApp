@@ -29,7 +29,7 @@ class MovieRepository: ObservableObject {
     //MARK: - MovieProperty
     @Published var nowPlayingMovies: [Movie] = []
     @Published var popularMovies: [Movie] = []
-    @Published var upcommingMovies: [Movie] = []
+    @Published var upcomingMovies: [Movie] = []
     @Published var searchMovies: [Movie] = []
     //MARK: -
     var nowPlayingCurrentPage: Int = 1
@@ -38,16 +38,42 @@ class MovieRepository: ObservableObject {
     var popularCurrentPage: Int = 1
     var popularTotalPages: Int?
     
-    var upcommingCurrentPage: Int = 1
-    var upcommingTotalPages: Int?
+    var upcomingCurrentPage: Int = 1
+    var upcomingTotalPages: Int?
     
     var searchMoviesCurrentPage: Int = 1
     var searchMoviesTotalPages: Int?
     
     
     private init() {
+        Task {
+            await refreshAllMovies() //초기값 요청
+        }
+
         
     }
+    
+    // MARK: - 모든 섹션 초기화 및 재호출 (예: Pull to Refresh 대응)
+    func refreshAllMovies() async {
+        // Reset page states
+        nowPlayingCurrentPage = 1
+        nowPlayingTotalPages = nil
+        popularCurrentPage = 1
+        popularTotalPages = nil
+        upcomingCurrentPage = 1
+        upcomingTotalPages = nil
+
+        // Reset movie data
+        nowPlayingMovies = []
+        popularMovies = []
+        upcomingMovies = []
+
+        // Re-fetch first pages
+        await fetchNowplayingMovies()
+        await fetchPopularMovies()
+        await fetchUpcomingMovies()
+    }
+
     
     
     
@@ -89,18 +115,18 @@ class MovieRepository: ObservableObject {
     }
     //MARK: - 상영예정작 초기/추가 호출
     func fetchUpcomingMovies(loadMore: Bool = false) async {
-        let nextPage = loadMore ? upcommingCurrentPage + 1 : 1
-        if let total = upcommingTotalPages, nextPage > total { return }
+        let nextPage = loadMore ? upcomingCurrentPage + 1 : 1
+        if let total = upcomingTotalPages, nextPage > total { return }
         
         let result = await requestData(type: .upcoming, page: nextPage)
         switch result {
         case .success(let (movies, totalPages)):
-            upcommingMovies = loadMore ? upcommingMovies + movies : movies
-            upcommingCurrentPage = nextPage
-            upcommingTotalPages = totalPages
+            upcomingMovies = loadMore ? upcomingMovies + movies : movies
+            upcomingCurrentPage = nextPage
+            upcomingTotalPages = totalPages
         case .failure(let error):
             print("❗️상영 예정 영화 로딩 실패: \(error.localizedDescription)")
-            if !loadMore { upcommingMovies = [] }
+            if !loadMore { upcomingMovies = [] }
         }
     }
     
