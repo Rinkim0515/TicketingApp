@@ -30,13 +30,13 @@ final class MovieSearchVM {
         currentPage = 1
         guard !query.isEmpty else { self.searchResults = []; return }
         
-        let resultRaw = await repository.requestData(from: query,page: currentPage)
-        switch resultRaw {
-        case .success(let movies):
-            self.searchResults = movies
-        case .failure(let error):
-            print("검색 실패: \(error.localizedDescription)")
-        }
+//        let resultRaw = await repository.requestData(from: query,page: currentPage)
+//        switch resultRaw {
+//        case .success(let movies):
+//            self.searchResults = movies
+//        case .failure(let error):
+//            print("검색 실패: \(error.localizedDescription)")
+//        }
     }
     
     func loadMoreSearchResults() async {
@@ -45,15 +45,15 @@ final class MovieSearchVM {
         isLoadingMore = true
         currentPage += 1
         
-        let resultRaw = await repository.requestData(from: currentQuery, page: currentPage)
-        
-        switch resultRaw {
-        case .success(let movies):
-            self.searchResults += movies
-        case .failure(let error):
-            print("추가 검색 실패: \(error.localizedDescription)")
-        }
-        isLoadingMore = false
+//        let resultRaw = await repository.requestData(from: currentQuery, page: currentPage)
+//        
+//        switch resultRaw {
+//        case .success(let movies):
+//            self.searchResults += movies
+//        case .failure(let error):
+//            print("추가 검색 실패: \(error.localizedDescription)")
+//        }
+//        isLoadingMore = false
     }
 
 }

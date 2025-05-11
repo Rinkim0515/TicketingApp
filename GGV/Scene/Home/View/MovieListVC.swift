@@ -41,7 +41,7 @@ final class MovieListViewController: UIViewController {
         bindViewModel()
         
         Task {
-            viewModel.fetchAllFromCache()
+            await viewModel.fetchAllFromCache()
         }
     }
         
@@ -63,45 +63,16 @@ final class MovieListViewController: UIViewController {
     }
     
     private func bindViewModel() {
-        viewModel.$nowPlaying
+        viewModel.insertedIndexPathsPublisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                guard let self = self, self.collectionView.window != nil else { return }
-                // Only call reloadData on initial load (empty section)
-                if self.collectionView.numberOfSections > 0,
-                   self.collectionView.numberOfItems(inSection: 0) == 0 {
-                    self.collectionView.reloadData()
-                } else if self.collectionView.numberOfSections > 0 {
-                    self.collectionView.reloadSections(IndexSet(integer: 0))
+            .sink { [weak self] type, indexPaths in
+                guard let self = self else { return }
+                self.collectionView.performBatchUpdates {
+                    self.collectionView.insertItems(at: indexPaths)
                 }
             }
             .store(in: &cancellables)
-        viewModel.$upcoming
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                guard let self = self, self.collectionView.window != nil else { return }
-                if self.collectionView.numberOfSections > 1,
-                   self.collectionView.numberOfItems(inSection: 1) == 0 {
-                    self.collectionView.reloadData()
-                } else if self.collectionView.numberOfSections > 1 {
-                    self.collectionView.reloadSections(IndexSet(integer: 1))
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$popular
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                guard let self = self, self.collectionView.window != nil else { return }
-                if self.collectionView.numberOfSections > 2,
-                   self.collectionView.numberOfItems(inSection: 2) == 0 {
-                    self.collectionView.reloadData()
-                } else if self.collectionView.numberOfSections > 2 {
-                    self.collectionView.reloadSections(IndexSet(integer: 2))
-                }
-            }
-            .store(in: &cancellables)
-        
+
     }
     
 
