@@ -28,57 +28,28 @@ class MovieRepository: ObservableObject {
     let movieNetwork = MovieNetwork.shared
     //MARK: - MovieProperty
     @Published var nowPlayingMovies: [Movie] = []
-    @Published var popularMovies: [Movie] = []
-    @Published var upcomingMovies: [Movie] = []
-    @Published var searchMovies: [Movie] = []
-    //MARK: -
+
     var nowPlayingCurrentPage: Int = 1
     var nowPlayingTotalPages: Int?
-    
-    var popularCurrentPage: Int = 1
-    var popularTotalPages: Int?
-    
-    var upcomingCurrentPage: Int = 1
-    var upcomingTotalPages: Int?
-    
-    var searchMoviesCurrentPage: Int = 1
-    var searchMoviesTotalPages: Int?
     
     
     private init() {
         Task {
             await refreshAllMovies() //초기값 요청
         }
-
         
     }
     
     // MARK: - 모든 섹션 초기화 및 재호출 (예: Pull to Refresh 대응)
     func refreshAllMovies() async {
-        // Reset page states
-        nowPlayingCurrentPage = 1
-        nowPlayingTotalPages = nil
-        popularCurrentPage = 1
-        popularTotalPages = nil
-        upcomingCurrentPage = 1
-        upcomingTotalPages = nil
 
-        // Reset movie data
-        nowPlayingMovies = []
-        popularMovies = []
-        upcomingMovies = []
-
-        // Re-fetch first pages
-        await fetchNowplayingMovies()
-        await fetchPopularMovies()
-        await fetchUpcomingMovies()
     }
 
     
     
     
     //MARK: - 상영중 영화리스트 초기/ 추가 호출
-    func fetchNowplayingMovies(loadMore: Bool = false) async {
+    func fetchNowplayingMovies(loadMore: Bool = false) async  {
         // 초기 호출인지 / 추가 호출인지 검사
         let nextPage = loadMore ? nowPlayingCurrentPage + 1 : 1
         // 페이지상태에 문제가없는지 검사
@@ -98,21 +69,25 @@ class MovieRepository: ObservableObject {
     }
     
     //MARK: - 인기영화 초기/추가 호출
-    func fetchPopularMovies(loadMore: Bool = false) async {
-        let nextPage = loadMore ? popularCurrentPage + 1 : 1
-        if let total = popularTotalPages, nextPage > total { return }
-        
-        let result = await requestData(type: .popular, page: nextPage)
+    func fetchPopularMovies(page: Int) async -> [Movie]? {
+        let result = await requestData(type: .popular, page: page)
         switch result {
-        case .success(let (movies, totalPages)):
-            print("📦 loadMore: \(loadMore), currentPage: \(popularCurrentPage)")
-            popularMovies = loadMore ? popularMovies + movies : movies
-            popularCurrentPage = nextPage
-            popularTotalPages = totalPages
-        case .failure(let error):
-            print("❗️인기 영화 로딩 실패: \(error.localizedDescription)")
-            if !loadMore { popularMovies = [] }
+        case .success(let (movies))
         }
+//        let nextPage = loadMore ? popularCurrentPage + 1 : 1
+//        if let total = popularTotalPages, nextPage > total { return }
+//        
+//        let result = await requestData(type: .popular, page: nextPage)
+//        switch result {
+//        case .success(let (movies, totalPages)):
+//            print("📦 loadMore: \(loadMore), currentPage: \(popularCurrentPage)")
+//            popularMovies = loadMore ? popularMovies + movies : movies
+//            popularCurrentPage = nextPage
+//            popularTotalPages = totalPages
+//        case .failure(let error):
+//            print("❗️인기 영화 로딩 실패: \(error.localizedDescription)")
+//            if !loadMore { popularMovies = [] }
+//        }
     }
     //MARK: - 상영예정작 초기/추가 호출
     func fetchUpcomingMovies(loadMore: Bool = false) async {

@@ -18,6 +18,8 @@ final class MovieListVM: ObservableObject {
     @Published var isLoadingUpcoming = false
     @Published var isLoadingPopular = false
     
+    
+    
 
     
     private let repository = MovieRepository.shared
