@@ -72,6 +72,8 @@ class MovieRepository: ObservableObject {
     }
     
     func fetchMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
+        print("🟣 fetchMovies 요청: \(type), page: \(page)")
+            
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
             let movies = response.results.map { Movie(from: $0, isNowPlaying: type == .nowPlaying) }

@@ -30,18 +30,20 @@ final class MainController: UIViewController {
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 13)
         return label
     }()
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        print("🧩 MainController init 진입")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // 생명주기 때문에 viewDidLoad로 해주면 디테일뷰컨에서 백버튼 눌렀을 때 네비게이션 바 노출됨 매번 똑같이 네비게이션 바 안보이는 뷰가 보여야 해서 viewWillAppear 사용
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
 
-        
-        view.backgroundColor = .white
-        if !hasInitialized {
-            hasInitialized = true
-            initializeView()
-        }
     }
     override func viewDidLoad() {
         initializeView()
@@ -103,7 +105,12 @@ final class MainController: UIViewController {
     }
 
     private func setupViewControllers() {
-        let movieListVC = MovieListViewController()
+        let movieListVM = MovieListVM()
+        Task {
+            await movieListVM.fetchAllFromCache()
+        }
+        
+        let movieListVC = MovieListViewController(viewModel: movieListVM)
         let searchVC = MovieSearchVC(viewModel: MovieSearchVM())
         let myPageVC = MyPageViewController()
 
@@ -214,6 +221,8 @@ extension MainController: UITabBarDelegate {
             selectViewController(at: index)
         }
     }
+    
+    
 }
 
 

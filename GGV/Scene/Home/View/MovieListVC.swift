@@ -22,7 +22,7 @@ final class MovieListViewController: UIViewController {
     
     
     
-    init(viewModel: MovieListVM = MovieListVM()){
+    init(viewModel: MovieListVM){
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -40,9 +40,7 @@ final class MovieListViewController: UIViewController {
         setupCollectionView()
         bindViewModel()
         
-        Task {
-            await viewModel.fetchAllFromCache()
-        }
+
     }
         
     
@@ -93,12 +91,17 @@ extension MovieListViewController: UICollectionViewDelegate {
         guard let type = SectionType(rawValue: indexPath.section) else { return }
 
         let items = collectionView.numberOfItems(inSection: indexPath.section)
-        if indexPath.item == items - 1 {
-            Task {
-                await viewModel.loadMoreIfNeeded(for: type)
+        if indexPath.item == items - 1 && items >= 20 {
+            let currentPage = viewModel.currentPage(for: type)
+            if currentPage > 1 {
+                Task {
+                    await viewModel.loadMoreIfNeeded(for: type)
+                }
             }
+
         }
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let type = SectionType(rawValue: indexPath.section) else { return }
         

@@ -27,4 +27,27 @@ final class LaunchScreenViewController: UIViewController {
             logoImageView.heightAnchor.constraint(equalToConstant: 150)
         ])
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // 1초 후 로그인 화면으로 전환
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            let loginVC = LoginViewController()
+            let nav = UINavigationController(rootViewController: loginVC)
+
+            guard let window = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first?.windows.first else { return }
+
+            window.rootViewController = nav
+            window.makeKeyAndVisible()
+
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: [.transitionCrossDissolve],
+                              animations: nil,
+                              completion: nil)
+        }
+    }
 }
