@@ -27,163 +27,35 @@ class MovieRepository: ObservableObject {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
     //MARK: - MovieProperty
-    @Published var nowPlayingMovies: [Movie] = []
-
+    private(set) var nowPlayingCache: [Movie] = []
     var nowPlayingCurrentPage: Int = 1
     var nowPlayingTotalPages: Int?
     
     
-    private init() {
-        Task {
-            await refreshAllMovies() //초기값 요청
-        }
-        
-    }
+    private init() {}
     
-    // MARK: - 모든 섹션 초기화 및 재호출 (예: Pull to Refresh 대응)
-    func refreshAllMovies() async {
+    // 상영중 영화를 검색할시에 불러올메서드
+    func preloadNowPlayingAll() async -> Result<Void, AppError> {
+        var page = nowPlayingCurrentPage
+        var totalPages: Int? = nowPlayingTotalPages
+        var accumulatedMovies: [Movie] = nowPlayingCache
 
-    }
-
-    
-    
-    
-    //MARK: - 상영중 영화리스트 초기/ 추가 호출
-    func fetchNowplayingMovies(loadMore: Bool = false) async  {
-        // 초기 호출인지 / 추가 호출인지 검사
-        let nextPage = loadMore ? nowPlayingCurrentPage + 1 : 1
-        // 페이지상태에 문제가없는지 검사
-        if let total = nowPlayingTotalPages, nextPage > total { return }
-        //페이지 값과함께 데이터 호출
-        let result = await requestData(type: .nowPlaying, page: nextPage, isNowPlaying: true)
-        //결과에따른 데이터 할당 혹은 추가
-        switch result {
-        case .success(let (movies, totalPages)):
-            nowPlayingMovies = loadMore ? nowPlayingMovies + movies : movies
-            nowPlayingCurrentPage = nextPage
-            nowPlayingTotalPages = totalPages
-        case .failure(let error):
-            print("❗️상영 중 영화 로딩 실패: \(error.localizedDescription)")
-        }
-        
-    }
-    
-    //MARK: - 인기영화 초기/추가 호출
-    func fetchPopularMovies(page: Int) async -> [Movie]? {
-        let result = await requestData(type: .popular, page: page)
-        switch result {
-        case .success(let (movies))
-        }
-//        let nextPage = loadMore ? popularCurrentPage + 1 : 1
-//        if let total = popularTotalPages, nextPage > total { return }
-//        
-//        let result = await requestData(type: .popular, page: nextPage)
-//        switch result {
-//        case .success(let (movies, totalPages)):
-//            print("📦 loadMore: \(loadMore), currentPage: \(popularCurrentPage)")
-//            popularMovies = loadMore ? popularMovies + movies : movies
-//            popularCurrentPage = nextPage
-//            popularTotalPages = totalPages
-//        case .failure(let error):
-//            print("❗️인기 영화 로딩 실패: \(error.localizedDescription)")
-//            if !loadMore { popularMovies = [] }
-//        }
-    }
-    //MARK: - 상영예정작 초기/추가 호출
-    func fetchUpcomingMovies(loadMore: Bool = false) async {
-        let nextPage = loadMore ? upcomingCurrentPage + 1 : 1
-        if let total = upcomingTotalPages, nextPage > total { return }
-        
-        let result = await requestData(type: .upcoming, page: nextPage)
-        switch result {
-        case .success(let (movies, totalPages)):
-            upcomingMovies = loadMore ? upcomingMovies + movies : movies
-            upcomingCurrentPage = nextPage
-            upcomingTotalPages = totalPages
-        case .failure(let error):
-            print("❗️상영 예정 영화 로딩 실패: \(error.localizedDescription)")
-            if !loadMore { upcomingMovies = [] }
-        }
-    }
-    
-    //MARK: - 검색어 기반 초기/ 추가 호출
-    func fetchSearchMovies(query: String, loadMore: Bool = false) async {
-        let nextPage = loadMore ? searchMoviesCurrentPage + 1 : 1
-        if let total = searchMoviesTotalPages, nextPage > total { return }
-        
-        let result = await requestData(from: query, page: nextPage)
-        switch result {
-        case .success(let movies):
-            searchMovies = loadMore ? searchMovies + movies : movies
-            searchMoviesCurrentPage = nextPage
-        case .failure(let error):
-            print("❗️검색 결과 로딩 실패: \(error.localizedDescription)")
-            if !loadMore { searchMovies = [] }
-        }
-    }
-
-    //MARK: - 상영작내에서 검색을 하기위한 데이터 호출
-    func fetchAllNowPlayingMovies() async {
-        
-        if nowPlayingCurrentPage > 1, let totalPages = nowPlayingTotalPages {
-            var page = nowPlayingCurrentPage + 1
-            while page <= totalPages {
-                let result = await requestData(type: .nowPlaying, page: page, isNowPlaying: true)
-                switch result {
-                case .success(let (movies, _)):
-                    nowPlayingMovies += movies
-                    nowPlayingCurrentPage = page
-                    page += 1
-                case .failure(let error):
-                    print("❗️상영 중 전체 로딩 실패 (추가 페이지): \(error.localizedDescription)")
-                    return
-                }
-            }
-            return
-        }
-
-        //만약에라도 페이지 1이 호출이되지않은상황이라고 한다면
-        nowPlayingMovies = []
-        nowPlayingCurrentPage = 1
-        nowPlayingTotalPages = nil
-        var page = 1
-        while true {
-            let result = await requestData(type: .nowPlaying, page: page, isNowPlaying: true)
+        repeat {
+            let result = await fetchMovies(by: .nowPlaying, page: page)
             switch result {
-            case .success(let (movies, totalPages)):
-                nowPlayingMovies += movies
-                nowPlayingTotalPages = totalPages
-                nowPlayingCurrentPage = page
-                if page >= totalPages {
-                    return
-                }
+            case .success(let info):
+                accumulatedMovies += info.movies
+                totalPages = info.totalPages
                 page += 1
             case .failure(let error):
-                print("❗️상영 중 전체 로딩 실패: \(error.localizedDescription)")
-                return
+                return .failure(error)
             }
-        }
-    }
+        } while totalPages == nil || page <= totalPages!
 
-
-    
-    
-    //MARK: - 키워드방식 정보 호출
-    func requestData(type: MovieRequestType, page: Int = 1, isNowPlaying: Bool = false) async -> Result<([Movie],totalPages: Int),Error> {
-        do {
-            let url = type.endpoint + "?page=\(page)"
-            let response = try await movieNetwork.fetchMovieList(page: page, type: type)
-            let movieDTOs = response.results
-            let movies = movieDTOs.map { Movie(from: $0, isNowPlaying: isNowPlaying) }
-            guard let totalPages = response.totalPages else {
-                return .failure(URLError(.cannotParseResponse))
-            }
-            
-            return .success((movies: movies, totalPages: totalPages))
-            
-        } catch {
-            return .failure(error)
-        }
+        nowPlayingCache = accumulatedMovies
+        nowPlayingCurrentPage = page
+        nowPlayingTotalPages = totalPages
+        return .success(())
     }
     
     
@@ -199,18 +71,37 @@ class MovieRepository: ObservableObject {
         }
     }
     
-    // MARK: - 검색어방식 영화 검색
-    func requestData(from query: String, page: Int) async -> Result<[Movie], Error> {
+    func fetchMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
-            let searchResults = try await movieNetwork.searchMovies(query: query, page: page)
-            let movies = searchResults.map { Movie(from: $0) }
-            return .success(movies)
+            let response = try await movieNetwork.fetchMovieList(page: page, type: type)
+            let movies = response.results.map { Movie(from: $0, isNowPlaying: type == .nowPlaying) }
+            return .success(MovieListInfo(
+                movies: movies,
+                totalResults: response.totalResults,
+                totalPages: response.totalPages,
+                currentPage: page
+            ))
         } catch {
-            return .failure(error)
+            return .failure(.network(.decodingFailed))
         }
     }
     
-    
+    func fetchSearchMovies(query: String, page: Int) async -> Result<MovieListInfo, AppError> {
+        do {
+            let results = try await movieNetwork.searchMovies(query: query, page: page)
+            let movies = results.map { Movie(from: $0) }
+            return .success(MovieListInfo(
+                movies: movies,
+                totalResults: movies.count,
+                totalPages: nil,
+                currentPage: page
+            ))
+        } catch {
+            return .failure(.network(.decodingFailed))
+        }
+        
+        
+    }
 }
 
 
@@ -226,6 +117,24 @@ extension MovieRequestType {
         case .nowPlaying: return "\(Constants.BASE_URL)now_playing"
         case .upcoming: return "\(Constants.BASE_URL)upcoming"
         case .popular: return "\(Constants.BASE_URL)popular"
+            
         }
+    }
+}
+
+struct MovieListInfo {
+    let movies: [Movie]
+    let totalResults: Int?        // 전체 결과 수
+    let totalPages: Int? // TMDB에서 페이지 수를안줄때
+    let currentPage: Int
+    
+    var isEmpty: Bool { // 검색결과가 없을때
+        return movies.isEmpty
+    }
+    
+    var isLastPage: Bool {
+        guard let totalPages else { return true } // 없으면 끝으로 간주
+        return currentPage >= totalPages
+        
     }
 }
