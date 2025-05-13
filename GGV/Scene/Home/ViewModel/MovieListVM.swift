@@ -11,10 +11,6 @@ import Combine
 final class MovieListVM: ObservableObject {
 
     static var instanceCount = 0
-    // Publisher to emit inserted index paths for compositional layout update
-    let insertedIndexPathsPublisher = PassthroughSubject<(MovieRequestType, [IndexPath]), Never>()
-
-    // Exposed for Combine binding
     @Published var nowPlaying: [Movie] = []
     @Published var upcoming: [Movie] = []
     @Published var popular: [Movie] = []
@@ -36,6 +32,10 @@ final class MovieListVM: ObservableObject {
     
     private let repository = MovieRepository.shared
     
+    /// Register a closure to be called when nowPlaying cache is ready.
+    func observeNowPlayingCache(_ handler: @escaping ([Movie], Int) -> Void) {
+        repository.registerNowPlayingCacheObserver(handler)
+    }
     
     func fetchAllFromCache() async{
         print("🟢 fetchAllFromCache 진입")
@@ -47,9 +47,10 @@ final class MovieListVM: ObservableObject {
     func loadMoreIfNeeded(for section: SectionType) async {
         let requestType: MovieRequestType
         switch section {
+        case .upcoming : requestType = .upcoming
         case .nowPlaying: requestType = .nowPlaying
-        case .upcoming: requestType = .upcoming
         case .popular: requestType = .popular
+            
         }
         await loadMore(for: requestType)
     }
@@ -64,10 +65,11 @@ final class MovieListVM: ObservableObject {
             switch result {
             case .success(let info):
 //                print(info.currentPage, info.totalPages, info.totalResults)
-                let insertedIndexPaths = updatePublishedMovies(info.movies, for: type)
+                updatePublishedMovies(info.movies, for: type)
+//                let insertedIndexPaths = updatePublishedMovies(info.movies, for: type)
                 currentPage[type] = info.currentPage + 1
                 totalPages[type] = info.totalPages
-                insertedIndexPathsPublisher.send((type, insertedIndexPaths))
+//                insertedIndexPathsPublisher.send((type, insertedIndexPaths))
             case .failure:
                 break
                 
@@ -77,37 +79,59 @@ final class MovieListVM: ObservableObject {
         }
     
     
-    private func updatePublishedMovies(_ newMovies: [Movie], for type: MovieRequestType) -> [IndexPath] {
-        let startIndex: Int
-        let section: Int
-        var insertedPaths: [IndexPath] = []
+    private func updatePublishedMovies(_ newMovies: [Movie], for type: MovieRequestType) {
+//        let startIndex: Int
+//        let section: Int
+//        var insertedPaths: [IndexPath] = []
 
         switch type {
         case .upcoming:
-            startIndex = upcoming.count
+            
             upcoming += newMovies
-            section = 0
+            
         case .nowPlaying:
-            startIndex = nowPlaying.count
+            
             nowPlaying += newMovies
-            section = 1
+            
 
         case .popular:
-            startIndex = popular.count
+            
             popular += newMovies
-            section = 2
+            
         }
 
-        let endIndex = startIndex + newMovies.count
-        insertedPaths = (startIndex..<endIndex).map { IndexPath(item: $0, section: section) }
-
-        return insertedPaths
+//        let endIndex = startIndex + newMovies.count
+//        insertedPaths = (startIndex..<endIndex).map { IndexPath(item: $0, section: section) }
+//
+//        return insertedPaths
     }
     func currentPage(for section: SectionType) -> Int {
         switch section {
         case .nowPlaying: return currentPage[.nowPlaying] ?? 1
         case .upcoming: return currentPage[.upcoming] ?? 1
         case .popular: return currentPage[.popular] ?? 1
+        }
+    }
+    
+    func items(for section: SectionType) -> [Movie] {
+        switch section {
+        case .upcoming: return upcoming
+        case .nowPlaying: return nowPlaying
+        case .popular: return popular
+        }
+    }
+    
+    func hasMorePages(for section: SectionType) -> Bool {
+        let requestType = requestType(from: section)
+        guard let total = totalPages[requestType] else { return true }
+        return currentPage[requestType, default: 1] <= total
+    }
+    
+    private func requestType(from section: SectionType) -> MovieRequestType {
+        switch section {
+        case .upcoming: return .upcoming
+        case .nowPlaying: return .nowPlaying
+        case .popular: return .popular
         }
     }
 

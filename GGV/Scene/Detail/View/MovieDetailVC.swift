@@ -64,7 +64,7 @@ final class MovieDetailViewController: UIViewController{
         let dateFormatted = formatDate(movie.releaseDate ?? "")
         movieDetailView.movieNameLabel.text = movie.title
         movieDetailView.releaseData.text = dateFormatted
-        movieDetailView.movieDescription.text = (movie.overview?.isEmpty != nil) ? "줄거리 정보가 없습니다." : movie.overview
+        movieDetailView.movieDescription.text = movie.overview == nil ? "줄거리 정보가 없습니다." : movie.overview
         movieDetailView.ratingScore.text = movie.voteAverage != nil ? String(format: "%.1f", movie.voteAverage! ) + "점 / 10점" : "평점 없음"
         validReserve(status: viewModel.isNowPlaying)
         

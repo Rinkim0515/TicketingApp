@@ -27,10 +27,16 @@ class MovieRepository: ObservableObject {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
     //MARK: - MovieProperty
-    private(set) var nowPlayingCache: [Movie] = []
+    private(set) var nowPlayingCache: [Movie] = [] // 캐싱 처리할 영화 리스트
     var nowPlayingCurrentPage: Int = 1
     var nowPlayingTotalPages: Int?
     var nowPlayingMoviesAmount: Int = 0
+    private var nowPlayingCacheCompletion: (([Movie], Int, Int?) -> Void)?
+    
+    func observeNowPlayingCache(_ handler: @escaping ([Movie], Int, Int?) -> Void) {
+        nowPlayingCacheCompletion = handler
+    }
+    
     
     
     private init() {}
@@ -38,24 +44,42 @@ class MovieRepository: ObservableObject {
     // 상영중 영화를 검색할시에 불러올메서드
     func preloadNowPlayingAll() async -> Result<Void, AppError> {
         var page = nowPlayingCurrentPage
-        var totalPages: Int? = nowPlayingTotalPages
-        var accumulatedMovies: [Movie] = nowPlayingCache
 
-        repeat {
-            let result = await fetchMovies(by: .nowPlaying, page: page)
+        var accumulatedMovies: [Movie] = nowPlayingCache
+        var seenIDs = Set(accumulatedMovies.map { $0.id })
+        var finalPage = page
+        var finalTotalPages: Int?
+
+        while true {
+
+        
+            let result = await fetchRawMovies(by: .nowPlaying, page: page)
             switch result {
             case .success(let info):
-                accumulatedMovies += info.movies
-                totalPages = info.totalPages
+                let filtered = info.movies.filter { movie in
+                    guard !seenIDs.contains(movie.id) else { return false }
+                    seenIDs.insert(movie.id)
+                    return true
+                }
+                accumulatedMovies += filtered
+                finalPage = info.currentPage
+                finalTotalPages = info.totalPages
+                if page >= (info.totalPages ?? .max) {
+                    break
+                }
                 page += 1
             case .failure(let error):
                 return .failure(error)
             }
-        } while totalPages == nil || page <= totalPages!
+        }
 
         nowPlayingCache = accumulatedMovies
-        nowPlayingCurrentPage = page
-        nowPlayingTotalPages = totalPages
+        nowPlayingCurrentPage = finalPage
+        nowPlayingTotalPages = finalTotalPages
+        
+        nowPlayingCacheCompletion?(nowPlayingCache, nowPlayingCurrentPage, nowPlayingTotalPages)
+        nowPlayingCacheCompletion = nil // Ensure one-time use
+        
         return .success(())
     }
     
@@ -72,6 +96,23 @@ class MovieRepository: ObservableObject {
         }
     }
     
+    private func fetchRawMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
+        do {
+            let response = try await movieNetwork.fetchMovieList(page: page, type: type)
+            let movies = response.results.map { Movie(from: $0, isNowPlaying: (type == .nowPlaying)) }
+
+            return .success(MovieListInfo(
+                movies: movies,
+                totalResults: response.totalResults,
+                totalPages: response.totalPages,
+                currentPage: page
+            ))
+        } catch {
+            return .failure(.network(.decodingFailed))
+        }
+    }
+    
+    
     func fetchMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
         print("🟣 fetchMovies 요청: \(type), page: \(page)")
             
@@ -79,15 +120,9 @@ class MovieRepository: ObservableObject {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
             var movies: [Movie]
             
-            if type == .nowPlaying {
-                movies = response.results.map { Movie(from: $0, isNowPlaying: true) }
-                self.nowPlayingCache.append(contentsOf: movies)
-                self.nowPlayingCurrentPage = response.page
-                self.nowPlayingTotalPages = response.totalResults
-                self.nowPlayingTotalPages = response.totalPages
-            } else {
+     
                 movies = response.results.map { Movie(from: $0) }
-            }
+            
             
             
             
