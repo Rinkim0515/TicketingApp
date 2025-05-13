@@ -12,15 +12,19 @@
 import UIKit
 import SnapKit
 import Combine
+import UIKit.UICellConfigurationState
 
 final class MovieListViewController: UIViewController {
+    
+
     
     private var collectionView: UICollectionView!
     private let viewModel: MovieListVM
     private var cancellables = Set<AnyCancellable>() // Disposable 같은 존재
+    private var dataSource: UICollectionViewDiffableDataSource<SectionType, Movie>!
+    
+    
 
-    
-    
     
     init(viewModel: MovieListVM){
         self.viewModel = viewModel
@@ -55,6 +59,7 @@ final class MovieListViewController: UIViewController {
         collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
 
+        
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
@@ -107,10 +112,10 @@ extension MovieListViewController: UICollectionViewDelegate {
         
         var selectedMovie: Movie
         switch type {
-        case .nowPlaying:
-            selectedMovie = viewModel.nowPlaying[indexPath.row]
         case .upcoming:
             selectedMovie = viewModel.upcoming[indexPath.row]
+        case .nowPlaying:
+            selectedMovie = viewModel.nowPlaying[indexPath.row]
         case .popular:
             selectedMovie = viewModel.popular[indexPath.row]
         }
@@ -130,8 +135,8 @@ extension MovieListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let type = SectionType(rawValue: section) else { return 0 }
         switch type {
-        case .nowPlaying: return viewModel.nowPlaying.count
         case .upcoming: return viewModel.upcoming.count
+        case .nowPlaying: return viewModel.nowPlaying.count
         case .popular: return viewModel.popular.count
         }
     }
@@ -140,11 +145,11 @@ extension MovieListViewController: UICollectionViewDataSource {
         switch indexPath.section {
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as! BannerCell
-            cell.configure(with: viewModel.nowPlaying[indexPath.item])
+            cell.configure(with: viewModel.upcoming[indexPath.item])
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCardCell.id, for: indexPath) as! MovieCardCell
-            cell.configure(with: viewModel.upcoming[indexPath.item])
+            cell.configure(with: viewModel.nowPlaying[indexPath.item])
             return cell
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCardCell.id, for: indexPath) as! MovieCardCell
@@ -158,8 +163,8 @@ extension MovieListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderView", for: indexPath) as! HeaderView
         switch indexPath.section {
-        case 0: header.setTitle("현재 상영 영화")
-        case 1: header.setTitle("상영 예정 영화")
+        case 0: header.setTitle("상영 예정 영화")
+        case 1: header.setTitle("현재 상영 영화")
         case 2: header.setTitle("인기 영화")
         default: break
         }

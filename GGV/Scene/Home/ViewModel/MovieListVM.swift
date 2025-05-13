@@ -63,7 +63,7 @@ final class MovieListVM: ObservableObject {
         await MainActor.run {
             switch result {
             case .success(let info):
-                print(info.currentPage, info.totalPages, info.totalResults)
+//                print(info.currentPage, info.totalPages, info.totalResults)
                 let insertedIndexPaths = updatePublishedMovies(info.movies, for: type)
                 currentPage[type] = info.currentPage + 1
                 totalPages[type] = info.totalPages
@@ -83,14 +83,15 @@ final class MovieListVM: ObservableObject {
         var insertedPaths: [IndexPath] = []
 
         switch type {
-        case .nowPlaying:
-            startIndex = nowPlaying.count
-            nowPlaying += newMovies
-            section = 0
         case .upcoming:
             startIndex = upcoming.count
             upcoming += newMovies
+            section = 0
+        case .nowPlaying:
+            startIndex = nowPlaying.count
+            nowPlaying += newMovies
             section = 1
+
         case .popular:
             startIndex = popular.count
             popular += newMovies
@@ -110,56 +111,6 @@ final class MovieListVM: ObservableObject {
         }
     }
 
-//    private func loadNowPlaying() async {
-//        guard !isLoadingNowPlaying else { return }
-//        isLoadingNowPlaying = true
-//        let result = await repository.fetchMovies(by: .nowPlaying, page: nowPlayingCurrentPage)
-//        await MainActor.run {
-//            switch result {
-//            case .success(let info):
-//                nowPlaying += info.movies
-//                nowPlayingCurrentPage = info.currentPage + 1
-//                nowPlayingTotalPages = info.totalPages
-//            case .failure:
-//                break
-//            }
-//            isLoadingNowPlaying = false
-//        }
-//        
-//    }
-    
-//    private func loadMoreNowPlaying() async {
-//        guard !isLoadingNowPlaying else { return }
-//        isLoadingNowPlaying = true
-//        await repository.fetchNowplayingMovies(loadMore: true)
-//        await MainActor.run {
-//            nowPlaying += repository.nowPlayingMovies
-//            isLoadingNowPlaying = false
-//        }
-//
-//    }
-//
-//    private func loadMoreUpcoming() async {
-//        guard !isLoadingUpcoming else { return }
-//        isLoadingUpcoming = true
-//        let newItem = await repository.fetchUpcomingMovies(loadMore: true)
-//        await MainActor.run {
-//            upcoming += newItem
-//            isLoadingUpcoming = false
-//        }
-//
-//    }
-//
-//    private func loadMorePopular() async {
-//        guard !isLoadingPopular else { return }
-//        isLoadingPopular = true
-//        await repository.fetchPopularMovies(loadMore: true)
-//        await MainActor.run {
-//            popular += repository.popularMovies
-//            isLoadingPopular = false
-//        }
-//    }
-    
 }
 
 actor MovieLoadingState {

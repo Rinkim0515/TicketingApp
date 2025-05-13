@@ -3,7 +3,6 @@
 //  TeamOne1
 //
 //  Created by 유민우 on 7/25/24.
-// 마지막 검수일 240506
 
 
 import UIKit

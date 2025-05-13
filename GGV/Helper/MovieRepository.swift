@@ -30,6 +30,7 @@ class MovieRepository: ObservableObject {
     private(set) var nowPlayingCache: [Movie] = []
     var nowPlayingCurrentPage: Int = 1
     var nowPlayingTotalPages: Int?
+    var nowPlayingMoviesAmount: Int = 0
     
     
     private init() {}
@@ -76,7 +77,20 @@ class MovieRepository: ObservableObject {
             
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
-            let movies = response.results.map { Movie(from: $0, isNowPlaying: type == .nowPlaying) }
+            var movies: [Movie]
+            
+            if type == .nowPlaying {
+                movies = response.results.map { Movie(from: $0, isNowPlaying: true) }
+                self.nowPlayingCache.append(contentsOf: movies)
+                self.nowPlayingCurrentPage = response.page
+                self.nowPlayingTotalPages = response.totalResults
+                self.nowPlayingTotalPages = response.totalPages
+            } else {
+                movies = response.results.map { Movie(from: $0) }
+            }
+            
+            
+            
             return .success(MovieListInfo(
                 movies: movies,
                 totalResults: response.totalResults,

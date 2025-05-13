@@ -8,8 +8,9 @@
 import Foundation
 
 enum SectionType: Int, CaseIterable {
-    case nowPlaying = 0
-    case upcoming
+    case upcoming = 0
+    case nowPlaying 
+    
     case popular
     
     var title: String {
