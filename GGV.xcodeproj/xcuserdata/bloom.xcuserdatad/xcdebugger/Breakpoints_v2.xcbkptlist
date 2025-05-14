@@ -316,9 +316,9 @@
             filePath = "GGV/Scene/Home/ViewModel/MovieListVM.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
-            landmarkName = "fetchAllFromCache()"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "fetchInitialSections()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

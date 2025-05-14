@@ -23,30 +23,29 @@ struct MovieModelMapper {
     }
     
     /// MovieDTO -> Domain.Movie 변환
-    static func map(from dto: MovieDTO, genreNames: [String] = []) -> Movie {
+    static func map(from movieDto: MovieDTO) -> Movie {
         return Movie(
-            id: dto.id,
-            title: dto.title,
-            posterPath: dto.posterPath,
-            backdropPath: dto.backdropPath,
+            id: movieDto.id,
+            title: movieDto.title,
+            posterPath: movieDto.posterPath,
+            backdropPath: movieDto.backdropPath,
             releaseDate: nil,
             overview: nil,
             voteAverage: nil,
-            
-            genreNames: genreNames
+            genreNames: movieDto.genreIDs.genreNames()
         )
     }
-    static func map(from dto: MovieDetailDTO/*, genreNames: [String] = []*/) -> Movie {
+    
+    static func map(from movieDetailDto: MovieDetailDTO) -> Movie {
         return Movie(
-            id: dto.id,
-            title: dto.title,
-            posterPath: dto.posterPath,
+            id: movieDetailDto.id,
+            title: movieDetailDto.title,
+            posterPath: movieDetailDto.posterPath,
             backdropPath: nil,
-            releaseDate: nil,
-            overview: nil,
-            voteAverage: nil,
-            
-            genreNames: []
+            releaseDate: movieDetailDto.releaseDate,
+            overview: movieDetailDto.overview,
+            voteAverage: movieDetailDto.voteAverage,
+            genreNames: movieDetailDto.genreIDs.genreNames()
         )
     }
 }

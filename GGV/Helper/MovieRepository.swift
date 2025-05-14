@@ -40,26 +40,13 @@ class MovieRepository {
             guard let dto = try await movieNetwork.fetchMovieDetailInfo(movieId: movieID) else {
                 return .failure(URLError(.badServerResponse))
             }
+            //MovieDetailDTO -> Movie
             return .success(MovieModelMapper.map(from: dto))
                 
         } catch {
             return .failure(error)
         }
     }
-    
-    
-    
-    private func fetchRawMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
-        do {
-            let response = try await movieNetwork.fetchMovieList(page: page, type: type)
-            
-
-            return .success( MovieModelMapper.map(from: response) )
-        } catch {
-            return .failure(.network(.decodingFailed))
-        }
-    }
-    
     
     func fetchMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
         print("🟣 fetchMovies 요청: \(type), page: \(page)")
@@ -68,12 +55,7 @@ class MovieRepository {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
             var movies: [Movie]
             
-     
-            movies = response.movies.map { MovieModelMapper.map(from: $0, genreNames: []) }
-            
-            
-            
-            
+            movies = response.movies.map { MovieModelMapper.map(from: $0) }
             return .success(MovieListInfo(
                 movies: movies,
                 totalResults: response.totalResults,
@@ -88,7 +70,7 @@ class MovieRepository {
     func fetchSearchMovies(query: String, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
             let results = try await movieNetwork.searchMovies(query: query, page: page)
-            let movies = results.map { MovieModelMapper.map(from: $0, genreNames: []) }
+            let movies = results.map { MovieModelMapper.map(from: $0) }
             return .success(MovieListInfo(
                 movies: movies,
                 totalResults: movies.count,

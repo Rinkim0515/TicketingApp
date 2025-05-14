@@ -107,7 +107,7 @@ final class MainController: UIViewController {
     private func setupViewControllers() {
         let movieListVM = MovieListVM()
         Task {
-            await movieListVM.fetchAllFromCache()
+            await movieListVM.fetchInitialSections()
         }
         
         let movieListVC = MovieListViewController(viewModel: movieListVM)

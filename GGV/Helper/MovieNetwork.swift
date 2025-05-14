@@ -13,9 +13,6 @@ struct Constants {
     static let BASE_URL = "https://api.themoviedb.org/3/movie/"
 }
 
-
-
-
 final class MovieNetwork {
     static let shared = MovieNetwork() // 싱글톤 패턴
     
@@ -45,14 +42,12 @@ final class MovieNetwork {
             throw URLError(.badServerResponse)
         }
         let movieResponse = try JSONDecoder().decode(MovieResponseDTO.self, from: data)
-        
         return movieResponse
     }
     
     
     
     
-    //MARK: MovieDetailView에서 쓸
     
     func fetchMovieDetailInfo(movieId: Int) async throws -> MovieDetailDTO? {
         let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")

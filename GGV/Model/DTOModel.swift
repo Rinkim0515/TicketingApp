@@ -26,11 +26,13 @@ struct MovieDTO: Codable {
     let title: String // 영화 한글 이름
     let posterPath: String? // 영화 세로 포스터 이미지
     let backdropPath: String? // 영화 가로 포스터 이미지
+    let genreIDs: [Int]
     
     enum CodingKeys: String, CodingKey {
         case id, title
         case posterPath = "poster_path"
         case backdropPath = "backdrop_path"
+        case genreIDs = "genre_ids"
     }
 }
 
@@ -43,20 +45,17 @@ struct MovieDetailDTO: Codable {
     let posterPath: String?
     let overview: String
     let voteAverage: Double
-    let genres: [GenreDTO]
+    let genreIDs: [Int]
     enum CodingKeys: String, CodingKey {
         case title, overview, id
         case posterPath = "poster_path"
         case releaseDate = "release_date"
         case voteAverage = "vote_average"
-        case genres
+        case genreIDs = "genre_ids"
     }
 }
 
-struct GenreDTO: Codable {
-    let id: Int
-    let name: String
-}
+
 
 //MARK: -  장르 매칭 번호
 enum Genre: Int, CaseIterable {

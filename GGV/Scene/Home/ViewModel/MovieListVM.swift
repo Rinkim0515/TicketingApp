@@ -9,9 +9,13 @@ import Foundation
 import Combine
 
 final class MovieListVM: ObservableObject {
-    @Published var nowPlaying: [Movie] = []
-    @Published var upcoming: [Movie] = []
-    @Published var popular: [Movie] = []
+    private var nowPlaying: [Movie] = []
+    private var upcoming: [Movie] = []
+    private var popular: [Movie] = []
+
+    @Published var nowPlayingModels: [MovieCardCellModel] = []
+    @Published var upcomingModels: [MovieBannerCellModel] = []
+    @Published var popularModels: [MovieCardCellModel] = []
 
     private let loadingState = MovieLoadingState()
     
@@ -29,9 +33,9 @@ final class MovieListVM: ObservableObject {
     /// Register a closure to be called when nowPlaying cache is ready.
 
     
-    func fetchAllFromCache() async{
-        print("🟢 fetchAllFromCache 진입")
-            await loadMoreIfNeeded(for: .nowPlaying)
+    func fetchInitialSections() async {
+        print(#function)
+        await loadMoreIfNeeded(for: .nowPlaying)
         await loadMoreIfNeeded(for: .popular)
         await loadMoreIfNeeded(for: .upcoming)
     }
@@ -74,30 +78,35 @@ final class MovieListVM: ObservableObject {
     
     
     private func updatePublishedMovies(_ newMovies: [Movie], for type: MovieRequestType) {
-//        let startIndex: Int
-//        let section: Int
-//        var insertedPaths: [IndexPath] = []
 
         switch type {
         case .upcoming:
-            
+            let mapped = newMovies.map {
+                MovieUIModelMapper.mapToBannerModel(from: $0)
+            }
+            upcomingModels += mapped
             upcoming += newMovies
             
         case .nowPlaying:
+            let mapped = newMovies.map {
+                MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
+            }
+            nowPlayingModels += mapped
             
             nowPlaying += newMovies
             
 
         case .popular:
+            let mapped = newMovies.map {
+                MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)
+            }
+            popularModels += mapped
             
             popular += newMovies
             
         }
 
-//        let endIndex = startIndex + newMovies.count
-//        insertedPaths = (startIndex..<endIndex).map { IndexPath(item: $0, section: section) }
-//
-//        return insertedPaths
+
     }
     func currentPage(for section: SectionType) -> Int {
         switch section {
