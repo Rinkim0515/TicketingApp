@@ -22,7 +22,7 @@ final class MovieNetwork {
     
     
     //MARK: - TotalPage를 위한
-    func fetchMovieList(page: Int, type: MovieRequestType) async throws -> MovieResponse {
+    func fetchMovieList(page: Int, type: MovieRequestType) async throws -> MovieResponseDTO {
         guard var components = URLComponents(string: type.endpoint) else {
             throw URLError(.badURL)
         }
@@ -44,7 +44,7 @@ final class MovieNetwork {
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
-        let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
+        let movieResponse = try JSONDecoder().decode(MovieResponseDTO.self, from: data)
         
         return movieResponse
     }
@@ -54,7 +54,7 @@ final class MovieNetwork {
     
     //MARK: MovieDetailView에서 쓸
     
-    func fetchMovieDetailInfo(movieId: Int) async throws -> MovieDetailModel? {
+    func fetchMovieDetailInfo(movieId: Int) async throws -> MovieDetailDTO? {
         let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")
         do {
             let (data, response) = try await URLSession.shared.data(from: detailurl!)
@@ -62,7 +62,7 @@ final class MovieNetwork {
                 print("서버 응답 에러")
                 return nil
             }
-            let decodedData = try JSONDecoder().decode(MovieDetailModel.self, from: data)
+            let decodedData = try JSONDecoder().decode(MovieDetailDTO.self, from: data)
             return decodedData
         } catch let error {
             print(error.localizedDescription)
@@ -75,7 +75,7 @@ final class MovieNetwork {
     
     
     // Async/await 기반 영화 검색 함수
-    func searchMovies(query: String, page: Int = 1) async throws -> [MovieListModel] {
+    func searchMovies(query: String, page: Int = 1) async throws -> [MovieDTO] {
         let baseURL = "https://api.themoviedb.org/3/search/movie"
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -96,7 +96,7 @@ final class MovieNetwork {
             throw URLError(.badServerResponse)
         }
         
-        let movieResponse = try JSONDecoder().decode(MovieResponse.self, from: data)
-        return movieResponse.results
+        let movieResponse = try JSONDecoder().decode(MovieResponseDTO.self, from: data)
+        return movieResponse.movies
     }
 }

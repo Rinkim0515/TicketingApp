@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Movie: Hashable {
+struct Movie: Hashable, Identifiable {
     let id: Int
     let title: String
     let posterPath: String?
@@ -15,33 +15,27 @@ struct Movie: Hashable {
     let releaseDate: String?
     let overview: String?
     let voteAverage: Double?
-    var isNowPlaying: Bool = false
     let genreNames: [String]
     
-    //MARK: - ListModel에서 변환 초기생성자
-    init(from dto: MovieListModel, isNowPlaying: Bool = false) {
-        self.id = dto.id
-        self.title = dto.title
-        self.posterPath = dto.posterPath
-        self.backdropPath = dto.backdropPath
-        self.releaseDate = nil
-        self.overview = nil
-        self.voteAverage = nil
-        self.isNowPlaying = isNowPlaying
-        self.genreNames = []
+}
+
+struct MovieListInfo {
+    let movies: [Movie]
+    let totalResults: Int?        // 전체 결과 수
+    let totalPages: Int? // TMDB에서 페이지 수를안줄때
+    let currentPage: Int
+    
+    var isEmpty: Bool { // 검색결과가 없을때
+        return movies.isEmpty
     }
     
-    //MARK: - DetailVC에서 변환 초기생성자
-    init(from dto: MovieDetailModel) {
-        self.id = dto.id
-        self.title = dto.title
-        self.posterPath = dto.posterPath
-        self.backdropPath = nil
-        self.releaseDate = dto.releaseDate
-        self.overview = dto.overview
-        self.voteAverage = dto.voteAverage
-        self.isNowPlaying = false
-        self.genreNames = dto.genres.map { $0.name }
+    var isLastPage: Bool {
+        guard let totalPages else { return true } // 없으면 끝으로 간주
+        return currentPage >= totalPages
+        
     }
 }
+
+
+
 

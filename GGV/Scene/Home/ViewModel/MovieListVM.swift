@@ -9,6 +9,9 @@ import Foundation
 import Combine
 
 final class MovieListVM: ObservableObject {
+    private let nowPlayingController = SharedSectionControllers.nowPlaying
+    @Published var nowPlayingCardModels: [MovieCardCellModel] = []
+
 
     static var instanceCount = 0
     @Published var nowPlaying: [Movie] = []
@@ -33,9 +36,7 @@ final class MovieListVM: ObservableObject {
     private let repository = MovieRepository.shared
     
     /// Register a closure to be called when nowPlaying cache is ready.
-    func observeNowPlayingCache(_ handler: @escaping ([Movie], Int) -> Void) {
-        repository.registerNowPlayingCacheObserver(handler)
-    }
+
     
     func fetchAllFromCache() async{
         print("🟢 fetchAllFromCache 진입")
@@ -65,10 +66,12 @@ final class MovieListVM: ObservableObject {
             switch result {
             case .success(let info):
 //                print(info.currentPage, info.totalPages, info.totalResults)
+                print(info.movies.count)
                 updatePublishedMovies(info.movies, for: type)
 //                let insertedIndexPaths = updatePublishedMovies(info.movies, for: type)
                 currentPage[type] = info.currentPage + 1
                 totalPages[type] = info.totalPages
+                
 //                insertedIndexPathsPublisher.send((type, insertedIndexPaths))
             case .failure:
                 break
@@ -136,6 +139,31 @@ final class MovieListVM: ObservableObject {
     }
 
 }
+
+// MARK: - MovieSectionDataController Integration
+extension MovieListVM {
+    /// Sync nowPlayingCardModels from the data controller cache
+    ///
+    func syncNowPlayingFromCache() {
+        nowPlayingController.syncFromRepo()
+        let domainModels = nowPlayingController.currentItems()
+        let uiModels = domainModels.map {
+            MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
+        }
+        nowPlayingCardModels = uiModels
+    }
+
+    /// Load next page for nowPlaying and update nowPlayingCardModels
+    func loadNextNowPlayingPage() {
+        let domainModels = nowPlayingController.nextPageItems()
+        let uiModels = domainModels.map {
+            MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
+        }
+        nowPlayingCardModels = uiModels
+    }
+}
+
+
 
 actor MovieLoadingState {
     private var isLoading: [MovieRequestType: Bool] = [:]

@@ -23,7 +23,7 @@
 
 import Foundation
 
-class MovieRepository: ObservableObject {
+class MovieRepository {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
     //MARK: - MovieProperty
@@ -99,7 +99,7 @@ class MovieRepository: ObservableObject {
     private func fetchRawMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
-            let movies = response.results.map { Movie(from: $0, isNowPlaying: (type == .nowPlaying)) }
+            let movies = response.movies.map { Movie(from: $0, isNowPlaying: (type == .nowPlaying)) }
 
             return .success(MovieListInfo(
                 movies: movies,
@@ -121,7 +121,7 @@ class MovieRepository: ObservableObject {
             var movies: [Movie]
             
      
-                movies = response.results.map { Movie(from: $0) }
+                movies = response.movies.map { Movie(from: $0) }
             
             
             
@@ -156,36 +156,6 @@ class MovieRepository: ObservableObject {
 }
 
 
-enum MovieRequestType {
-    case nowPlaying
-    case upcoming
-    case popular
-}
 
-extension MovieRequestType {
-    var endpoint: String {
-        switch self {
-        case .nowPlaying: return "\(Constants.BASE_URL)now_playing"
-        case .upcoming: return "\(Constants.BASE_URL)upcoming"
-        case .popular: return "\(Constants.BASE_URL)popular"
-            
-        }
-    }
-}
 
-struct MovieListInfo {
-    let movies: [Movie]
-    let totalResults: Int?        // 전체 결과 수
-    let totalPages: Int? // TMDB에서 페이지 수를안줄때
-    let currentPage: Int
-    
-    var isEmpty: Bool { // 검색결과가 없을때
-        return movies.isEmpty
-    }
-    
-    var isLastPage: Bool {
-        guard let totalPages else { return true } // 없으면 끝으로 간주
-        return currentPage >= totalPages
-        
-    }
-}
+

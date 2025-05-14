@@ -47,6 +47,9 @@ final class MovieListViewController: UIViewController {
         
 
     }
+    override func viewDidAppear(_ animated: Bool) {
+        
+    }
         
     
     private func setupCollectionView() {

@@ -7,21 +7,7 @@
 
 import Foundation
 
-enum SectionType: Int, CaseIterable {
-    case upcoming = 0
-    case nowPlaying
-    case popular
-    
-    
-    var title: String {
-        switch self {
-        case .nowPlaying: return "현재 상영 영화"
-        case .upcoming: return "상영 예정 영화"
-        case .popular: return "인기 영화"
-        
-        }
-    }
-}
+
 
 protocol ReusableView: AnyObject {
     static var id: String { get }
