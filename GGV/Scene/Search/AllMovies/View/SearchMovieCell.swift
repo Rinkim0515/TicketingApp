@@ -78,7 +78,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
     }
     func configure(with movie: Movie) {
         titleLabel.text = movie.title
-        statusLabel.isHidden = movie.isNowPlaying ? false : true
+//        statusLabel.isHidden = movie.isNowPlaying ? false : true
         if let path = movie.posterPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
             posterImageView.kf.setImage(with: url)

@@ -71,3 +71,7 @@ struct MovieDetailUIModel: Hashable {
     let isNowPlaying: Bool
 }
 
+enum MovieListItem: Hashable {
+    case banner(MovieBannerCellModel)
+    case card(MovieCardCellModel)
+}

@@ -18,7 +18,7 @@ final class MovieDetailVM {
 
     init(movie: Movie) {
         self.movie = movie
-        self.isNowPlaying = movie.isNowPlaying
+        self.isNowPlaying = true
     }
     
     func fetchDetail() async {

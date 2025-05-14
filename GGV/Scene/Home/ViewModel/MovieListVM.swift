@@ -9,11 +9,6 @@ import Foundation
 import Combine
 
 final class MovieListVM: ObservableObject {
-    private let nowPlayingController = SharedSectionControllers.nowPlaying
-    @Published var nowPlayingCardModels: [MovieCardCellModel] = []
-
-
-    static var instanceCount = 0
     @Published var nowPlaying: [Movie] = []
     @Published var upcoming: [Movie] = []
     @Published var popular: [Movie] = []
@@ -26,10 +21,6 @@ final class MovieListVM: ObservableObject {
         .popular: 1
     ]
 
-    init(){
-        Self.instanceCount += 1
-        print("🧩 MovieListVM init 진입 (총 인스턴스 수: \(Self.instanceCount))")
-    }
     private var totalPages: [MovieRequestType: Int] = [:]
 
     
@@ -141,27 +132,7 @@ final class MovieListVM: ObservableObject {
 }
 
 // MARK: - MovieSectionDataController Integration
-extension MovieListVM {
-    /// Sync nowPlayingCardModels from the data controller cache
-    ///
-    func syncNowPlayingFromCache() {
-        nowPlayingController.syncFromRepo()
-        let domainModels = nowPlayingController.currentItems()
-        let uiModels = domainModels.map {
-            MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
-        }
-        nowPlayingCardModels = uiModels
-    }
 
-    /// Load next page for nowPlaying and update nowPlayingCardModels
-    func loadNextNowPlayingPage() {
-        let domainModels = nowPlayingController.nextPageItems()
-        let uiModels = domainModels.map {
-            MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
-        }
-        nowPlayingCardModels = uiModels
-    }
-}
 
 
 

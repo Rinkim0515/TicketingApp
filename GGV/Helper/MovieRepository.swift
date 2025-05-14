@@ -26,62 +26,12 @@ import Foundation
 class MovieRepository {
     static let shared = MovieRepository()
     let movieNetwork = MovieNetwork.shared
-    //MARK: - MovieProperty
-    private(set) var nowPlayingCache: [Movie] = [] // 캐싱 처리할 영화 리스트
-    var nowPlayingCurrentPage: Int = 1
-    var nowPlayingTotalPages: Int?
-    var nowPlayingMoviesAmount: Int = 0
-    private var nowPlayingCacheCompletion: (([Movie], Int, Int?) -> Void)?
-    
-    func observeNowPlayingCache(_ handler: @escaping ([Movie], Int, Int?) -> Void) {
-        nowPlayingCacheCompletion = handler
-    }
     
     
     
     private init() {}
     
-    // 상영중 영화를 검색할시에 불러올메서드
-    func preloadNowPlayingAll() async -> Result<Void, AppError> {
-        var page = nowPlayingCurrentPage
 
-        var accumulatedMovies: [Movie] = nowPlayingCache
-        var seenIDs = Set(accumulatedMovies.map { $0.id })
-        var finalPage = page
-        var finalTotalPages: Int?
-
-        while true {
-
-        
-            let result = await fetchRawMovies(by: .nowPlaying, page: page)
-            switch result {
-            case .success(let info):
-                let filtered = info.movies.filter { movie in
-                    guard !seenIDs.contains(movie.id) else { return false }
-                    seenIDs.insert(movie.id)
-                    return true
-                }
-                accumulatedMovies += filtered
-                finalPage = info.currentPage
-                finalTotalPages = info.totalPages
-                if page >= (info.totalPages ?? .max) {
-                    break
-                }
-                page += 1
-            case .failure(let error):
-                return .failure(error)
-            }
-        }
-
-        nowPlayingCache = accumulatedMovies
-        nowPlayingCurrentPage = finalPage
-        nowPlayingTotalPages = finalTotalPages
-        
-        nowPlayingCacheCompletion?(nowPlayingCache, nowPlayingCurrentPage, nowPlayingTotalPages)
-        nowPlayingCacheCompletion = nil // Ensure one-time use
-        
-        return .success(())
-    }
     
     
     // MARK: - 영화 상세 정보 호출
@@ -90,23 +40,21 @@ class MovieRepository {
             guard let dto = try await movieNetwork.fetchMovieDetailInfo(movieId: movieID) else {
                 return .failure(URLError(.badServerResponse))
             }
-            return .success(Movie(from: dto))
+            return .success(MovieModelMapper.map(from: dto))
+                
         } catch {
             return .failure(error)
         }
     }
     
+    
+    
     private func fetchRawMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)
-            let movies = response.movies.map { Movie(from: $0, isNowPlaying: (type == .nowPlaying)) }
+            
 
-            return .success(MovieListInfo(
-                movies: movies,
-                totalResults: response.totalResults,
-                totalPages: response.totalPages,
-                currentPage: page
-            ))
+            return .success( MovieModelMapper.map(from: response) )
         } catch {
             return .failure(.network(.decodingFailed))
         }
@@ -121,7 +69,7 @@ class MovieRepository {
             var movies: [Movie]
             
      
-                movies = response.movies.map { Movie(from: $0) }
+            movies = response.movies.map { MovieModelMapper.map(from: $0, genreNames: []) }
             
             
             
@@ -140,7 +88,7 @@ class MovieRepository {
     func fetchSearchMovies(query: String, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
             let results = try await movieNetwork.searchMovies(query: query, page: page)
-            let movies = results.map { Movie(from: $0) }
+            let movies = results.map { MovieModelMapper.map(from: $0, genreNames: []) }
             return .success(MovieListInfo(
                 movies: movies,
                 totalResults: movies.count,

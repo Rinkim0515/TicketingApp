@@ -21,7 +21,7 @@ final class MovieListViewController: UIViewController {
     private var collectionView: UICollectionView!
     private let viewModel: MovieListVM
     private var cancellables = Set<AnyCancellable>() // Disposable 같은 존재
-    private var dataSource: UICollectionViewDiffableDataSource<SectionType, Movie>!
+    private var dataSource: UICollectionViewDiffableDataSource<SectionType, MovieListItem>!
     
     
 
@@ -63,17 +63,16 @@ final class MovieListViewController: UIViewController {
         collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
 
-
-        dataSource = UICollectionViewDiffableDataSource<SectionType, Movie>(collectionView: collectionView) { collectionView, indexPath, movie in
+        dataSource = UICollectionViewDiffableDataSource<SectionType, MovieListItem>(collectionView: collectionView) { collectionView, indexPath, item in
             let section = SectionType.allCases[indexPath.section]
-            switch section {
-            case .upcoming:
+            switch item {
+            case .banner(let model):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as! BannerCell
-                cell.configure(with: movie)
+                cell.configure(with: model)
                 return cell
-            default:
+            case .card(let model):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCardCell.id, for: indexPath) as! MovieCardCell
-                cell.configure(with: movie)
+                cell.configure(with: model)
                 return cell
             }
         }
@@ -84,7 +83,6 @@ final class MovieListViewController: UIViewController {
             case 0: header.setTitle("상영 예정 영화")
             case 1: header.setTitle("현재 상영 영화")
             case 2: header.setTitle("인기 영화")
-            case 3: header.setTitle("상영 예정 영화")
             default: break
             }
             return header
@@ -101,6 +99,12 @@ final class MovieListViewController: UIViewController {
     
     private func bindViewModel() {
         Publishers.CombineLatest3(viewModel.$nowPlaying, viewModel.$upcoming, viewModel.$popular)
+            .map { nowPlaying, upcoming, popular in
+                let nowPlayingItems = nowPlaying.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)) }
+                let upcomingItems = upcoming.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)) }
+                let popularItems = popular.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)) }
+                return (nowPlayingItems, upcomingItems, popularItems)
+            }
             .receive(on: RunLoop.main)
             .sink { [weak self] nowPlaying, upcoming, popular in
                 self?.applySnapshot(nowPlaying: nowPlaying, upcoming: upcoming, popular: popular)

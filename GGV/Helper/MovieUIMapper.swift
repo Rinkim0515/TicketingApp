@@ -36,6 +36,19 @@ struct MovieModelMapper {
             genreNames: genreNames
         )
     }
+    static func map(from dto: MovieDetailDTO/*, genreNames: [String] = []*/) -> Movie {
+        return Movie(
+            id: dto.id,
+            title: dto.title,
+            posterPath: dto.posterPath,
+            backdropPath: nil,
+            releaseDate: nil,
+            overview: nil,
+            voteAverage: nil,
+            
+            genreNames: []
+        )
+    }
 }
 
 struct MovieUIModelMapper {
