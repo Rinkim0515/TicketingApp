@@ -19,13 +19,13 @@ final class MovieListVM: ObservableObject {
 
     private let loadingState = MovieLoadingState()
     
-    private var currentPage: [MovieRequestType: Int] = [
+    private var currentPage: [MovieCategory: Int] = [
         .nowPlaying: 1,
         .upcoming: 1,
         .popular: 1
     ]
 
-    private var totalPages: [MovieRequestType: Int] = [:]
+    private var totalPages: [MovieCategory: Int] = [:]
 
     
     private let repository = MovieRepository.shared
@@ -35,23 +35,19 @@ final class MovieListVM: ObservableObject {
     
     func fetchInitialSections() async {
         print(#function)
-        await loadMoreIfNeeded(for: .nowPlaying)
-        await loadMoreIfNeeded(for: .popular)
-        await loadMoreIfNeeded(for: .upcoming)
+        async let now: () = loadMoreIfNeeded(for: .nowPlaying)
+        async let pop: () = loadMoreIfNeeded(for: .popular)
+        async let upc: () = loadMoreIfNeeded(for: .upcoming)
+        _ = await [now, pop, upc]
     }
     
-    func loadMoreIfNeeded(for section: SectionType) async {
-        let requestType: MovieRequestType
-        switch section {
-        case .upcoming : requestType = .upcoming
-        case .nowPlaying: requestType = .nowPlaying
-        case .popular: requestType = .popular
-            
-        }
-        await loadMore(for: requestType)
+
+    
+    func loadMoreIfNeeded(for category: MovieCategory) async {
+        await loadMore(for: category)
     }
     
-    private func loadMore(for type: MovieRequestType) async {
+    private func loadMore(for type: MovieCategory) async {
         print("🔵 loadMore 실행: \(type), page: \(currentPage[type, default: 1])")
         guard await loadingState.checkAndSetLoading(for: type) else { return }
 
@@ -77,7 +73,7 @@ final class MovieListVM: ObservableObject {
         }
     
     
-    private func updatePublishedMovies(_ newMovies: [Movie], for type: MovieRequestType) {
+    private func updatePublishedMovies(_ newMovies: [Movie], for type: MovieCategory) {
 
         switch type {
         case .upcoming:
@@ -108,15 +104,11 @@ final class MovieListVM: ObservableObject {
 
 
     }
-    func currentPage(for section: SectionType) -> Int {
-        switch section {
-        case .nowPlaying: return currentPage[.nowPlaying] ?? 1
-        case .upcoming: return currentPage[.upcoming] ?? 1
-        case .popular: return currentPage[.popular] ?? 1
-        }
+    func currentPage(for category: MovieCategory) -> Int {
+        return currentPage[category] ?? 1
     }
     
-    func items(for section: SectionType) -> [Movie] {
+    private func items(for section: MovieCategory) -> [Movie] {
         switch section {
         case .upcoming: return upcoming
         case .nowPlaying: return nowPlaying
@@ -124,19 +116,11 @@ final class MovieListVM: ObservableObject {
         }
     }
     
-    func hasMorePages(for section: SectionType) -> Bool {
-        let requestType = requestType(from: section)
-        guard let total = totalPages[requestType] else { return true }
-        return currentPage[requestType, default: 1] <= total
+    func hasMorePages(for category: MovieCategory) -> Bool {
+        guard let total = totalPages[category] else { return false }
+        return currentPage[category, default: 1] <= total
     }
-    
-    private func requestType(from section: SectionType) -> MovieRequestType {
-        switch section {
-        case .upcoming: return .upcoming
-        case .nowPlaying: return .nowPlaying
-        case .popular: return .popular
-        }
-    }
+
 
 }
 
@@ -146,15 +130,15 @@ final class MovieListVM: ObservableObject {
 
 
 actor MovieLoadingState {
-    private var isLoading: [MovieRequestType: Bool] = [:]
+    private var isLoading: [MovieCategory: Bool] = [:]
 
-    func checkAndSetLoading(for type: MovieRequestType) -> Bool {
+    func checkAndSetLoading(for type: MovieCategory) -> Bool {
         if isLoading[type] == true { return false }
         isLoading[type] = true
         return true
     }
 
-    func setFinished(for type: MovieRequestType) {
+    func setFinished(for type: MovieCategory) {
         isLoading[type] = false
     }
 }

@@ -21,7 +21,7 @@ final class MovieListViewController: UIViewController {
     private var collectionView: UICollectionView!
     private let viewModel: MovieListVM
     private var cancellables = Set<AnyCancellable>() // Disposable 같은 존재
-    private var dataSource: UICollectionViewDiffableDataSource<SectionType, MovieListItem>!
+    private var dataSource: UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>!
     
     
 
@@ -63,8 +63,8 @@ final class MovieListViewController: UIViewController {
         collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
 
-        dataSource = UICollectionViewDiffableDataSource<SectionType, MovieListItem>(collectionView: collectionView) { collectionView, indexPath, item in
-            let section = SectionType.allCases[indexPath.section]
+        dataSource = UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>(collectionView: collectionView) { collectionView, indexPath, item in
+            let MovieCategory = MovieCategory.allCases[indexPath.section]
             switch item {
             case .banner(let model):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as! BannerCell
@@ -113,8 +113,8 @@ final class MovieListViewController: UIViewController {
 
     }
     private func applySnapshot(nowPlaying: [Movie], upcoming: [Movie], popular: [Movie]) {
-        var snapshot = NSDiffableDataSourceSnapshot<SectionType, Movie>()
-        snapshot.appendSections(SectionType.allCases)
+        var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, Movie>()
+        snapshot.appendSections(MovieCategory.allCases)
         snapshot.appendItems(upcoming, toSection: .upcoming)
         snapshot.appendItems(nowPlaying, toSection: .nowPlaying)
         snapshot.appendItems(popular, toSection: .popular)
@@ -138,7 +138,7 @@ final class MovieListViewController: UIViewController {
 }
 extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let type = SectionType(rawValue: indexPath.section) else { return }
+        guard let type = MovieCategory(rawValue: indexPath.section) else { return }
         
         let currentItemsCount = viewModel.items(for: type).count
         let isLastItem = indexPath.item == currentItemsCount - 1

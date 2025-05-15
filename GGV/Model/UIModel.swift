@@ -6,37 +6,30 @@
 //
 
 import Foundation
-enum SectionType: Int, CaseIterable {
+
+
+enum MovieCategory: Int, CaseIterable {
     case upcoming = 0
     case nowPlaying
     case popular
-    
-    
+
     var title: String {
         switch self {
         case .nowPlaying: return "현재 상영 영화"
         case .upcoming: return "상영 예정 영화"
         case .popular: return "인기 영화"
-        
         }
     }
-}
-enum MovieRequestType {
-    case nowPlaying
-    case upcoming
-    case popular
-}
 
-extension MovieRequestType {
     var endpoint: String {
         switch self {
         case .nowPlaying: return "\(Constants.BASE_URL)now_playing"
         case .upcoming: return "\(Constants.BASE_URL)upcoming"
         case .popular: return "\(Constants.BASE_URL)popular"
-            
         }
     }
 }
+
 
 // MARK: - UI Models
 
