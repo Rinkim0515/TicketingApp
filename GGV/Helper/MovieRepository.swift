@@ -35,6 +35,7 @@ class MovieRepository {
     
     
     // MARK: - 영화 상세 정보 호출
+    
     func requestData(for movieID: Int) async -> Result<Movie, Error> {
         do {
             guard let dto = try await movieNetwork.fetchMovieDetailInfo(movieId: movieID) else {
@@ -49,7 +50,6 @@ class MovieRepository {
     }
     
     func fetchMovies(by type: MovieCategory, page: Int) async -> Result<MovieListInfo, AppError> {
-//        print("🟣 fetchMovies 요청: \(type), page: \(page)")
             
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)

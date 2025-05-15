@@ -106,7 +106,9 @@ final class MovieListViewController: UIViewController {
             .map { nowPlaying, upcoming, popular in
                 let nowPlayingItems = nowPlaying.map { MovieListItem.card($0) }
                 let upcomingItems = upcoming.map { MovieListItem.banner($0) }
-                print(upcomingItems)
+                upcoming.map { item in
+                    print(item.id,item.title,item.backdropPath)
+                }
                 let popularItems = popular.map { MovieListItem.card($0) }
                 return (nowPlayingItems, upcomingItems, popularItems)
             }
@@ -164,7 +166,6 @@ extension MovieListViewController: UICollectionViewDelegate {
         guard let selectedMovie = dataSource.itemIdentifier(for: indexPath) else { return }
         
 
-        print("🟥 선택된 indexPath: \(indexPath)")
         
         let movieID: Int
         switch selectedMovie {
@@ -211,14 +212,15 @@ extension MovieListViewController {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalWidth(0.56) // 16:9
+            widthDimension: .fractionalWidth(0.92),
+            heightDimension: .fractionalWidth(0.52) // slightly smaller height
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 0)
+        section.interGroupSpacing = 8
+        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16)
         // 헤더의 위치조정 필요
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

@@ -10,8 +10,9 @@ import Foundation
 struct MovieModelMapper {
     /// MovieResponseDTO -> MovieListInfo 변환
     static func map(from response: MovieResponseDTO) -> MovieListInfo {
-        let movies = response.movies.map { dto in
-            MovieModelMapper.map(from: dto)
+        let movies = response.movies.enumerated().map { index, dto in
+            print("🟡 [DTO \(index)] \(dto.id) - \(dto.title)")
+            return MovieModelMapper.map(from: dto)
         }
         
         return MovieListInfo(
@@ -56,7 +57,8 @@ struct MovieUIModelMapper {
         return MovieBannerCellModel(
             id: movie.id,
             title: movie.title,
-            backdropPath: movie.backdropPath
+            backdropPath: movie.backdropPath,
+            posterPath: movie.posterPath
         )
     }
     static func mapToCardModel(from movie: Movie, isNowPlaying: Bool = false) -> MovieCardCellModel {

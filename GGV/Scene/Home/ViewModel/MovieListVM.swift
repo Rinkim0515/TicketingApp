@@ -35,8 +35,8 @@ final class MovieListVM: ObservableObject {
     
     func fetchInitialSections() async {
         print(#function)
-        async let now: () = loadMoreIfNeeded(for: .nowPlaying)
-        async let pop: () = loadMoreIfNeeded(for: .popular)
+        async let now: () = ()//loadMoreIfNeeded(for: .nowPlaying)
+        async let pop: () = ()//loadMoreIfNeeded(for: .popular)
         async let upc: () = loadMoreIfNeeded(for: .upcoming)
         _ = await [now, pop, upc]
     }

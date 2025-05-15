@@ -24,16 +24,26 @@ final class BannerCell: UICollectionViewCell, ReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        self.layer.cornerRadius = 8
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.systemGray.cgColor
+        self.clipsToBounds = true
+    
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        imageView.image = nil
+    }
 
     private func setupUI() {
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)
-        imageView.contentMode = .scaleAspectFill
+        
         imageView.clipsToBounds = true
 
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -47,14 +57,18 @@ final class BannerCell: UICollectionViewCell, ReusableView {
     }
 
     func configure(with model: MovieBannerCellModel) {
+        self.titleLabel.text = model.title
         
         if let backdropPath = model.backdropPath
           {
             let url = URL(string: "https://image.tmdb.org/t/p/w780" + backdropPath)
             imageView.kf.setImage(with: url)
-            self.titleLabel.text = model.title
-        } else {
-            imageView.image = nil
+            imageView.contentMode = .scaleAspectFill
+            
+        } else if let posterPath = model.posterPath {
+            let url = URL(string: "https://image.tmdb.org/t/p/w780" + posterPath)
+            imageView.kf.setImage(with: url)
+            imageView.contentMode = .scaleAspectFit
         }
     }
 }

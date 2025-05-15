@@ -32,7 +32,7 @@ final class MainController: UIViewController {
     }()
     init() {
         super.init(nibName: nil, bundle: nil)
-        print("🧩 MainController init 진입")
+        
     }
     
     required init?(coder: NSCoder) {
