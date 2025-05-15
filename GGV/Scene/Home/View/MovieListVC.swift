@@ -98,11 +98,16 @@ final class MovieListViewController: UIViewController {
 
     
     private func bindViewModel() {
-        Publishers.CombineLatest3(viewModel.$nowPlaying, viewModel.$upcoming, viewModel.$popular)
+        print("📋 upcomingModels 순서:")
+
+        
+        Publishers.CombineLatest3(viewModel.$nowPlayingModels, viewModel.$upcomingModels, viewModel.$popularModels)
+        
             .map { nowPlaying, upcoming, popular in
-                let nowPlayingItems = nowPlaying.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)) }
-                let upcomingItems = upcoming.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)) }
-                let popularItems = popular.map { MovieListItem.card(MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)) }
+                let nowPlayingItems = nowPlaying.map { MovieListItem.card($0) }
+                let upcomingItems = upcoming.map { MovieListItem.banner($0) }
+                print(upcomingItems)
+                let popularItems = popular.map { MovieListItem.card($0) }
                 return (nowPlayingItems, upcomingItems, popularItems)
             }
             .receive(on: RunLoop.main)
@@ -110,16 +115,16 @@ final class MovieListViewController: UIViewController {
                 self?.applySnapshot(nowPlaying: nowPlaying, upcoming: upcoming, popular: popular)
             }
             .store(in: &cancellables)
-
+        
     }
-    private func applySnapshot(nowPlaying: [Movie], upcoming: [Movie], popular: [Movie]) {
-        var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, Movie>()
+    
+    private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
+        var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
         snapshot.appendSections(MovieCategory.allCases)
         snapshot.appendItems(upcoming, toSection: .upcoming)
         snapshot.appendItems(nowPlaying, toSection: .nowPlaying)
         snapshot.appendItems(popular, toSection: .popular)
-        
-        
+
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -140,7 +145,12 @@ extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let type = MovieCategory(rawValue: indexPath.section) else { return }
         
-        let currentItemsCount = viewModel.items(for: type).count
+        let currentItemsCount: Int
+        switch type {
+        case .upcoming: currentItemsCount = viewModel.upcomingModels.count
+        case .nowPlaying: currentItemsCount = viewModel.nowPlayingModels.count
+        case .popular: currentItemsCount = viewModel.popularModels.count
+        }
         let isLastItem = indexPath.item == currentItemsCount - 1
         
         if isLastItem && viewModel.hasMorePages(for: type) {
@@ -153,7 +163,25 @@ extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let selectedMovie = dataSource.itemIdentifier(for: indexPath) else { return }
         
-        let detailVC = MovieDetailViewController(movie: selectedMovie)
+
+        print("🟥 선택된 indexPath: \(indexPath)")
+        
+        let movieID: Int
+        switch selectedMovie {
+
+
+        case .banner(let model):
+            print(model.id)
+            print("🟩 선택된 모델 ID: \(model.id ?? -1), title: \(model.title)")
+            movieID = model.id
+        case .card(let model):
+            movieID = model.id
+        }
+
+
+        
+        let detailVC = MovieDetailViewController(movieId: movieID)
+        
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

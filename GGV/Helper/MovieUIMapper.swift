@@ -32,7 +32,7 @@ struct MovieModelMapper {
             releaseDate: nil,
             overview: nil,
             voteAverage: nil,
-            genreNames: movieDto.genreIDs.genreNames()
+            genreNames: []
         )
     }
     
@@ -45,7 +45,7 @@ struct MovieModelMapper {
             releaseDate: movieDetailDto.releaseDate,
             overview: movieDetailDto.overview,
             voteAverage: movieDetailDto.voteAverage,
-            genreNames: movieDetailDto.genreIDs.genreNames()
+            genreNames: movieDetailDto.genres.map{ $0.name}
         )
     }
 }

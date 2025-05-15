@@ -19,7 +19,7 @@ final class MovieNetwork {
     
     
     //MARK: - TotalPage를 위한
-    func fetchMovieList(page: Int, type: MovieRequestType) async throws -> MovieResponseDTO {
+    func fetchMovieList(page: Int, type: MovieCategory) async throws -> MovieResponseDTO {
         guard var components = URLComponents(string: type.endpoint) else {
             throw URLError(.badURL)
         }
@@ -53,6 +53,7 @@ final class MovieNetwork {
         let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")
         do {
             let (data, response) = try await URLSession.shared.data(from: detailurl!)
+            
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 print("서버 응답 에러")
                 return nil

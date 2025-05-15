@@ -48,8 +48,8 @@ class MovieRepository {
         }
     }
     
-    func fetchMovies(by type: MovieRequestType, page: Int) async -> Result<MovieListInfo, AppError> {
-        print("🟣 fetchMovies 요청: \(type), page: \(page)")
+    func fetchMovies(by type: MovieCategory, page: Int) async -> Result<MovieListInfo, AppError> {
+//        print("🟣 fetchMovies 요청: \(type), page: \(page)")
             
         do {
             let response = try await movieNetwork.fetchMovieList(page: page, type: type)

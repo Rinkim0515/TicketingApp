@@ -17,8 +17,8 @@ final class MovieDetailViewController: UIViewController{
     private var cancellables: Set<AnyCancellable> = []
     
     //MARK: - lifeCyvle
-    init(movie: Movie) {
-        self.viewModel = MovieDetailVM(movie: movie)
+    init(movieId: Int) {
+        self.viewModel = MovieDetailVM(movieId: movieId)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -45,6 +45,7 @@ final class MovieDetailViewController: UIViewController{
         }
         
         viewModel.$movie
+            .compactMap { $0 }
             .receive(on: RunLoop.main)
             .sink { [weak self] movie in
                 self?.render(movie: movie)

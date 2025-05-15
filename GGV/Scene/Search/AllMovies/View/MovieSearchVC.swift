@@ -82,7 +82,7 @@ extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = viewModel.searchResults[indexPath.item]
-        let detailVC = MovieDetailViewController(movie: movie)
+        let detailVC = MovieDetailViewController(movieId: movie.id)
         navigationController?.pushViewController(detailVC, animated: true)
     }
     //스크롤 감지 -> 데이터 추가 호출

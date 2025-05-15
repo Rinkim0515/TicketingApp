@@ -37,6 +37,14 @@ struct MovieBannerCellModel: Hashable {
     let id: Int
     let title: String
     let backdropPath: String?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func ==(lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct MovieCardCellModel: Hashable {
