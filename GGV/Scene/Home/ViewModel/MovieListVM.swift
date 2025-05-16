@@ -56,14 +56,10 @@ final class MovieListVM: ObservableObject {
         await MainActor.run {
             switch result {
             case .success(let info):
-//                print(info.currentPage, info.totalPages, info.totalResults)
                 print(info.movies.count)
                 updatePublishedMovies(info.movies, for: type)
-//                let insertedIndexPaths = updatePublishedMovies(info.movies, for: type)
                 currentPage[type] = info.currentPage + 1
                 totalPages[type] = info.totalPages
-                
-//                insertedIndexPathsPublisher.send((type, insertedIndexPaths))
             case .failure:
                 break
                 

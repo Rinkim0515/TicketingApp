@@ -165,17 +165,20 @@ extension MovieListViewController: UICollectionViewDelegate {
 
         
         let movieID: Int
+        let isNowPlaying: Bool
         switch selectedMovie {
         case .banner(let model):
             print(model.id)
             movieID = model.id
+            isNowPlaying = false
         case .card(let model):
             movieID = model.id
+            isNowPlaying = model.isNowPlaying
         }
 
 
         
-        let detailVC = MovieDetailViewController(movieId: movieID)
+        let detailVC = MovieDetailViewController(movieId: movieID, isNowPlay: isNowPlaying)
         
         navigationController?.pushViewController(detailVC, animated: true)
     }

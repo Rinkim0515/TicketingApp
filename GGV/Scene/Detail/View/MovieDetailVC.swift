@@ -15,11 +15,13 @@ final class MovieDetailViewController: UIViewController{
     private let movieDetailView = MovieDetailView()
     private let viewModel: MovieDetailVM
     private var cancellables: Set<AnyCancellable> = []
+    private var isNowPlay: Bool = false
     
     //MARK: - lifeCyvle
-    init(movieId: Int) {
+    init(movieId: Int, isNowPlay: Bool) {
         self.viewModel = MovieDetailVM(movieId: movieId)
         super.init(nibName: nil, bundle: nil)
+        self.isNowPlay = isNowPlay
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -29,6 +31,7 @@ final class MovieDetailViewController: UIViewController{
         configureUI()
         loadData()
         movieDetailView.TicketingButton.addTarget(self, action: #selector(changeView), for: .touchDown)
+        print(isNowPlay)
     }
     
     private func configureUI() {
@@ -36,6 +39,7 @@ final class MovieDetailViewController: UIViewController{
         movieDetailView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
+        
     }
     
     private func loadData() {
@@ -52,12 +56,10 @@ final class MovieDetailViewController: UIViewController{
             }
             .store(in: &cancellables)
         
-        viewModel.$isNowPlaying
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isNowPlaying in
-                self?.validReserve(status: isNowPlaying)
-            }
-            .store(in: &cancellables)
+
+        
+        
+        validReserve(status: isNowPlay)
     }
     
     
@@ -67,7 +69,7 @@ final class MovieDetailViewController: UIViewController{
         movieDetailView.releaseData.text = dateFormatted
         movieDetailView.movieDescription.text = movie.overview == nil ? "줄거리 정보가 없습니다." : movie.overview
         movieDetailView.ratingScore.text = movie.voteAverage != nil ? String(format: "%.1f", movie.voteAverage! ) + "점 / 10점" : "평점 없음"
-        validReserve(status: viewModel.isNowPlaying)
+        
         
         if let url = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
             movieDetailView.posterView.kf.setImage(with: url)
@@ -75,9 +77,12 @@ final class MovieDetailViewController: UIViewController{
     }
     
     private func validReserve(status: Bool) {
-        if !status {
+        if status == false {
             movieDetailView.TicketingButton.isEnabled = false
             movieDetailView.TicketingButton.backgroundColor = .systemGray
+        } else {
+            movieDetailView.TicketingButton.isEnabled = true
+            movieDetailView.TicketingButton.backgroundColor = .systemRed
         }
     }
     
