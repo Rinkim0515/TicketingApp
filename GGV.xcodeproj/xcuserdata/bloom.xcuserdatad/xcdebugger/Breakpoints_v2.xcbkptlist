@@ -284,8 +284,8 @@
             filePath = "GGV/Scene/Home/View/MovieListVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "140"
-            endingLineNumber = "140"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "MovieListViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -300,8 +300,8 @@
             filePath = "GGV/Scene/Home/View/MovieListVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
             landmarkName = "collectionView(_:willDisplay:forItemAt:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -17,6 +17,10 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
         super.init(frame: frame)
         setupUI()
         contentView.backgroundColor = .white
+        self.layer.cornerRadius = 8
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        self.clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {
@@ -34,18 +38,21 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
         
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        titleLabel.font = .boldSystemFont(ofSize: 13)
+        titleLabel.font = .boldSystemFont(ofSize: 15)
         titleLabel.numberOfLines = 2
         titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
+        titleLabel.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9)
+        
         
         imageView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(imageView.snp.width).multipliedBy(1.5) // 포스터 비율
+            $0.horizontalEdges.verticalEdges.equalToSuperview()
+            
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(4)
-            $0.leading.trailing.bottom.equalToSuperview().inset(4)
+            $0.height.equalTo(26)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
     }
     

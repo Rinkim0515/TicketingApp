@@ -106,9 +106,6 @@ final class MovieListViewController: UIViewController {
             .map { nowPlaying, upcoming, popular in
                 let nowPlayingItems = nowPlaying.map { MovieListItem.card($0) }
                 let upcomingItems = upcoming.map { MovieListItem.banner($0) }
-                upcoming.map { item in
-                    print(item.id,item.title,item.backdropPath)
-                }
                 let popularItems = popular.map { MovieListItem.card($0) }
                 return (nowPlayingItems, upcomingItems, popularItems)
             }
@@ -169,11 +166,8 @@ extension MovieListViewController: UICollectionViewDelegate {
         
         let movieID: Int
         switch selectedMovie {
-
-
         case .banner(let model):
             print(model.id)
-            print("🟩 선택된 모델 ID: \(model.id ?? -1), title: \(model.title)")
             movieID = model.id
         case .card(let model):
             movieID = model.id
@@ -238,17 +232,17 @@ extension MovieListViewController {
 
     private func cardSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(120),
-            heightDimension: .absolute(200)
+            widthDimension: .absolute(160),
+            heightDimension: .absolute(220)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16)
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(200)
+            widthDimension: .estimated(160),
+            heightDimension: .absolute(220)
         )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.interItemSpacing = .fixed(12)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: Array(repeating: item, count: 1))
+        group.interItemSpacing = .fixed(20)
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous

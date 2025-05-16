@@ -20,7 +20,7 @@ final class MovieDetailView: UIView {
     }()
     let movieNameLabel = {
         let label = UILabel()
-        label.text = "영화이름"
+        label.text = ""
         label.numberOfLines = 2
         label.textAlignment = .center
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)

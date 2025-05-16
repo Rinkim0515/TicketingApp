@@ -16,7 +16,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
         label.textColor = .white
         label.numberOfLines = 0
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        label.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9)
         label.textAlignment = .center
         return label
     }()
@@ -26,7 +26,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
         setupUI()
         self.layer.cornerRadius = 8
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.systemGray.cgColor
+        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
         self.clipsToBounds = true
     
     }
