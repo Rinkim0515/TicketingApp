@@ -28,8 +28,6 @@ final class MovieDetailVM {
     
     func fetchDetail() async{
         isLoading = true
-//        let result = await MovieNetwork().fetchMovieDetailInfo(movieId: movie.id)
-        
         let result = await repository.requestData(for: movieId)
         
         await MainActor.run {

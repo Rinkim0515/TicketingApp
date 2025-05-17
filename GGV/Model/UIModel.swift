@@ -65,6 +65,10 @@ struct MovieDetailUIModel: Hashable {
     let genres: [String]
     let isNowPlaying: Bool
 }
+struct MovieSearchUIModel {
+    let id: Int
+    let title: String
+}
 
 enum MovieListItem: Hashable {
     case banner(MovieBannerCellModel)

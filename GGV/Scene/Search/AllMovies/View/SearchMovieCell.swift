@@ -25,17 +25,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         label.textAlignment = .left
         return label
     }()
-    private let statusLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        label.textAlignment = .center
-        label.textColor = .white
-        label.layer.cornerRadius = 6
-        label.clipsToBounds = true
-        label.text = "예매 가능"
-        label.backgroundColor = .systemGreen
-        return label
-    }()
+
     //MARK: - lifeCycle
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -53,8 +43,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         contentView.clipsToBounds = true
         [
             posterImageView,
-            titleLabel,
-            statusLabel
+            titleLabel
         ].forEach {
             contentView.addSubview($0)
         }
@@ -69,16 +58,11 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
             $0.trailing.lessThanOrEqualToSuperview().inset(90)
             
         }
-        statusLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(12)
-            $0.bottom.equalToSuperview().inset(12)
-            $0.width.equalTo(70)
-            $0.height.equalTo(28)
-        }
+
     }
     func configure(with movie: Movie) {
         titleLabel.text = movie.title
-//        statusLabel.isHidden = movie.isNowPlaying ? false : true
+
         if let path = movie.posterPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
             posterImageView.kf.setImage(with: url)
