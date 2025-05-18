@@ -11,7 +11,7 @@ import Kingfisher
 import Combine
 
 final class MovieSearchVC: UIViewController {
-    private let movieSearchView = MovieSearchView()
+    private let movieSearchView = SearchView()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: MovieSearchVM
     //MARK: - lifeCycle
@@ -34,6 +34,7 @@ final class MovieSearchVC: UIViewController {
             }
         }
     }
+    // 검색창이 트리거  -> 여기서 검색에 대한 부분을 전달 해야함 vm한테
     
     
     private func bindViewModel() {
@@ -60,10 +61,8 @@ final class MovieSearchVC: UIViewController {
         movieSearchView.movieCollectionView.delegate = self
         movieSearchView.movieCollectionView.dataSource = self
         movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
-        movieSearchView.searchButton.addAction(
-            UIAction { [weak self] _ in
-                self?.startSearch()
-            }, for: .touchUpInside)
+
+
         view.addSubview(movieSearchView)
         movieSearchView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -78,8 +77,24 @@ final class MovieSearchVC: UIViewController {
             await viewModel.search(query: query)
         }
     }
+    
     private func initNowPlayingMovies() async {
         await viewModel.loadNowplaying()
+        
+    }
+    
+    @objc private func searchModeChanged(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            viewModel.searchMode = .nowPlayingOnly
+            movieSearchView.movieCollectionView.reloadData()
+        case 1:
+            movieSearchView.movieCollectionView.reloadData()
+            viewModel.searchMode = .all
+            
+        default:
+            break
+        }
         
     }
 }
@@ -96,7 +111,10 @@ extension MovieSearchVC: UISearchBarDelegate {
 //MARK: - UICollectionView
 extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.searchResults.count
+
+
+            return viewModel.searchResults.count
+ 
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell

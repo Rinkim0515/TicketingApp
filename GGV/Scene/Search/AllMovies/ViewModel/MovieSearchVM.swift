@@ -22,6 +22,8 @@ final class MovieSearchVM {
     
     private(set) var nowplayingMovies: [Movie] = []
     
+    
+    
     private let repository = MovieRepository.shared
     private var currentQuery: String = ""
     
@@ -35,7 +37,6 @@ final class MovieSearchVM {
     
     private var totalPages: Int?
 
-  
     
     func search(query: String) async {
         currentQuery = query
