@@ -26,17 +26,34 @@ final class MovieSearchVC: UIViewController {
         super.viewDidLoad()
         configureUI()
         bindViewModel()
+        
+        
+        if viewModel.searchMode == .nowPlayingOnly {
+            Task {
+                await viewModel.loadNowplaying()
+            }
+        }
     }
     
     
     private func bindViewModel() {
-        viewModel.$searchResults
+
+        viewModel.$isSearching
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.movieSearchView.movieCollectionView.reloadData()
+            .sink { [weak self] isSearching in
+                self?.movieSearchView.setLoading(isSearching)
             }
             .store(in: &cancellables)
     }
+    
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard viewModel.searchMode == .nowPlayingOnly else { return }
+        Task {
+            await viewModel.search(query: searchText)
+        }
+    }
+    
     private func configureUI() {
         movieSearchView.searchBar.delegate = self
         movieSearchView.searchBar.placeholder = "영화 검색"
@@ -52,12 +69,18 @@ final class MovieSearchVC: UIViewController {
             $0.edges.equalToSuperview()
         }
     }
+    
     private func startSearch(){
+        
         guard let query = movieSearchView.searchBar.text else { return }
         movieSearchView.movieCollectionView.setContentOffset(.zero, animated: false)
         Task {
             await viewModel.search(query: query)
         }
+    }
+    private func initNowPlayingMovies() async {
+        await viewModel.loadNowplaying()
+        
     }
 }
 
@@ -67,6 +90,8 @@ extension MovieSearchVC: UISearchBarDelegate {
         startSearch()
     }
 }
+
+
 
 //MARK: - UICollectionView
 extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

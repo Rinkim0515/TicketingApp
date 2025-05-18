@@ -19,6 +19,8 @@ final class MovieSearchView: UIView {
         layout.minimumLineSpacing = 5
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
+    
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
     let segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl(items: ["상영 영화", "전체 영화"])
         segmentedControl.selectedSegmentIndex = 0
@@ -48,7 +50,15 @@ final class MovieSearchView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+    func setLoading(_ isLoading: Bool) {
+        if isLoading {
+            activityIndicator.startAnimating()
+            activityIndicator.isHidden = false
+        } else {
+            activityIndicator.stopAnimating()
+            activityIndicator.isHidden = true
+        }
+    }
     
     private func configureUI() {
         [
@@ -58,6 +68,13 @@ final class MovieSearchView: UIView {
             searchButton
             
         ].forEach { addSubview($0) }
+        addSubview(activityIndicator)
+        
+        activityIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        activityIndicator.isHidden = true
+        
         
         searchButton.setTitle("검색", for: .normal)
         searchBar.backgroundImage = UIImage() // 하단의 구분선 없애기 위한 용도
