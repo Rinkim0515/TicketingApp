@@ -48,14 +48,13 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
             contentView.addSubview($0)
         }
         posterImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(12)
-            $0.top.bottom.equalToSuperview().inset(12)
-            $0.width.equalTo(80)
+            $0.horizontalEdges.verticalEdges.equalToSuperview()
         }
+        
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(35)
-            $0.leading.equalTo(posterImageView.snp.trailing).offset(12)
-            $0.trailing.lessThanOrEqualToSuperview().inset(90)
+            $0.bottom.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(30)
             
         }
 
@@ -63,11 +62,11 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
     func configure(with movie: Movie) {
         titleLabel.text = movie.title
 
-        if let path = movie.posterPath {
+        if let path = movie.backdropPath {
             let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)")
             posterImageView.kf.setImage(with: url)
         } else {
-            posterImageView.image = UIImage(named: "default_poster")
+            posterImageView.image = UIImage(named: "image_nil")
         }
     }
 }

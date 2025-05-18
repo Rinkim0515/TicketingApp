@@ -27,13 +27,8 @@ final class MovieSearchVC: UIViewController {
         configureUI()
         bindViewModel()
         
-        
-        if viewModel.searchMode == .nowPlayingOnly {
-            Task {
-                await viewModel.loadNowplaying()
-            }
-        }
     }
+    
     // 검색창이 트리거  -> 여기서 검색에 대한 부분을 전달 해야함 vm한테
     
     
@@ -48,12 +43,7 @@ final class MovieSearchVC: UIViewController {
     }
     
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard viewModel.searchMode == .nowPlayingOnly else { return }
-        Task {
-            await viewModel.search(query: searchText)
-        }
-    }
+
     
     private func configureUI() {
         movieSearchView.searchBar.delegate = self
@@ -78,25 +68,9 @@ final class MovieSearchVC: UIViewController {
         }
     }
     
-    private func initNowPlayingMovies() async {
-        await viewModel.loadNowplaying()
-        
-    }
+
     
-    @objc private func searchModeChanged(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            viewModel.searchMode = .nowPlayingOnly
-            movieSearchView.movieCollectionView.reloadData()
-        case 1:
-            movieSearchView.movieCollectionView.reloadData()
-            viewModel.searchMode = .all
-            
-        default:
-            break
-        }
-        
-    }
+
 }
 
 //MARK: - UISearchBar

@@ -52,7 +52,8 @@ struct MovieSearchCellModel: Hashable {
     let id: Int
     let title: String
     let posterPath: String?
-    let overview: String?
+    let backdropPath: String?
+    
 }
 
 struct MovieDetailUIModel: Hashable {
@@ -65,10 +66,8 @@ struct MovieDetailUIModel: Hashable {
     let genres: [String]
     let isNowPlaying: Bool
 }
-struct MovieSearchUIModel {
-    let id: Int
-    let title: String
-}
+
+
 
 enum MovieListItem: Hashable {
     case banner(MovieBannerCellModel)
