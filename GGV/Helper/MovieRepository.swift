@@ -70,13 +70,10 @@ class MovieRepository {
     func fetchSearchMovies(query: String, page: Int) async -> Result<MovieListInfo, AppError> {
         do {
             let results = try await movieNetwork.searchMovies(query: query, page: page)
-            let movies = results.map { MovieModelMapper.map(from: $0) }
-            return .success(MovieListInfo(
-                movies: movies,
-                totalResults: movies.count,
-                totalPages: nil,
-                currentPage: page
-            ))
+            
+            
+            return .success(
+                MovieModelMapper.map(from: results))
         } catch {
             return .failure(.network(.decodingFailed))
         }

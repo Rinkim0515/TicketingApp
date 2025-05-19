@@ -62,7 +62,7 @@ final class NowPlayingSearchVC: UIViewController {
                 if result.isEmptyResult {
                     // 빈 상태 UI 처리 예: 라벨 노출, 뷰 전환 등
                 }
-                if let error = result.errorMessage {
+                if result.errorMessage != nil {
                     // 에러 상태 처리
                 }
                 
@@ -124,7 +124,7 @@ extension NowPlayingSearchVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = viewModel.nowPlayingMovies[indexPath.item]
+        let movie = viewModel.searchResultUIModel!.results[indexPath.item]
         let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
         navigationController?.pushViewController(detailVC, animated: true)
     }

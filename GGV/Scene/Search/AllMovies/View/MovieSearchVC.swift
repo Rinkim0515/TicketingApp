@@ -26,7 +26,7 @@ final class MovieSearchVC: UIViewController {
         super.viewDidLoad()
         configureUI()
         bindViewModel()
-        print("MovieSearchVC")
+        
         self.view.backgroundColor = .white
         self.title = "전체 영화 검색"
     }
@@ -36,10 +36,19 @@ final class MovieSearchVC: UIViewController {
     
     private func bindViewModel() {
 
-        viewModel.$isSearching
+        
+        viewModel.$searchedMovie
             .receive(on: RunLoop.main)
-            .sink { [weak self] isSearching in
-                self?.movieSearchView.setLoading(isSearching)
+            .sink { [weak self] _ in
+                self?.movieSearchView.movieCollectionView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$resultCount
+            .receive(on: RunLoop.main)
+            .sink { [weak self] count in
+                self?.movieSearchView.searchResultLabel.text = "\(count)건 검색됨"
+                print("DEBUG - 바인딩된 resultCount: \(count)")
             }
             .store(in: &cancellables)
     }
@@ -88,20 +97,20 @@ extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
 
-            return 0
+        return viewModel.searchedMovie.count
  
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell
-//        let movie = viewModel.searchResults[indexPath.item]
-//        cell.configure(with: movie)
+        let movie = viewModel.searchedMovie[indexPath.item]
+        cell.configure(with: movie)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let movie = viewModel.searchResults[indexPath.item]
-//        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
-//        navigationController?.pushViewController(detailVC, animated: true)
+        let movie = viewModel.searchedMovie[indexPath.item]
+        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     //스크롤 감지 -> 데이터 추가 호출
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

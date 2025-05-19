@@ -18,7 +18,7 @@ final class MovieNetwork {
     
     
     
-    //MARK: - TotalPage를 위한
+    //MARK: - TotalPage를 위한 메타데이터를 포함한
     func fetchMovieList(page: Int, type: MovieCategory) async throws -> MovieResponseDTO {
         guard var components = URLComponents(string: type.endpoint) else {
             throw URLError(.badURL)
@@ -71,7 +71,7 @@ final class MovieNetwork {
     
     
     // Async/await 기반 영화 검색 함수
-    func searchMovies(query: String, page: Int = 1) async throws -> [MovieDTO] {
+    func searchMovies(query: String, page: Int = 1) async throws -> MovieResponseDTO {
         let baseURL = "https://api.themoviedb.org/3/search/movie"
         var components = URLComponents(string: baseURL)
         components?.queryItems = [
@@ -93,6 +93,6 @@ final class MovieNetwork {
         }
         
         let movieResponse = try JSONDecoder().decode(MovieResponseDTO.self, from: data)
-        return movieResponse.movies
+        return movieResponse
     }
 }
