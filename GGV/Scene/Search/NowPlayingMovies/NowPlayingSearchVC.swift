@@ -29,11 +29,17 @@ final class NowPlayingSearchVC: UIViewController {
         
         configureUI()
         bindViewModel()
-        print("NowPlayingSearchVC")
-        Task {
-            await viewModel.loadNowplaying()
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if viewModel.nowPlayingMovies.isEmpty {
+            Task {
+                await viewModel.loadNowplaying()
+            }
         }
     }
+    
     private func bindViewModel() {
         viewModel.$searchResultUIModel
             .receive(on: RunLoop.main)
@@ -70,7 +76,17 @@ final class NowPlayingSearchVC: UIViewController {
         
         
             .store(in: &cancellables)
+        
+        viewModel.$isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                self?.movieSearchView.setLoading(isLoading)
+            }
+            .store(in: &cancellables)
+        
     }
+    
+
     
     private func configureUI() {
         movieSearchView.searchBar.delegate = self
@@ -125,7 +141,7 @@ extension NowPlayingSearchVC: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = viewModel.searchResultUIModel!.results[indexPath.item]
-        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
+        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: true)
         navigationController?.pushViewController(detailVC, animated: true)
     }
  

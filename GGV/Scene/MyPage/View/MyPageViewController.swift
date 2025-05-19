@@ -122,7 +122,12 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
         loadUserInfo()
         
         // 예매 내역 로드
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         loadBookingHistory()
+        collectionView.reloadData()
     }
   func configureUI(){
     [

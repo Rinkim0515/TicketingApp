@@ -35,8 +35,6 @@ final class MovieSearchVC: UIViewController {
     
     
     private func bindViewModel() {
-
-        
         viewModel.$searchedMovie
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
@@ -48,9 +46,11 @@ final class MovieSearchVC: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] count in
                 self?.movieSearchView.searchResultLabel.text = "\(count)건 검색됨"
-                print("DEBUG - 바인딩된 resultCount: \(count)")
+                
             }
             .store(in: &cancellables)
+        
+        
     }
     
     

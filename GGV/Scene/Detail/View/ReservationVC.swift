@@ -104,9 +104,24 @@ final class ReservationViewController: UIViewController {
     }()
     
     // pickerView 안에 들어갈 날짜 더미데이터
-    var 날짜 = ["2024.07.29", "2024.07.30", "2024.07.31", "2024.08.01", "2024.08.02"]
+    var dateGenerator: [String] {
+        var result: [String] = []
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        let calendar = Calendar.current
+        let today = Date()
+        
+        for i in 0..<5 {
+            if let date = calendar.date(byAdding: .day, value: i, to: today) {
+                result.append(formatter.string(from: date))
+            }
+        }
+        return result
+    }
     // 영화 시간 버튼 설정
     var time = ["오전 10시 35분", "오후 1시 50분", "오후 3시 10분", "오후 5시 30분", "오후 9시 10분"]
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -177,6 +192,9 @@ final class ReservationViewController: UIViewController {
         
 
     }
+    
+
+    
     
     @objc
     private func minusButtonTapped() {
@@ -252,7 +270,7 @@ final class ReservationViewController: UIViewController {
         func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
             switch pickerView.tag {
             case 1:
-                return 날짜.count
+                return dateGenerator.count
             case 2:
                 return time.count
             default:
@@ -264,7 +282,7 @@ final class ReservationViewController: UIViewController {
 
             switch pickerView.tag {
             case 1:
-                return 날짜[row]
+                return dateGenerator[row]
             case 2:
                 return time[row]
             default:
@@ -274,7 +292,7 @@ final class ReservationViewController: UIViewController {
         
         func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             if pickerView.tag == 1 {
-                saveDate = 날짜[row]
+                saveDate = dateGenerator[row]
             } else if pickerView.tag == 2 {
                 saveTime = time[row]
             }

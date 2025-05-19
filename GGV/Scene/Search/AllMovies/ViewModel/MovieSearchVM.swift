@@ -20,7 +20,7 @@ final class MovieSearchVM {
     private var currentQuery: String = ""
     private var currentPage: Int = 1
     private var totalPages: Int?
-    private var isLoading = false
+    @Published var isLoading = false
     
     
     
@@ -40,6 +40,7 @@ final class MovieSearchVM {
     private func performSearch() async {
 
         isSearching = true
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
         let result = await repository.fetchSearchMovies(query: currentQuery, page: 1)
         searchedMovie = []
         switch result {

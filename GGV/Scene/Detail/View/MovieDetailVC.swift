@@ -56,7 +56,7 @@ final class MovieDetailViewController: UIViewController{
             }
             .store(in: &cancellables)
         
-
+        
         
         
         validReserve(status: isNowPlay)
@@ -110,14 +110,16 @@ final class MovieDetailViewController: UIViewController{
     }
     
     @objc func changeView(){
-        //        guard let movie else { return }
-        //        let reservationVC = ReservationViewController()
-        //        reservationVC.movieTitle = movie.title
-        //        reservationVC.movieId = movie.id
-        //        reservationVC.posterPath = posterPath
-        //        reservationVC.sss = self
-        //        showModal(viewController: reservationVC)
+        
+        guard let movie = viewModel.movie else { return }
+        let reservationVC = ReservationViewController()
+        reservationVC.movieTitle = movie.title
+        reservationVC.movieId = movie.id
+        reservationVC.posterPath = movie.posterPath
+        reservationVC.sss = self
+        showModal(viewController: reservationVC)
         
         
     }
+    
 }

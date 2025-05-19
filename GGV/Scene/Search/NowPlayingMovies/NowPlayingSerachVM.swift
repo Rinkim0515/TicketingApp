@@ -8,8 +8,8 @@
 import Foundation
 
 final class NowPlayingSerachVM {
-    private var isLoaded: Bool = false
-    private var isLoading: Bool = false
+     
+    @Published var isLoading: Bool = false
     
     private var nowplayingResult: [Movie] = []
     private var movieListInfo: MovieListInfo?
@@ -23,7 +23,7 @@ final class NowPlayingSerachVM {
         print("start")
         isLoading = true
         nowplayingResult = []
-        
+        try? await Task.sleep(nanoseconds: 500_000_000)
         // 유효하게 호출할수있는지 페이지 1을 먼저 호출
         guard let info = await fetchFirstPage(),
               let totalPages = info.totalPages,
