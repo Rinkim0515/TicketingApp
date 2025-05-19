@@ -66,9 +66,6 @@ final class SearchView: UIView {
             
             $0.height.equalTo(50)
         }
-
-
-
         movieCollectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()

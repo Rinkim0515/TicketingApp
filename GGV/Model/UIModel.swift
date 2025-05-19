@@ -73,3 +73,8 @@ enum MovieListItem: Hashable {
     case banner(MovieBannerCellModel)
     case card(MovieCardCellModel)
 }
+
+struct SearchResultUIModel {
+    let results: [MovieSearchCellModel]
+    let totalCount: Int
+}

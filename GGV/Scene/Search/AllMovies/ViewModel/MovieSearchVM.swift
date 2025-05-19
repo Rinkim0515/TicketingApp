@@ -65,6 +65,7 @@ final class MovieSearchVM {
         isLoading = true
         currentPage += 1
         let result = await repository.fetchSearchMovies(query: currentQuery, page: currentPage)
+        
         isLoading = false
         
     }
