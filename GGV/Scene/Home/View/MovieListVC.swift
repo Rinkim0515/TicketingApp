@@ -111,9 +111,9 @@ extension MovieListViewController: UICollectionViewDelegate {
         }
         //그리려는 셀이 마지막셀이면 추가 데이터 로드 진행
         let isLastItem = indexPath.item == currentItemsCount - 1
-        if isLastItem && viewModel.hasMorePages(for: type) {
+        if isLastItem && viewModel.shouldLoadMore(for: type) {
             Task {
-                await viewModel.loadMoreIfNeeded(for: type)
+                await viewModel.loadNextPageIfNeeded(for: type)
             }
         }
     }

@@ -286,8 +286,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "104"
             endingLineNumber = "104"
-            landmarkName = "MovieListViewController"
-            landmarkType = "21">
+            landmarkName = "collectionView(_:willDisplay:forItemAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -300,9 +300,9 @@
             filePath = "GGV/Scene/Home/ViewModel/MovieListVM.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
-            landmarkName = "fetchInitialSections()"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "loadInitialSections()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

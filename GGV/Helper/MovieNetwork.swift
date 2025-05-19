@@ -4,8 +4,9 @@
 //
 //  Created by 유민우 on 7/25/24.
 //
+// 메타데이터 때문에 list형식으로 받아오는것은 Response로 받아서 매핑하는 방식 선택
+//
 
-// 영화 검색 페이지에서 사용할 네트워크 -> 가져오기
 import Foundation
 
 struct Constants {
@@ -18,7 +19,6 @@ final class MovieNetwork {
     
     
     
-    //MARK: - TotalPage를 위한 메타데이터를 포함한
     func fetchMovieList(page: Int, type: MovieCategory) async throws -> MovieResponseDTO {
         guard var components = URLComponents(string: type.endpoint) else {
             throw URLError(.badURL)

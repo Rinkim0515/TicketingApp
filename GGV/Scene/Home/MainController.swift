@@ -8,8 +8,6 @@
 import UIKit
 import SnapKit
 
-
-// 이부분은 TabBar 관련 부분 한번 읽어봐야함 
 final class MainController: UIViewController {
 
     private let logoView = UIView()
@@ -108,7 +106,7 @@ final class MainController: UIViewController {
     private func setupViewControllers() {
         let movieListVM = MovieListVM()
         Task {
-            await movieListVM.fetchInitialSections()
+            await movieListVM.loadInitialSections()
         }
         
         let movieListVC = MovieListViewController(viewModel: movieListVM)

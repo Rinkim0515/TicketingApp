@@ -8,7 +8,6 @@
 import Foundation
 
 class DataController {
-
     
     // 예약 정보를 UserDefaults에 저장하는 메서드
     // 이부분을 FireBase로 저장 처리를 해줘야함

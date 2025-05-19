@@ -57,10 +57,10 @@
 </string>
 				<key>leading</key>
 				<string>        let isLastItem = indexPath.item == currentItemsCount - 1
-        if isLastItem &amp;&amp; viewModel.hasMorePages(for: type) {
+        if isLastItem &amp;&amp; viewModel.shouldLoadMore(for: type) {
 </string>
 				<key>trailing</key>
-				<string>                await viewModel.loadMoreIfNeeded(for: type)
+				<string>                await viewModel.loadNextPageIfNeeded(for: type)
             }
         }
 </string>
