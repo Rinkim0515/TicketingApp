@@ -26,7 +26,7 @@ final class MovieSearchVC: UIViewController {
         super.viewDidLoad()
         configureUI()
         bindViewModel()
-        
+        print("MovieSearchVC")
     }
     
     // 검색창이 트리거  -> 여기서 검색에 대한 부분을 전달 해야함 vm한테
@@ -52,7 +52,7 @@ final class MovieSearchVC: UIViewController {
         movieSearchView.movieCollectionView.dataSource = self
         movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
 
-
+        
         view.addSubview(movieSearchView)
         movieSearchView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -87,20 +87,20 @@ extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 
 
-            return viewModel.searchResults.count
+            return 0
  
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell
-        let movie = viewModel.searchResults[indexPath.item]
-        cell.configure(with: movie)
+//        let movie = viewModel.searchResults[indexPath.item]
+//        cell.configure(with: movie)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = viewModel.searchResults[indexPath.item]
-        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
-        navigationController?.pushViewController(detailVC, animated: true)
+//        let movie = viewModel.searchResults[indexPath.item]
+//        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
+//        navigationController?.pushViewController(detailVC, animated: true)
     }
     //스크롤 감지 -> 데이터 추가 호출
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

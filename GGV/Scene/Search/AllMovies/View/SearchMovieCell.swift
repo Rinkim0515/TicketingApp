@@ -20,9 +20,11 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "NanumSquareNeo-cBd", size: 18)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 2
-        label.textAlignment = .left
+        label.textAlignment = .center
+        
+        label.backgroundColor = .systemBlue.withAlphaComponent(0.9)
         return label
     }()
 
@@ -59,7 +61,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         }
 
     }
-    func configure(with movie: Movie) {
+    func configure(with movie: MovieSearchCellModel) {
         titleLabel.text = movie.title
 
         if let path = movie.backdropPath {

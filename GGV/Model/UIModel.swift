@@ -77,4 +77,6 @@ enum MovieListItem: Hashable {
 struct SearchResultUIModel {
     let results: [MovieSearchCellModel]
     let totalCount: Int
+    let isEmptyResult: Bool
+    let errorMessage: String?
 }

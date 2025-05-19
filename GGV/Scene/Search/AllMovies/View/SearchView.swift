@@ -21,6 +21,22 @@ final class SearchView: UIView {
     }()
     
     private let activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    
+    let floatingButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("영화검색", for: .normal)
+        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = .systemRed
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+        button.layer.cornerRadius = 5
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
+        button.clipsToBounds = true
+        return button
+    }()
 
 
     //MARK: - lifeCycle
@@ -50,13 +66,20 @@ final class SearchView: UIView {
         ].forEach { addSubview($0) }
         addSubview(activityIndicator)
         
+        addSubview(floatingButton)
+        floatingButton.snp.makeConstraints {
+            $0.height.equalTo(50)
+            $0.width.equalTo(100)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(30)
+        }
+        
         activityIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
         activityIndicator.isHidden = true
         
         
-
         movieCollectionView.backgroundColor = .white
         self.backgroundColor = .white
 

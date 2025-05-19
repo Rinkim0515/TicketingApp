@@ -76,7 +76,8 @@ struct MovieUIModelMapper {
             id: movie.id,
             title: movie.title,
             posterPath: movie.posterPath,
-            overview: movie.overview
+            backdropPath: movie.backdropPath
+            
         )
     }
     
