@@ -3,33 +3,21 @@
 //  TeamOne1
 //
 //  Created by 유민우 on 7/23/24.
-
-//pull to refresh ?
-// 상영중인 영화는 순서를 random 하게 해줘도 좋을거 같아 -> 인기순위랑 순서가 겹치는경우가 많아서
-// 여기를 compositional layout으로 바꿔줘야함 tableView는 없애고 Header 넣어야함
-// SnapShot 이나 Diffiable에 대한것이 overengineering이 될수도 있다는 판단.
+// 250519
 
 import UIKit
 import SnapKit
 import Combine
-import UIKit.UICellConfigurationState
 
 final class MovieListViewController: UIViewController {
-    
-
-    
     private var collectionView: UICollectionView!
     private let viewModel: MovieListVM
-    private var cancellables = Set<AnyCancellable>() // Disposable 같은 존재
+    private var cancellables = Set<AnyCancellable>()
     private var dataSource: UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>!
-    
-    
-
     
     init(viewModel: MovieListVM){
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -37,23 +25,14 @@ final class MovieListViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        
         setupCollectionView()
         bindViewModel()
-        
-
     }
-    override func viewDidAppear(_ animated: Bool) {
-        
-    }
-        
     
     private func setupCollectionView() {
-        let layout = createLayout()
+        let layout = makeCompositionalLayout()
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
 
@@ -64,7 +43,6 @@ final class MovieListViewController: UIViewController {
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
 
         dataSource = UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>(collectionView: collectionView) { collectionView, indexPath, item in
-            let MovieCategory = MovieCategory.allCases[indexPath.section]
             switch item {
             case .banner(let model):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as! BannerCell
@@ -89,20 +67,16 @@ final class MovieListViewController: UIViewController {
         }
 
         collectionView.dataSource = dataSource
-
         
         view.addSubview(collectionView)
-        collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
+        collectionView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.horizontalEdges.bottom.equalToSuperview()
+        }
     }
-
     
     private func bindViewModel() {
-        print("📋 upcomingModels 순서:")
-
-        
-        Publishers.CombineLatest3(viewModel.$nowPlayingModels, viewModel.$upcomingModels, viewModel.$popularModels)
-        
+        Publishers.CombineLatest3(viewModel.$nowPlayingCardModels, viewModel.$upcomingBannerModels, viewModel.$popularCardModels)
             .map { nowPlaying, upcoming, popular in
                 let nowPlayingItems = nowPlaying.map { MovieListItem.card($0) }
                 let upcomingItems = upcoming.map { MovieListItem.banner($0) }
@@ -114,58 +88,40 @@ final class MovieListViewController: UIViewController {
                 self?.applySnapshot(nowPlaying: nowPlaying, upcoming: upcoming, popular: popular)
             }
             .store(in: &cancellables)
-        
     }
-    
+    // 추가 학습이 필요함
     private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
         var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
         snapshot.appendSections(MovieCategory.allCases)
         snapshot.appendItems(upcoming, toSection: .upcoming)
         snapshot.appendItems(nowPlaying, toSection: .nowPlaying)
         snapshot.appendItems(popular, toSection: .popular)
-
         dataSource.apply(snapshot, animatingDifferences: true)
     }
-    
-
-    @MainActor
-    private func reload(section: Int) {
-        self.collectionView.reloadData()
-    }
-    
-    
-
-
- 
-
-    
 }
+//MARK: - UICollectionView Delegate
 extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let type = MovieCategory(rawValue: indexPath.section) else { return }
-        
         let currentItemsCount: Int
         switch type {
-        case .upcoming: currentItemsCount = viewModel.upcomingModels.count
-        case .nowPlaying: currentItemsCount = viewModel.nowPlayingModels.count
-        case .popular: currentItemsCount = viewModel.popularModels.count
+        case .upcoming: currentItemsCount = viewModel.upcomingBannerModels.count
+        case .nowPlaying: currentItemsCount = viewModel.nowPlayingCardModels.count
+        case .popular: currentItemsCount = viewModel.popularCardModels.count
         }
+        //그리려는 셀이 마지막셀이면 추가 데이터 로드 진행
         let isLastItem = indexPath.item == currentItemsCount - 1
-        
         if isLastItem && viewModel.hasMorePages(for: type) {
             Task {
                 await viewModel.loadMoreIfNeeded(for: type)
             }
         }
     }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let selectedMovie = dataSource.itemIdentifier(for: indexPath) else { return }
-        
-
-        
         let movieID: Int
         let isNowPlaying: Bool
+        
         switch selectedMovie {
         case .banner(let model):
             print(model.id)
@@ -175,49 +131,43 @@ extension MovieListViewController: UICollectionViewDelegate {
             movieID = model.id
             isNowPlaying = model.isNowPlaying
         }
-
-
         
-        let detailVC = MovieDetailViewController(movieId: movieID, isNowPlay: isNowPlaying)
-        
+        let detailVC = MovieDetailViewController(movieId: movieID, isNowPlaying: isNowPlaying)
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 
 
 //MARK: - Compositional Layout
-
 extension MovieListViewController {
-    func createLayout() -> UICollectionViewLayout {
+    private func makeCompositionalLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, environment in
             switch sectionIndex {
             case 0:
-                return self.bannerSection()
+                return self.makeBannerSectionLayout()
             case 1, 2:
-                return self.cardSection()
+                return self.makeCardSectionLayout()
             default:
                 return nil
             }
         }
     }
 
-    private func bannerSection() -> NSCollectionLayoutSection {
+    private func makeBannerSectionLayout() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.92),
-            heightDimension: .fractionalWidth(0.52) // slightly smaller height
+            heightDimension: .fractionalWidth(0.52)
         )
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
         section.interGroupSpacing = 8
-        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 16, trailing: 16)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
         // 헤더의 위치조정 필요
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -233,7 +183,7 @@ extension MovieListViewController {
         return section
     }
 
-    private func cardSection() -> NSCollectionLayoutSection {
+    private func makeCardSectionLayout() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .absolute(160),
             heightDimension: .absolute(220)
@@ -249,7 +199,7 @@ extension MovieListViewController {
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 20, trailing: 16)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 20, trailing: 16)
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),

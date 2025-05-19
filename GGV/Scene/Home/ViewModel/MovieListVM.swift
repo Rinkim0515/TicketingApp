@@ -9,13 +9,13 @@ import Foundation
 import Combine
 
 final class MovieListVM: ObservableObject {
-    private var nowPlaying: [Movie] = []
-    private var upcoming: [Movie] = []
-    private var popular: [Movie] = []
+    private var nowPlayingMovies: [Movie] = []
+    private var upcomingMovies: [Movie] = []
+    private var popularMovies: [Movie] = []
 
-    @Published var nowPlayingModels: [MovieCardCellModel] = []
-    @Published var upcomingModels: [MovieBannerCellModel] = []
-    @Published var popularModels: [MovieCardCellModel] = []
+    @Published var nowPlayingCardModels: [MovieCardCellModel] = []
+    @Published var upcomingBannerModels: [MovieBannerCellModel] = []
+    @Published var popularCardModels: [MovieCardCellModel] = []
 
     private let loadingState = MovieLoadingState()
     
@@ -24,17 +24,10 @@ final class MovieListVM: ObservableObject {
         .upcoming: 1,
         .popular: 1
     ]
-
     private var totalPages: [MovieCategory: Int] = [:]
-
-    
     private let repository = MovieRepository.shared
-    
-    /// Register a closure to be called when nowPlaying cache is ready.
 
-    
     func fetchInitialSections() async {
-        print(#function)
         async let now: () = loadMoreIfNeeded(for: .nowPlaying)
         async let pop: () = loadMoreIfNeeded(for: .popular)
         async let upc: () = loadMoreIfNeeded(for: .upcoming)
@@ -48,9 +41,7 @@ final class MovieListVM: ObservableObject {
     }
     
     private func loadMore(for type: MovieCategory) async {
-        print("🔵 loadMore 실행: \(type), page: \(currentPage[type, default: 1])")
         guard await loadingState.checkAndSetLoading(for: type) else { return }
-
         
         let result = await repository.fetchMovies(by: type, page: currentPage[type, default: 1])
         await MainActor.run {
@@ -76,25 +67,25 @@ final class MovieListVM: ObservableObject {
             let mapped = newMovies.map {
                 MovieUIModelMapper.mapToBannerModel(from: $0)
             }
-            upcomingModels += mapped
-            upcoming += newMovies
+            upcomingBannerModels += mapped
+            upcomingMovies += newMovies
             
         case .nowPlaying:
             let mapped = newMovies.map {
                 MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true)
             }
-            nowPlayingModels += mapped
+            nowPlayingCardModels += mapped
             
-            nowPlaying += newMovies
+            nowPlayingMovies += newMovies
             
 
         case .popular:
             let mapped = newMovies.map {
                 MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false)
             }
-            popularModels += mapped
+            popularCardModels += mapped
             
-            popular += newMovies
+            popularMovies += newMovies
             
         }
 
@@ -106,9 +97,9 @@ final class MovieListVM: ObservableObject {
     
     private func items(for section: MovieCategory) -> [Movie] {
         switch section {
-        case .upcoming: return upcoming
-        case .nowPlaying: return nowPlaying
-        case .popular: return popular
+        case .upcoming: return upcomingMovies
+        case .nowPlaying: return nowPlayingMovies
+        case .popular: return popularMovies
         }
     }
     
@@ -120,7 +111,6 @@ final class MovieListVM: ObservableObject {
 
 }
 
-// MARK: - MovieSectionDataController Integration
 
 
 

@@ -15,67 +15,64 @@ final class MovieDetailViewController: UIViewController{
     private let movieDetailView = MovieDetailView()
     private let viewModel: MovieDetailVM
     private var cancellables: Set<AnyCancellable> = []
-    private var isNowPlay: Bool = false
+    private var isNowPlaying: Bool = false
     
-    //MARK: - lifeCyvle
-    init(movieId: Int, isNowPlay: Bool) {
+    init(movieId: Int, isNowPlaying: Bool) {
         self.viewModel = MovieDetailVM(movieId: movieId)
         super.init(nibName: nil, bundle: nil)
-        self.isNowPlay = isNowPlay
+        self.isNowPlaying = isNowPlaying
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
+        setupUI()
         loadData()
-        movieDetailView.TicketingButton.addTarget(self, action: #selector(changeView), for: .touchDown)
-        print(isNowPlay)
     }
     
-    private func configureUI() {
+    private func setupUI() {
+        self.title = "영화 상세 설명"
         view.addSubview(movieDetailView)
+        movieDetailView.TicketingButton.addAction(UIAction(handler: { [weak self] _ in
+            self?.changeView()
+        }), for: .touchDown)
+        
         movieDetailView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
-        
     }
     
     private func loadData() {
         Task {
             await viewModel.fetchDetail()
-            
         }
-        
+        bindViewModel()
+    }
+    private func bindViewModel() {
         viewModel.$movie
             .compactMap { $0 }
             .receive(on: RunLoop.main)
             .sink { [weak self] movie in
-                self?.render(movie: movie)
+                self?.configure(with: movie)
             }
             .store(in: &cancellables)
-        
-        
-        
-        
-        validReserve(status: isNowPlay)
+        validReserve(status: isNowPlaying)
     }
     
-    
-    private func render(movie: Movie) {
+    private func configure(with movie: Movie) {
         let dateFormatted = formatDate(movie.releaseDate ?? "")
         movieDetailView.movieNameLabel.text = movie.title
         movieDetailView.releaseData.text = dateFormatted
         movieDetailView.movieDescription.text = movie.overview == nil ? "줄거리 정보가 없습니다." : movie.overview
         movieDetailView.ratingScore.text = movie.voteAverage != nil ? String(format: "%.1f", movie.voteAverage! ) + "점 / 10점" : "평점 없음"
-        
-        
         if let url = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
             movieDetailView.posterView.kf.setImage(with: url)
+        } else {
+            movieDetailView.posterView.image = UIImage(named: "image_nil")
         }
     }
-    
+
     private func validReserve(status: Bool) {
         if status == false {
             movieDetailView.TicketingButton.isEnabled = false
@@ -85,9 +82,6 @@ final class MovieDetailViewController: UIViewController{
             movieDetailView.TicketingButton.backgroundColor = .systemRed
         }
     }
-    
-    
-    
     
     private func formatDate(_ dateString: String) -> String {
         let formatter = DateFormatter()
@@ -99,9 +93,6 @@ final class MovieDetailViewController: UIViewController{
         return dateString
     }
     
-    
-    
-    // 하프모달 메서드
     func showModal(viewController: UIViewController) {
         if let sheet = viewController.sheetPresentationController {
             sheet.detents = [.medium()]
@@ -109,8 +100,7 @@ final class MovieDetailViewController: UIViewController{
         self.present(viewController, animated: true)
     }
     
-    @objc func changeView(){
-        
+    private func changeView(){
         guard let movie = viewModel.movie else { return }
         let reservationVC = ReservationViewController()
         reservationVC.movieTitle = movie.title
@@ -118,8 +108,6 @@ final class MovieDetailViewController: UIViewController{
         reservationVC.posterPath = movie.posterPath
         reservationVC.sss = self
         showModal(viewController: reservationVC)
-        
-        
     }
     
 }

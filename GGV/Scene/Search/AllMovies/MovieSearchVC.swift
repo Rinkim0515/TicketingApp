@@ -3,7 +3,7 @@
 //  TeamOne1
 //
 //  Created by 유민우 on 7/25/24.
-
+// 250519
 
 import UIKit
 import SnapKit
@@ -14,8 +14,8 @@ final class MovieSearchVC: UIViewController {
     private let movieSearchView = SearchView()
     private var cancellables = Set<AnyCancellable>()
     private let viewModel: MovieSearchVM
-    //MARK: - lifeCycle
-    init(viewModel: MovieSearchVM){ //@MainActor에 대한 부분 찾아봐야함
+    
+    init(viewModel: MovieSearchVM){
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -31,21 +31,26 @@ final class MovieSearchVC: UIViewController {
         self.title = "전체 영화 검색"
     }
     
-    // 검색창이 트리거  -> 여기서 검색에 대한 부분을 전달 해야함 vm한테
     
     
     private func bindViewModel() {
-        viewModel.$searchedMovie
+        viewModel.$searchedMovies
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.movieSearchView.movieCollectionView.reloadData()
             }
             .store(in: &cancellables)
         
-        viewModel.$resultCount
+        viewModel.$totalResultCount
             .receive(on: RunLoop.main)
             .sink { [weak self] count in
-                self?.movieSearchView.searchResultLabel.text = "\(count)건 검색됨"
+                guard let self = self else { return }
+                let query = self.viewModel.searchQuery
+                guard query != ""  else {
+                    self.movieSearchView.searchResultLabel.text = "검색어를 입력해주세요."
+                    return
+                }
+                self.movieSearchView.searchResultLabel.text = "\(query)에 대한 검색결과가 \(count)개 있습니다."
                 
             }
             .store(in: &cancellables)
@@ -95,21 +100,18 @@ extension MovieSearchVC: UISearchBarDelegate {
 //MARK: - UICollectionView
 extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-
-
-        return viewModel.searchedMovie.count
- 
+        return viewModel.searchedMovies.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell
-        let movie = viewModel.searchedMovie[indexPath.item]
+        let movie = viewModel.searchedMovies[indexPath.item]
         cell.configure(with: movie)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = viewModel.searchedMovie[indexPath.item]
-        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: false)
+        let movie = viewModel.searchedMovies[indexPath.item]
+        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlaying: false)
         navigationController?.pushViewController(detailVC, animated: true)
     }
     //스크롤 감지 -> 데이터 추가 호출
@@ -119,7 +121,7 @@ extension MovieSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, U
         let height = scrollView.frame.size.height
         if contentHeight > height && offsetY > contentHeight - height * 1.5 {
             Task {
-                await viewModel.loadMoreSearchResults()
+                await viewModel.fetchAdditionalSearchResults()
             }
         }
     }

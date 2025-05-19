@@ -87,6 +87,7 @@ final class MovieDetailView: UIView {
         super.init(frame: .zero)
         configureUI()
         fixDescriptionSpacing()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -139,13 +140,13 @@ final class MovieDetailView: UIView {
         scrollContentView.snp.makeConstraints{
             $0.edges.equalTo(scrollView)
             $0.width.equalTo(scrollView)
-            $0.height.equalTo(1150)
+            $0.bottom.equalTo(releaseStackView.snp.bottom).offset(30)
         }
         posterView.snp.makeConstraints{
             $0.centerX.equalToSuperview()
             $0.leading.trailing.equalTo(scrollContentView)
             $0.height.equalTo(550)
-            $0.top.equalTo(scrollContentView).offset(30)
+            $0.top.equalTo(scrollContentView)
             $0.width.equalTo(380)
         }
         movieNameLabel.snp.makeConstraints{

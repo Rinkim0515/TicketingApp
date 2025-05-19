@@ -3,9 +3,8 @@
 //  TeamOne1
 //
 //  Created by 김동준 on 7/25/24.
-// 좋아요 기능의 추가
-// 예매한 영화리스트 추가
-// 마이페이지 밑에 테이블 뷰로 차라리 구현하는게 나을듯 함. 
+// 여기는 의도적으로 코드 개선을 하지 않겠습니다. 이때의 시점과 현재가 얼마나 달라졌는지 판단하기위한 중요한 척도라고 생각됩니다.
+//
 
 import UIKit
 import SnapKit
@@ -120,8 +119,6 @@ final class ReservationViewController: UIViewController {
     }
     // 영화 시간 버튼 설정
     var time = ["오전 10시 35분", "오후 1시 50분", "오후 3시 10분", "오후 5시 30분", "오후 9시 10분"]
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()

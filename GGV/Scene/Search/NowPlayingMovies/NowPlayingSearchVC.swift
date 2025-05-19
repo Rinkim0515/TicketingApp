@@ -62,7 +62,7 @@ final class NowPlayingSearchVC: UIViewController {
             .receive(on: RunLoop.main)
             .sink{  [weak self] result in
                 guard let result else { return }
-                self?.movieSearchView.searchResultLabel.text = "총 \(result.totalCount)개의 영화가 있습니다."
+                self?.movieSearchView.searchResultLabel.text = "총 \(result.totalCount)개의 상영가능한 영화가 있습니다."
                 // 예시: 결과 수 출력 (추후 라벨이 있다면 연결 가능)
                 print("총 검색 결과 수: \(result.totalCount)")
                 if result.isEmptyResult {
@@ -90,7 +90,7 @@ final class NowPlayingSearchVC: UIViewController {
     
     private func configureUI() {
         movieSearchView.searchBar.delegate = self
-        movieSearchView.searchBar.placeholder = "영화 검색"
+        movieSearchView.searchBar.placeholder = "상영중인 영화 검색"
         movieSearchView.movieCollectionView.delegate = self
         movieSearchView.movieCollectionView.dataSource = self
         movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
@@ -141,7 +141,7 @@ extension NowPlayingSearchVC: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = viewModel.searchResultUIModel!.results[indexPath.item]
-        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlay: true)
+        let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlaying: true)
         navigationController?.pushViewController(detailVC, animated: true)
     }
  

@@ -3,7 +3,7 @@
 //  GGV
 //
 //  Created by KimRin on 4/24/25.
-// 헤더셀
+// 250519
 
 import UIKit
 import SnapKit
@@ -24,13 +24,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        self.layer.cornerRadius = 8
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
-        self.clipsToBounds = true
-    
     }
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -39,15 +33,17 @@ final class BannerCell: UICollectionViewCell, ReusableView {
         titleLabel.text = nil
         imageView.image = nil
     }
-
+    
+    
     private func setupUI() {
+        self.layer.cornerRadius = 8
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        self.clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)
-        
         imageView.clipsToBounds = true
-
         imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview()
@@ -58,7 +54,6 @@ final class BannerCell: UICollectionViewCell, ReusableView {
 
     func configure(with model: MovieBannerCellModel) {
         self.titleLabel.text = model.title
-        
         if let backdropPath = model.backdropPath
           {
             let url = URL(string: "https://image.tmdb.org/t/p/w780" + backdropPath)
