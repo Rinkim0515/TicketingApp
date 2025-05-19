@@ -27,6 +27,8 @@ final class MovieSearchVC: UIViewController {
         configureUI()
         bindViewModel()
         print("MovieSearchVC")
+        self.view.backgroundColor = .white
+        self.title = "전체 영화 검색"
     }
     
     // 검색창이 트리거  -> 여기서 검색에 대한 부분을 전달 해야함 vm한테
@@ -43,7 +45,6 @@ final class MovieSearchVC: UIViewController {
     }
     
     
-
     
     private func configureUI() {
         movieSearchView.searchBar.delegate = self
@@ -51,11 +52,11 @@ final class MovieSearchVC: UIViewController {
         movieSearchView.movieCollectionView.delegate = self
         movieSearchView.movieCollectionView.dataSource = self
         movieSearchView.movieCollectionView.register(SearchMovieCell.self, forCellWithReuseIdentifier: SearchMovieCell.id)
-
+        movieSearchView.floatingButton.isHidden = true
         
         view.addSubview(movieSearchView)
         movieSearchView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
     

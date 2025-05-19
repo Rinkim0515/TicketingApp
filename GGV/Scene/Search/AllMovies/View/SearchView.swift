@@ -20,6 +20,14 @@ final class SearchView: UIView {
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
+    let searchResultLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .systemGray
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textAlignment = .center
+        return label
+    }()
+    
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     
@@ -61,7 +69,8 @@ final class SearchView: UIView {
     private func configureUI() {
         [
             searchBar,
-            movieCollectionView
+            movieCollectionView,
+            searchResultLabel
             
         ].forEach { addSubview($0) }
         addSubview(activityIndicator)
@@ -74,9 +83,16 @@ final class SearchView: UIView {
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(30)
         }
         
+        searchResultLabel.snp.makeConstraints {
+            $0.top.equalTo(searchBar.snp.bottom)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(30)
+        }
+        
         activityIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        
         activityIndicator.isHidden = true
         
         
@@ -89,8 +105,9 @@ final class SearchView: UIView {
             
             $0.height.equalTo(50)
         }
+        
         movieCollectionView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom)
+            $0.top.equalTo(searchResultLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }

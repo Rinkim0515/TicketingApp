@@ -52,6 +52,24 @@ final class NowPlayingSearchVC: UIViewController {
                 }
             }
             .store(in: &cancellables)
+        viewModel.$searchResultUIModel
+            .receive(on: RunLoop.main)
+            .sink{  [weak self] result in
+                guard let result else { return }
+                self?.movieSearchView.searchResultLabel.text = "총 \(result.totalCount)개의 영화가 있습니다."
+                // 예시: 결과 수 출력 (추후 라벨이 있다면 연결 가능)
+                print("총 검색 결과 수: \(result.totalCount)")
+                if result.isEmptyResult {
+                    // 빈 상태 UI 처리 예: 라벨 노출, 뷰 전환 등
+                }
+                if let error = result.errorMessage {
+                    // 에러 상태 처리
+                }
+                
+            }
+        
+        
+            .store(in: &cancellables)
     }
     
     private func configureUI() {
@@ -73,6 +91,7 @@ final class NowPlayingSearchVC: UIViewController {
     private func startSearch() {
         guard let query = movieSearchView.searchBar.text else { return }
         viewModel.filterNowPlayingMovies(query: query)
+        self.movieSearchView.searchResultLabel.text = "\(viewModel.searchResultUIModel?.totalCount)"
     }
     
     private func segueToMovieSearchVC() {
