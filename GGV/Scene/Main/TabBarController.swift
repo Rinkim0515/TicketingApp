@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class TabBarController: UIViewController, TabBarHiding {
+final class TabBarController: UIViewController {
     // MARK: - Properties
     private var viewControllers: [UIViewController] = []
     private var selectedIndex: Int = 0
@@ -31,7 +31,7 @@ final class TabBarController: UIViewController, TabBarHiding {
         return label
     }()
     
-    private lazy var customTabBar: UITabBar = {
+    private lazy var tabBar: UITabBar = {
         let tabBar = UITabBar()
         tabBar.delegate = self
         tabBar.tintColor = .white
@@ -139,9 +139,9 @@ final class TabBarController: UIViewController, TabBarHiding {
         
         /// 커스텀 탭바 설정
         private func setupCustomTabBar() {
-            customTabBar.items = viewControllers.map { $0.tabBarItem }
-            customTabBar.selectedItem = customTabBar.items?.first
-            view.addSubview(customTabBar)
+            tabBar.items = viewControllers.map { $0.tabBarItem }
+            tabBar.selectedItem = tabBar.items?.first
+            view.addSubview(tabBar)
             
             // 탭바 텍스트 스타일 설정
             let attributes: [NSAttributedString.Key: Any] = [
@@ -158,32 +158,32 @@ final class TabBarController: UIViewController, TabBarHiding {
         
         /// UI 요소들의 제약조건 설정
         private func setupConstraints() {
-            customTabBar.snp.makeConstraints {
+            tabBar.snp.makeConstraints {
                 $0.top.equalTo(logoView.snp.bottom)
                 $0.leading.trailing.equalToSuperview()
                 $0.height.equalTo(55)
             }
         }
     private func setupSelectionIndicator() {
-           customTabBar.addSubview(selectionIndicator)
+           tabBar.addSubview(selectionIndicator)
            updateSelectionIndicatorPosition()
        }
        
        /// 탭 선택 인디케이터 위치 업데이트
        private func updateSelectionIndicatorPosition() {
-           guard let selectedItem = customTabBar.selectedItem,
-                 let index = customTabBar.items?.firstIndex(of: selectedItem) else {
+           guard let selectedItem = tabBar.selectedItem,
+                 let index = tabBar.items?.firstIndex(of: selectedItem) else {
                return
            }
            
-           let tabBarWidth = customTabBar.bounds.width
-           let itemWidth = tabBarWidth / CGFloat(customTabBar.items?.count ?? 1)
+           let tabBarWidth = tabBar.bounds.width
+           let itemWidth = tabBarWidth / CGFloat(tabBar.items?.count ?? 1)
            let xPosition = itemWidth * CGFloat(index)
            
            selectionIndicator.snp.remakeConstraints {
-               $0.bottom.equalTo(customTabBar.snp.bottom)
+               $0.bottom.equalTo(tabBar.snp.bottom)
                $0.height.equalTo(3)
-               $0.leading.equalTo(customTabBar.snp.leading).offset(xPosition)
+               $0.leading.equalTo(tabBar.snp.leading).offset(xPosition)
                $0.width.equalTo(itemWidth)
            }
            view.layoutIfNeeded()
@@ -204,17 +204,17 @@ final class TabBarController: UIViewController, TabBarHiding {
         let selectedVC = viewControllers[index]
         addChild(selectedVC)
         selectedVC.view.frame = view.bounds
-        view.insertSubview(selectedVC.view, belowSubview: customTabBar)
+        view.insertSubview(selectedVC.view, belowSubview: tabBar)
         selectedVC.didMove(toParent: self)
         
         selectedVC.view.snp.makeConstraints {
-            $0.top.equalTo(customTabBar.snp.bottom)
+            $0.top.equalTo(tabBar.snp.bottom)
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
         // 탭바 아이템 선택 상태 업데이트
         selectedIndex = index
-        customTabBar.selectedItem = customTabBar.items?[index]
+        tabBar.selectedItem = tabBar.items?[index]
         updateSelectionIndicatorPosition()
     }
     // MARK: - User Info Handling
@@ -235,9 +235,8 @@ extension TabBarController: UITabBarDelegate {
             selectViewController(at: index)
         }
     }
+    
+
 }
 
-protocol TabBarHiding {
-    func hideTabBar()
-    func showTabBar()
-}
+

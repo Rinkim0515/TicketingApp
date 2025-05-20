@@ -65,11 +65,11 @@ final class LoginViewController: UIViewController {
             .compactMap({ $0 as? UIWindowScene })
             .first?.windows.first else { return }
         
-        let tabBarController = TabBarController()
-        window.rootViewController = tabBarController
+        let mainVC = MainViewController()
+        let navController = UINavigationController(rootViewController: mainVC)
+        window.rootViewController = navController
         window.makeKeyAndVisible()
         
-        // 부드러운 화면 전환
         UIView.transition(with: window,
                           duration: 0.3,
                           options: [.transitionCrossDissolve],

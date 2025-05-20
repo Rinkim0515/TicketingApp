@@ -3,8 +3,7 @@
 //  TeamOne1
 //
 //  Created by 김동준 on 7/25/24.
-// 여기는 의도적으로 코드 개선을 하지 않겠습니다. 이때의 시점과 현재가 얼마나 달라졌는지 판단하기위한 중요한 척도라고 생각됩니다.
-//
+
 
 import UIKit
 import SnapKit

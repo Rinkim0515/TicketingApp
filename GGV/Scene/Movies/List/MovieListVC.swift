@@ -54,8 +54,8 @@ final class MovieListViewController: UIViewController {
         setupDataSource()
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
-            $0.horizontalEdges.bottom.equalToSuperview()
+            
+            $0.horizontalEdges.verticalEdges.equalToSuperview()
         }
     }
     

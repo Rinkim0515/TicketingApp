@@ -37,7 +37,6 @@
 		9F925D9E2DDC545D0087BABA /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
 		9F925D9F2DDC54830087BABA /* Common */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Common; sourceTree = "<group>"; };
 		9F925DB52DDC54E50087BABA /* Resource */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F925DC12DDC54FD0087BABA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resource; sourceTree = "<group>"; };
-		9F925DDD2DDCAFB20087BABA /* Coordinator */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Coordinator; sourceTree = "<group>"; };
 		9FE995B12DB8D791009564E5 /* Scene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scene; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -73,7 +72,6 @@
 		9F4CB9432C4DF9B000D4847F /* GGV */ = {
 			isa = PBXGroup;
 			children = (
-				9F925DDD2DDCAFB20087BABA /* Coordinator */,
 				9F925DB52DDC54E50087BABA /* Resource */,
 				9F925D9F2DDC54830087BABA /* Common */,
 				9F925D9E2DDC545D0087BABA /* Core */,
@@ -105,7 +103,6 @@
 				9F925D9E2DDC545D0087BABA /* Core */,
 				9F925D9F2DDC54830087BABA /* Common */,
 				9F925DB52DDC54E50087BABA /* Resource */,
-				9F925DDD2DDCAFB20087BABA /* Coordinator */,
 				9FE995B12DB8D791009564E5 /* Scene */,
 			);
 			name = GGV;

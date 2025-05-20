@@ -30,6 +30,8 @@ final class MovieDetailViewController: UIViewController{
         setupUI()
         loadData()
     }
+
+    
     deinit {
         print("👍 \(String(describing: type(of: self))) deinit")
         cancellables.forEach { $0.cancel() }
