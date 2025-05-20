@@ -7,39 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		56DAA7172C53596F00382203 /* NanumSquareNeoOTF-Bd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 56DAA7162C53596F00382203 /* NanumSquareNeoOTF-Bd.otf */; };
-		56DAA7192C53597D00382203 /* NanumSquareNeoOTF-Eb.otf in Resources */ = {isa = PBXBuildFile; fileRef = 56DAA7182C53597D00382203 /* NanumSquareNeoOTF-Eb.otf */; };
-		56DAA71D2C53598300382203 /* NanumSquareNeoOTF-Rg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 56DAA71A2C53598300382203 /* NanumSquareNeoOTF-Rg.otf */; };
-		56DAA71E2C53598300382203 /* NanumSquareNeoOTF-Hv.otf in Resources */ = {isa = PBXBuildFile; fileRef = 56DAA71B2C53598300382203 /* NanumSquareNeoOTF-Hv.otf */; };
-		56DAA71F2C53598300382203 /* NanumSquareNeoOTF-Lt.otf in Resources */ = {isa = PBXBuildFile; fileRef = 56DAA71C2C53598300382203 /* NanumSquareNeoOTF-Lt.otf */; };
 		9F4CB9452C4DF9B000D4847F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4CB9442C4DF9B000D4847F /* AppDelegate.swift */; };
 		9F4CB9472C4DF9B000D4847F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4CB9462C4DF9B000D4847F /* SceneDelegate.swift */; };
 		9F4CB94C2C4DF9B000D4847F /* TeamOne1.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9F4CB94A2C4DF9B000D4847F /* TeamOne1.xcdatamodeld */; };
-		9F4CB94E2C4DF9B100D4847F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F4CB94D2C4DF9B100D4847F /* Assets.xcassets */; };
 		9F4CB9512C4DF9B100D4847F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 9F4CB9502C4DF9B100D4847F /* Base */; };
 		9F4CB95C2C4E3F9B00D4847F /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9F4CB95B2C4E3F9B00D4847F /* SnapKit */; };
 		E2237E112C50C8AB0006EF2A /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E2237E102C50C8AB0006EF2A /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		56DAA7162C53596F00382203 /* NanumSquareNeoOTF-Bd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Bd.otf"; sourceTree = "<group>"; };
-		56DAA7182C53597D00382203 /* NanumSquareNeoOTF-Eb.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Eb.otf"; sourceTree = "<group>"; };
-		56DAA71A2C53598300382203 /* NanumSquareNeoOTF-Rg.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Rg.otf"; sourceTree = "<group>"; };
-		56DAA71B2C53598300382203 /* NanumSquareNeoOTF-Hv.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Hv.otf"; sourceTree = "<group>"; };
-		56DAA71C2C53598300382203 /* NanumSquareNeoOTF-Lt.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NanumSquareNeoOTF-Lt.otf"; sourceTree = "<group>"; };
 		9F4CB9412C4DF9B000D4847F /* GGV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GGV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F4CB9442C4DF9B000D4847F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F4CB9462C4DF9B000D4847F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9F4CB94B2C4DF9B000D4847F /* TeamOne1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TeamOne1.xcdatamodel; sourceTree = "<group>"; };
-		9F4CB94D2C4DF9B100D4847F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9F4CB9502C4DF9B100D4847F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9F4CB9522C4DF9B100D4847F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9F925DC12DDC54FD0087BABA /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 9F4CB9402C4DF9B000D4847F /* GGV */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9F3274652DBA08FF0088CC70 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
-		9F925D972DDC27380087BABA /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
-		9FE995AC2DB8D770009564E5 /* Helper */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Helper; sourceTree = "<group>"; };
+		9F925D9E2DDC545D0087BABA /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
+		9F925D9F2DDC54830087BABA /* Common */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Common; sourceTree = "<group>"; };
+		9F925DB52DDC54E50087BABA /* Resource */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F925DC12DDC54FD0087BABA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resource; sourceTree = "<group>"; };
 		9FE995B12DB8D791009564E5 /* Scene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scene; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -56,22 +53,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		56DAA7152C53589800382203 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				56DAA71B2C53598300382203 /* NanumSquareNeoOTF-Hv.otf */,
-				56DAA71C2C53598300382203 /* NanumSquareNeoOTF-Lt.otf */,
-				56DAA71A2C53598300382203 /* NanumSquareNeoOTF-Rg.otf */,
-				56DAA7182C53597D00382203 /* NanumSquareNeoOTF-Eb.otf */,
-				56DAA7162C53596F00382203 /* NanumSquareNeoOTF-Bd.otf */,
-			);
-			path = Fonts;
-			sourceTree = "<group>";
-		};
 		9F4CB9382C4DF9B000D4847F = {
 			isa = PBXGroup;
 			children = (
-				56DAA7152C53589800382203 /* Fonts */,
 				9F4CB9432C4DF9B000D4847F /* GGV */,
 				9F4CB9422C4DF9B000D4847F /* Products */,
 			);
@@ -88,16 +72,14 @@
 		9F4CB9432C4DF9B000D4847F /* GGV */ = {
 			isa = PBXGroup;
 			children = (
-				9F3274652DBA08FF0088CC70 /* Extension */,
+				9F925DB52DDC54E50087BABA /* Resource */,
+				9F925D9F2DDC54830087BABA /* Common */,
+				9F925D9E2DDC545D0087BABA /* Core */,
 				9FE995B12DB8D791009564E5 /* Scene */,
-				9FE995AC2DB8D770009564E5 /* Helper */,
 				9F4CB9442C4DF9B000D4847F /* AppDelegate.swift */,
 				9F4CB9462C4DF9B000D4847F /* SceneDelegate.swift */,
-				9F4CB94D2C4DF9B100D4847F /* Assets.xcassets */,
 				9F4CB94F2C4DF9B100D4847F /* LaunchScreen.storyboard */,
-				9F4CB9522C4DF9B100D4847F /* Info.plist */,
 				9F4CB94A2C4DF9B000D4847F /* TeamOne1.xcdatamodeld */,
-				9F925D972DDC27380087BABA /* Model */,
 			);
 			path = GGV;
 			sourceTree = "<group>";
@@ -118,9 +100,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9F3274652DBA08FF0088CC70 /* Extension */,
-				9F925D972DDC27380087BABA /* Model */,
-				9FE995AC2DB8D770009564E5 /* Helper */,
+				9F925D9E2DDC545D0087BABA /* Core */,
+				9F925D9F2DDC54830087BABA /* Common */,
+				9F925DB52DDC54E50087BABA /* Resource */,
 				9FE995B12DB8D791009564E5 /* Scene */,
 			);
 			name = GGV;
@@ -174,12 +156,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56DAA7172C53596F00382203 /* NanumSquareNeoOTF-Bd.otf in Resources */,
-				9F4CB94E2C4DF9B100D4847F /* Assets.xcassets in Resources */,
-				56DAA7192C53597D00382203 /* NanumSquareNeoOTF-Eb.otf in Resources */,
-				56DAA71F2C53598300382203 /* NanumSquareNeoOTF-Lt.otf in Resources */,
-				56DAA71E2C53598300382203 /* NanumSquareNeoOTF-Hv.otf in Resources */,
-				56DAA71D2C53598300382203 /* NanumSquareNeoOTF-Rg.otf in Resources */,
 				9F4CB9512C4DF9B100D4847F /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,7 +315,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2R8FU9V62;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = GGV/Info.plist;
+				INFOPLIST_FILE = GGV/Resource/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -367,7 +343,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P2R8FU9V62;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = GGV/Info.plist;
+				INFOPLIST_FILE = GGV/Resource/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
