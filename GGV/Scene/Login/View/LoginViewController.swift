@@ -10,70 +10,74 @@
 import UIKit
 import SnapKit
 final class LoginViewController: UIViewController {
-
-  
-  let loginView = LoginView()
-                            
-  override func viewDidLoad() {
-    super.viewDidLoad()
     
-    configureAddTarget()
-
-    view.addSubview(loginView)
-    loginView.snp.makeConstraints{
-      $0.edges.equalToSuperview()
+    // MARK: - Properties
+    let loginView = LoginView()
+    
+    // MARK: - Lifecycle Methods
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureAddTarget()
+        setupUI()
     }
-  }
-
-  
-  private func configureAddTarget(){
-    loginView.signupButton.addTarget(self, action: #selector(signupTapped), for: .touchDown)
-    loginView.loginButton.addTarget(self, action: #selector(loginTapped), for: .touchDown)
-  }
-
-
+    
+    // MARK: - UI Setup
+    private func setupUI() {
+        view.addSubview(loginView)
+        loginView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
+    // MARK: - Event Handling
+    private func configureAddTarget() {
+        loginView.signupButton.addTarget(self, action: #selector(signupTapped), for: .touchDown)
+        loginView.loginButton.addTarget(self, action: #selector(loginTapped), for: .touchDown)
+    }
+    
     @objc private func loginTapped() {
-        // 로그인 로직 구현
+        // 입력값 검증
         guard let userid = loginView.idTextField.text, !userid.isEmpty,
               let password = loginView.pwTextField.text, !password.isEmpty else {
             showAlert(message: "아이디와 비밀번호를 입력해주세요.")
             return
         }
         
-        if let userDict = UserDefaults.standard.dictionary(forKey: userid) as? [String: String],
-               userDict["password"] == password {
-            // 로그인 성공 시 아이디 저장
-            UserDefaults.standard.set(userid, forKey: "loggedInUserID")
-              showAlert(message: "로그인 성공") {
-                
-                  // 로그인 성공 시 메인화면 전환 rootViewController 전환
-                  
-                  guard let window = UIApplication.shared.connectedScenes
-                    .compactMap({ $0 as? UIWindowScene })
-                    .first?.windows.first else { return }
-                     let tabBarController = MainController()
-                  window.rootViewController = tabBarController
-                  window.makeKeyAndVisible()
-                  // 부드러운 화면 전환
-                  UIView.transition(with: window,
-                                    duration: 0.3,
-                                    options: [.transitionCrossDissolve],
-                                    animations: nil,
-                                    completion: nil)
-              }
-            } else {
-              showAlert(message: "아이디 또는 비밀번호가 잘못되었습니다.")
+        // UserService를 통한 로그인 처리
+        if UserService.shared.login(userId: userid, password: password) {
+            showAlert(message: "로그인 성공") {
+                self.navigateToMainScreen()
             }
-          }
+        } else {
+            showAlert(message: "아이디 또는 비밀번호가 잘못되었습니다.")
+        }
+    }
     
-    
-
     @objc private func signupTapped() {
         let signupViewController = SignupViewController()
         signupViewController.modalPresentationStyle = .fullScreen
         present(signupViewController, animated: true, completion: nil)
     }
     
+    // MARK: - Navigation
+    private func navigateToMainScreen() {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.windows.first else { return }
+        
+        let tabBarController = TabBarController()
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        
+        // 부드러운 화면 전환
+        UIView.transition(with: window,
+                          duration: 0.3,
+                          options: [.transitionCrossDissolve],
+                          animations: nil,
+                          completion: nil)
+    }
+    
+    // MARK: - Helper Methods
     private func showAlert(message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default) { _ in

@@ -221,11 +221,10 @@ final class TabBarController: UIViewController {
     // MARK: - User Info Handling
     private func loadUserInfo() {
            // 추후 UserService로 이동 가능한 로직
-           if let userid = UserDefaults.standard.string(forKey: "loggedInUserID"),
-              let userDict = UserDefaults.standard.dictionary(forKey: userid) as? [String: String] {
-               welcomeUser.text = "\(userDict["userid"] ?? "아이디")님 반갑습니다."
-           }
-       }
+        if let currentUser = UserService.shared.getCurrentUser() {
+             welcomeUser.text = "\(currentUser.userId)님 반갑습니다."
+         }
+    }
 }
 
 
