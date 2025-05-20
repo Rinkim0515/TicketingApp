@@ -40,6 +40,9 @@ final class MovieListViewController: UIViewController {
         view.backgroundColor = .white
         setupCollectionView()
         bindViewModel()
+        Task {
+            await viewModel.loadInitialSections()
+        }
     }
     deinit {
         print("👍 \(String(describing: type(of: self))) deinit")

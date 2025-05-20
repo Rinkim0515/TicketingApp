@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class TabBarController: UIViewController {
+final class TabBarController: UIViewController, TabBarHiding {
     // MARK: - Properties
     private var viewControllers: [UIViewController] = []
     private var selectedIndex: Int = 0
@@ -119,23 +119,22 @@ final class TabBarController: UIViewController {
         }
     /// 탭바에 표시될 뷰컨트롤러 설정
         private func setupViewControllers() {
-            // 영화 목록 뷰컨트롤러
-            let movieListVM = MovieListVM()
-            Task {
-                await movieListVM.loadInitialSections()
-            }
-            let movieListVC = MovieListViewController(viewModel: movieListVM)
-            movieListVC.tabBarItem = UITabBarItem(title: "영화 목록", image: nil, tag: 0)
+            let movieListVC = MovieListViewController(viewModel: MovieListVM())
+            let movieListNavVC = UINavigationController(rootViewController: movieListVC)
+            movieListNavVC.tabBarItem = UITabBarItem(title: "영화 목록", image: nil, tag: 0)
             
             // 영화 검색 뷰컨트롤러
             let searchVC = NowPlayingSearchViewController(viewModel: NowPlayingSerachViewModel())
-            searchVC.tabBarItem = UITabBarItem(title: "영화 검색", image: nil, tag: 1)
+            let searchNavVC = UINavigationController(rootViewController: searchVC)
+            searchNavVC.tabBarItem = UITabBarItem(title: "영화 검색", image: nil, tag: 1)
             
             // 마이페이지 뷰컨트롤러
             let myPageVC = MyPageViewController()
-            myPageVC.tabBarItem = UITabBarItem(title: "마이페이지", image: nil, tag: 2)
+            let myPageNavVC = UINavigationController(rootViewController: myPageVC)
+            myPageNavVC.tabBarItem = UITabBarItem(title: "마이페이지", image: nil, tag: 2)
             
-            viewControllers = [movieListVC, searchVC, myPageVC]
+            
+            viewControllers = [movieListNavVC, searchNavVC, myPageNavVC]
         }
         
         /// 커스텀 탭바 설정
@@ -191,33 +190,33 @@ final class TabBarController: UIViewController {
        }
     // MARK: - Tab Management
     /// 지정된 인덱스의 뷰컨트롤러를 표시
-        private func selectViewController(at index: Int) {
-            guard index >= 0, index < viewControllers.count else { return }
-            
-            // 모든 자식 뷰컨트롤러 제거
-            for child in children {
-                child.willMove(toParent: nil)
-                child.view.removeFromSuperview()
-                child.removeFromParent()
-            }
-            
-            // 선택된 뷰컨트롤러 추가
-            let selectedVC = viewControllers[index]
-            addChild(selectedVC)
-            selectedVC.view.frame = view.bounds
-            view.insertSubview(selectedVC.view, belowSubview: customTabBar)
-            selectedVC.didMove(toParent: self)
-            
-            selectedVC.view.snp.makeConstraints {
-                $0.top.equalTo(customTabBar.snp.bottom)
-                $0.leading.trailing.bottom.equalToSuperview()
-            }
-            
-            // 탭바 아이템 선택 상태 업데이트
-            selectedIndex = index
-            customTabBar.selectedItem = customTabBar.items?[index]
-            updateSelectionIndicatorPosition()
+    private func selectViewController(at index: Int) {
+        guard index >= 0, index < viewControllers.count else { return }
+        
+        // 모든 자식 뷰컨트롤러 제거
+        for child in children {
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
         }
+        
+        // 선택된 뷰컨트롤러(네비게이션 컨트롤러) 추가
+        let selectedVC = viewControllers[index]
+        addChild(selectedVC)
+        selectedVC.view.frame = view.bounds
+        view.insertSubview(selectedVC.view, belowSubview: customTabBar)
+        selectedVC.didMove(toParent: self)
+        
+        selectedVC.view.snp.makeConstraints {
+            $0.top.equalTo(customTabBar.snp.bottom)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        // 탭바 아이템 선택 상태 업데이트
+        selectedIndex = index
+        customTabBar.selectedItem = customTabBar.items?[index]
+        updateSelectionIndicatorPosition()
+    }
     // MARK: - User Info Handling
     private func loadUserInfo() {
            // 추후 UserService로 이동 가능한 로직
@@ -236,4 +235,9 @@ extension TabBarController: UITabBarDelegate {
             selectViewController(at: index)
         }
     }
+}
+
+protocol TabBarHiding {
+    func hideTabBar()
+    func showTabBar()
 }
