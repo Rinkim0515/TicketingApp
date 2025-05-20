@@ -76,12 +76,9 @@ final class NowPlayingSearchViewController: UIViewController {
                 if result.errorMessage != nil {
                     // 에러 상태 처리
                 }
-                
+
             }
-        
-        
             .store(in: &cancellables)
-        
         viewModel.$isLoading
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
@@ -116,8 +113,27 @@ final class NowPlayingSearchViewController: UIViewController {
     }
     
     private func segueToMovieSearchVC() {
-        let vc = MovieSearchViewController(viewModel: MovieSearchViewModel())
-        navigationController?.pushViewController(vc, animated: true)
+        let viewModel = MovieSearchViewModel()
+        let vc = MovieSearchViewController(viewModel: viewModel)
+        
+        // 전체 화면 모달 스타일
+        vc.modalPresentationStyle = .fullScreen
+        
+        // 또는 카드 스타일 (iOS 13+)
+        // vc.modalPresentationStyle = .automatic
+        
+        // 닫기 버튼 추가
+        let closeButton = UIBarButtonItem(
+            barButtonSystemItem: .close,
+            target: vc,
+            action: #selector(MovieSearchViewController.dismissSelf)
+        )
+        vc.navigationItem.leftBarButtonItem = closeButton
+        
+        // 네비게이션 컨트롤러로 감싸기 (네비게이션 바 유지를 위해)
+        let navController = UINavigationController(rootViewController: vc)
+        
+        present(navController, animated: true)
     }
     
 }

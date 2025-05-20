@@ -17,19 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-//        let launchVC = LaunchScreenViewController()
-//        window?.rootViewController = launchVC
-        let VC = UINavigationController(rootViewController: TabBarController())
-        window?.rootViewController = VC
+        let launchVC = LaunchScreenViewController()
+        window?.rootViewController = launchVC
         window?.makeKeyAndVisible()
         
-//        Task {
-//            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 유지
-//            await MainActor.run {
-//                let mainVC = UINavigationController(rootViewController: MainController())
-//                self.window?.rootViewController = mainVC
-//            }
-//        }
+
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {

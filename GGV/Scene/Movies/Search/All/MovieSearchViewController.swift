@@ -36,6 +36,9 @@ final class MovieSearchViewController: UIViewController {
         cancellables.removeAll()
     }
     
+    @objc func dismissSelf() {
+        dismiss(animated: true)
+    }
     
     private func bindViewModel() {
         viewModel.$searchedMovies
