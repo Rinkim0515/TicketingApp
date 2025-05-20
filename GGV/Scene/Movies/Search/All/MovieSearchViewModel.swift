@@ -28,25 +28,29 @@ final class MovieSearchViewModel {
         rawSearchResults = []
         await fetchFirstSearchPage()
     }
+    
     private func fetchFirstSearchPage() async {
-        isLoading = true
+        setLoading(true)
         let result = await repository.fetchSearchMovies(query: searchQuery, page: 1)
-        searchedMovies = []
-        switch result {
-        case .success(let info):
-            self.rawSearchResults += info.movies
-            self.totalPages = info.totalPages
-            self.totalResultCount = info.totalResults ?? 0
-            let newModels = info.movies.map {
-                MovieUIModelMapper.mapToSearchModel(from: $0)
-                }
-            self.searchedMovies += newModels
-            print("DEBUG - 검색 전체 결과 수: \(info.totalResults ?? -1)")
-            print("DEBUG - 가져온 영화 개수: \(info.movies.count)")
-        case .failure:
-            self.rawSearchResults = []
+        
+        await MainActor.run {
+            searchedMovies = []
+            switch result {
+            case .success(let info):
+                self.rawSearchResults += info.movies
+                self.totalPages = info.totalPages
+                self.totalResultCount = info.totalResults ?? 0
+                let newModels = info.movies.map {
+                    MovieUIModelMapper.mapToSearchModel(from: $0)
+                    }
+                self.searchedMovies += newModels
+
+            case .failure:
+                self.rawSearchResults = []
+            }
+            self.isLoading = false
         }
-        isLoading = false
+        
     }
     
     func fetchAdditionalSearchResults() async {
@@ -54,22 +58,29 @@ final class MovieSearchViewModel {
               !isLoading,
               let totalPages = totalPages,
               currentPage < totalPages else { return }
-        isLoading = true
+        setLoading(true)
+        
         currentPage += 1
         
         let result = await repository.fetchSearchMovies(query: searchQuery, page: currentPage)
-        
-        switch result {
-        case .success(let info):
-            self.rawSearchResults += info.movies
-            let newModels = info.movies.map {
-                MovieUIModelMapper.mapToSearchModel(from: $0)
-                }
-            self.searchedMovies += newModels
-        case .failure:
-            break
+        await MainActor.run {
+            switch result {
+            case .success(let info):
+                self.rawSearchResults += info.movies
+                let newModels = info.movies.map {
+                    MovieUIModelMapper.mapToSearchModel(from: $0)
+                    }
+                self.searchedMovies += newModels
+            case .failure:
+                break
+            }
+            self.isLoading = false
         }
-        isLoading = false
+    }
+    
+    @MainActor
+    private func setLoading(_ isLoading: Bool) {
+        self.isLoading = isLoading
     }
 }
 
