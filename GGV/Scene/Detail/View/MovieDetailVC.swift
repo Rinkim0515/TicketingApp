@@ -65,7 +65,11 @@ final class MovieDetailViewController: UIViewController{
         movieDetailView.movieNameLabel.text = movie.title
         movieDetailView.releaseData.text = dateFormatted
         movieDetailView.movieDescription.text = movie.overview == nil ? "줄거리 정보가 없습니다." : movie.overview
-        movieDetailView.ratingScore.text = movie.voteAverage != nil ? String(format: "%.1f", movie.voteAverage! ) + "점 / 10점" : "평점 없음"
+        if let voteAverage = movie.voteAverage {
+            movieDetailView.ratingScore.text = String(format: "%.1f", voteAverage) + "점 / 10점"
+        } else {
+            movieDetailView.ratingScore.text = "평점 없음"
+        }
         if let url = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
             movieDetailView.posterView.kf.setImage(with: url)
         } else {

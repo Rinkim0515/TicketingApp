@@ -129,18 +129,27 @@ extension NowPlayingSearchVC: UISearchBarDelegate {
 extension NowPlayingSearchVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.searchResultUIModel?.results.count ?? 0
- 
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as! SearchMovieCell
-        let movie = viewModel.searchResultUIModel!.results[indexPath.item]
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchMovieCell.id, for: indexPath) as? SearchMovieCell,
+              let searchResult = viewModel.searchResultUIModel,
+              indexPath.item < searchResult.results.count else {
+            return UICollectionViewCell() // 기본 셀 반환
+        }
+        
+        let movie = searchResult.results[indexPath.item]
         cell.configure(with: movie)
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = viewModel.searchResultUIModel!.results[indexPath.item]
+        guard let searchResult = viewModel.searchResultUIModel,
+              indexPath.item < searchResult.results.count else {
+            return
+        }
+        
+        let movie = searchResult.results[indexPath.item]
         let detailVC = MovieDetailViewController(movieId: movie.id, isNowPlaying: true)
         navigationController?.pushViewController(detailVC, animated: true)
     }

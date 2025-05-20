@@ -10,10 +10,21 @@ import SnapKit
 import Combine
 
 final class MovieListViewController: UIViewController {
-    private var collectionView: UICollectionView!
+    private lazy var collectionView: UICollectionView = {
+        let layout = makeCompositionalLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.delegate = self
+        
+        collectionView.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
+        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
+        
+        return collectionView
+    }()
     private let viewModel: MovieListVM
     private var cancellables = Set<AnyCancellable>()
-    private var dataSource: UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>!
+    private var dataSource: UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>?
     
     init(viewModel: MovieListVM){
         self.viewModel = viewModel
@@ -30,33 +41,40 @@ final class MovieListViewController: UIViewController {
         setupCollectionView()
         bindViewModel()
     }
+    deinit {
+        cancellables.removeAll()
+    }
     
     private func setupCollectionView() {
-        let layout = makeCompositionalLayout()
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .white
-
-        collectionView.delegate = self
-
-        collectionView.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
-        collectionView.register(MovieCardCell.self, forCellWithReuseIdentifier: MovieCardCell.id)
-        collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
-
+        setupDataSource()
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.horizontalEdges.bottom.equalToSuperview()
+        }
+    }
+    
+    private func setupDataSource() {
         dataSource = UICollectionViewDiffableDataSource<MovieCategory, MovieListItem>(collectionView: collectionView) { collectionView, indexPath, item in
             switch item {
             case .banner(let model):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as! BannerCell
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath) as? BannerCell {
+                    cell.configure(with: model)
+                    return cell
+            }
+            return UICollectionViewCell()
+        case .card(let model):
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCardCell.id, for: indexPath) as? MovieCardCell {
                 cell.configure(with: model)
                 return cell
-            case .card(let model):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCardCell.id, for: indexPath) as! MovieCardCell
-                cell.configure(with: model)
-                return cell
+        }
+        return UICollectionViewCell()
             }
         }
         
-        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath) as! HeaderView
+        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath) as? HeaderView
+            else { return UICollectionReusableView() }
             switch indexPath.section {
             case 0: header.setTitle("상영 예정 영화")
             case 1: header.setTitle("현재 상영 영화")
@@ -65,30 +83,28 @@ final class MovieListViewController: UIViewController {
             }
             return header
         }
-
         collectionView.dataSource = dataSource
-        
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
-            $0.horizontalEdges.bottom.equalToSuperview()
-        }
     }
     
     private func bindViewModel() {
         Publishers.CombineLatest3(viewModel.$nowPlayingCardModels, viewModel.$upcomingBannerModels, viewModel.$popularCardModels)
-            .map { nowPlaying, upcoming, popular in
+            .map { [weak self] nowPlaying, upcoming, popular -> (nowPlayingItems: [MovieListItem], upcomingItems: [MovieListItem], popularItems: [MovieListItem])? in
+                guard self != nil else { return nil }
+                
                 let nowPlayingItems = nowPlaying.map { MovieListItem.card($0) }
                 let upcomingItems = upcoming.map { MovieListItem.banner($0) }
                 let popularItems = popular.map { MovieListItem.card($0) }
                 return (nowPlayingItems, upcomingItems, popularItems)
             }
-            .receive(on: RunLoop.main)
-            .sink { [weak self] nowPlaying, upcoming, popular in
-                self?.applySnapshot(nowPlaying: nowPlaying, upcoming: upcoming, popular: popular)
+            .compactMap { $0 } // nil 값 필터링
+            .receive(on: DispatchQueue.main) // RunLoop 대신 DispatchQueue 사용 (
+            .sink { [weak self] tuple in
+                guard let self = self else { return }
+                self.applySnapshot(nowPlaying: tuple.nowPlayingItems, upcoming: tuple.upcomingItems, popular: tuple.popularItems)
             }
             .store(in: &cancellables)
     }
+    
     // 추가 학습이 필요함
     private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
         var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
@@ -96,7 +112,7 @@ final class MovieListViewController: UIViewController {
         snapshot.appendItems(upcoming, toSection: .upcoming)
         snapshot.appendItems(nowPlaying, toSection: .nowPlaying)
         snapshot.appendItems(popular, toSection: .popular)
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
 //MARK: - UICollectionView Delegate
@@ -118,7 +134,7 @@ extension MovieListViewController: UICollectionViewDelegate {
         }
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let selectedMovie = dataSource.itemIdentifier(for: indexPath) else { return }
+        guard let selectedMovie = dataSource?.itemIdentifier(for: indexPath) else { return }
         let movieID: Int
         let isNowPlaying: Bool
         

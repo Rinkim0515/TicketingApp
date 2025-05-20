@@ -31,13 +31,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>115</string>
+					<string>131</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>114</string>
+					<string>130</string>
 					<key>Timestamp</key>
-					<string>769355174.816713</string>
+					<string>769407340.917043</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -76,13 +76,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>93</string>
+					<string>109</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>92</string>
+					<string>108</string>
 					<key>Timestamp</key>
-					<string>769355174.816726</string>
+					<string>769407340.917017</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -101,7 +101,7 @@
 				<string>    private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
 </string>
 				<key>leading</key>
-				<string>    }
+				<string>    
     // 추가 학습이 필요함
 </string>
 				<key>trailing</key>

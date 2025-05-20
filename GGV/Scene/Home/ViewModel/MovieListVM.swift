@@ -54,7 +54,7 @@ final class MovieListVM {
             await loadingState.setFinished(for: type)
         }
     
-    
+    @MainActor
     private func appendMoviesToPublishedModels(_ newMovies: [Movie], for type: MovieCategory) {
         switch type {
         case .upcoming:

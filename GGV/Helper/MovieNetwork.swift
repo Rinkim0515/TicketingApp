@@ -50,9 +50,14 @@ final class MovieNetwork {
     
     
     func fetchMovieDetailInfo(movieId: Int) async throws -> MovieDetailDTO? {
-        let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")
+        guard let detailurl = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)?api_key=\(Constants.API_KEY)&language=ko-KR")
+                
+        else {
+            print("잘못된 URL 형식")
+            return nil
+        }
         do {
-            let (data, response) = try await URLSession.shared.data(from: detailurl!)
+            let (data, response) = try await URLSession.shared.data(from: detailurl)
             
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 print("서버 응답 에러")
