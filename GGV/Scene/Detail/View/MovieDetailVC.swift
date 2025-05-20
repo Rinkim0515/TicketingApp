@@ -58,6 +58,19 @@ final class MovieDetailViewController: UIViewController{
             }
             .store(in: &cancellables)
         validReserve(status: isNowPlaying)
+        viewModel.$errorMessage
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] errorMessage in
+                self?.showErrorAlert(message: errorMessage)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     private func configure(with movie: Movie) {
@@ -110,7 +123,7 @@ final class MovieDetailViewController: UIViewController{
         reservationVC.movieTitle = movie.title
         reservationVC.movieId = movie.id
         reservationVC.posterPath = movie.posterPath
-        reservationVC.sss = self
+        reservationVC.parentVC = self
         showModal(viewController: reservationVC)
     }
     

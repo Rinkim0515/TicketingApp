@@ -38,7 +38,10 @@ final class LaunchScreenViewController: UIViewController {
 
             guard let window = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene })
-                .first?.windows.first else { return }
+                .first?.windows.first else {
+                print("윈도우를 찾을 수 없습니다.")
+                return
+            }
 
             window.rootViewController = nav
             window.makeKeyAndVisible()

@@ -8,9 +8,10 @@
 
 import UIKit
 import SnapKit
+import UIKit
 
 final class ReservationViewController: UIViewController {
-  var sss: MovieDetailViewController?
+    var parentVC: MovieDetailViewController?
     var numberCount: Int = 1
     var price: Int = 14000
     var saveDate: String? = "2024.07.29"
@@ -56,7 +57,7 @@ final class ReservationViewController: UIViewController {
     lazy var decreaseButton: UIButton = {
         let button = UIButton()
         button.setTitle(" - ", for: .normal)
-      button.backgroundColor = UIColor(hexCode: "99b8ff", alpha: 1.0)
+        button.backgroundColor = UIColor(hexCode: "99b8ff", alpha: 1.0)
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         button.layer.cornerRadius = 5
@@ -92,11 +93,11 @@ final class ReservationViewController: UIViewController {
         
         let button = UIButton(type: .system)
         button.setTitle("결제하기", for: .normal)
-      button.setTitleColor(.white, for: .normal)
-      button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 27)
-      button.backgroundColor = .red
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 27)
+        button.backgroundColor = .red
         button.frame.size = CGSize.init(width: 150, height: 60)
-      
+        
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(pressPayButton), for: .touchUpInside)
         return button
@@ -183,14 +184,14 @@ final class ReservationViewController: UIViewController {
         payButton.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom).offset(30)
             $0.centerX.equalToSuperview()
-          $0.height.equalTo(40)
-          $0.width.equalTo(300)
+            $0.height.equalTo(40)
+            $0.width.equalTo(300)
         }
         
-
+        
     }
     
-
+    
     
     
     @objc
@@ -205,20 +206,25 @@ final class ReservationViewController: UIViewController {
     }
     
     @objc
-        private func plusButtonTapped() {
-            self.numberCount += 1
-            peopleCountLabel.text = "\(numberCount)"
-            
-            self.price += 14000
-            priceLabel.text = "\(price)원"
-            
+    private func plusButtonTapped() {
+        self.numberCount += 1
+        peopleCountLabel.text = "\(numberCount)"
+        
+        self.price += 14000
+        priceLabel.text = "\(price)원"
+        
     }
     
     // 경고메세지 출력
     @objc private func pressPayButton() {
-      guard let saveDate = saveDate, let movieTitle = movieTitle, let saveTime = saveTime else { return }
-
-      let confirmAlert = UIAlertController(title: "결제 확인", message: "제목: \(movieTitle)\n 상영 시간: \(saveDate) \(saveTime) \n 인원 수: \(numberCount) 금액 :\(price) \n 결제하시겠습니까", preferredStyle: .alert)
+        guard let saveDate = saveDate, let movieTitle = movieTitle, let saveTime = saveTime else {
+            let alert = UIAlertController(title: "오류", message: "예약 정보가 완전하지 않습니다", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        
+        let confirmAlert = UIAlertController(title: "결제 확인", message: "제목: \(movieTitle)\n 상영 시간: \(saveDate) \(saveTime) \n 인원 수: \(numberCount) 금액 :\(price) \n 결제하시겠습니까", preferredStyle: .alert)
         confirmAlert.addAction(UIAlertAction(title: "결제", style: .default, handler: { _ in
             self.showPaymentCompletedAlert()
         }))
@@ -228,9 +234,9 @@ final class ReservationViewController: UIViewController {
     
     // 결제완료 메세지 출력
     private func showPaymentCompletedAlert() {
-
+        
         let completedAlert = UIAlertController(title: "결제 완료", message: "결제가 완료되었습니다.", preferredStyle: .alert)
-
+        
         completedAlert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
             guard let self = self else { return }
             // 예약 정보 저장
@@ -243,56 +249,56 @@ final class ReservationViewController: UIViewController {
                 movieId: self.movieId,
                 posterPath: self.posterPath ?? ""
             )
-
+            
             // 저장된 모든 예약 내역 출력
             if let allReservations = DataController.loadReservationsFromUserDefaults(key: "allReservations") {
                 print("####", allReservations)
             }
             
-            self.dismiss(animated: true, completion: {
-                self.sss?.navigationController?.popViewController(animated: true)
+            self.dismiss(animated: true, completion: { [weak self]  in
+                self?.parentVC?.navigationController?.popViewController(animated: true)
             })
         }))
         self.present(completedAlert, animated: true, completion: nil)
-
+        
     }
 }
-    
-    extension ReservationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-        
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 1
-        }
-        
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-            switch pickerView.tag {
-            case 1:
-                return dateGenerator.count
-            case 2:
-                return time.count
-            default:
-                return 0
-            }
-        }
-        
-        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 
-            switch pickerView.tag {
-            case 1:
-                return dateGenerator[row]
-            case 2:
-                return time[row]
-            default:
-                return nil
-            }
-        }
-        
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-            if pickerView.tag == 1 {
-                saveDate = dateGenerator[row]
-            } else if pickerView.tag == 2 {
-                saveTime = time[row]
-            }
+extension ReservationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch pickerView.tag {
+        case 1:
+            return dateGenerator.count
+        case 2:
+            return time.count
+        default:
+            return 0
         }
     }
-           
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        switch pickerView.tag {
+        case 1:
+            return dateGenerator[row]
+        case 2:
+            return time[row]
+        default:
+            return nil
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if pickerView.tag == 1 {
+            saveDate = dateGenerator[row]
+        } else if pickerView.tag == 2 {
+            saveTime = time[row]
+        }
+    }
+}
+
