@@ -11,6 +11,7 @@ struct MovieUIModelMapper {
     
     static func mapToBannerModel(from movie: Movie) -> MovieBannerCellModel {
         return MovieBannerCellModel(
+            
             id: movie.id,
             title: movie.title,
             backdropPath: movie.backdropPath,

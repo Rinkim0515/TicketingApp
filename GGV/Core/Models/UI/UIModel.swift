@@ -34,6 +34,11 @@ enum MovieCategory: Int, CaseIterable {
 // MARK: - UI Models
 
 struct MovieBannerCellModel: Hashable {
+    struct Identifier: Hashable {
+        let categoryId: Int
+        let movieId: Int
+    }
+    
     let id: Int
     let title: String
     let backdropPath: String?
@@ -42,6 +47,10 @@ struct MovieBannerCellModel: Hashable {
 }
 
 struct MovieCardCellModel: Hashable {
+    struct Identifier: Hashable {
+        let categoryId: Int
+        let movieId: Int
+    }
     let id: Int
     let title: String
     let posterPath: String?
