@@ -34,39 +34,56 @@ final class MovieListVM {
     }
     
     func loadNextPageIfNeeded(for category: MovieCategory) async {
+        let page = currentPageByCategory[category, default: 1]
+        
         await loadMovies(for: category)
     }
     
     private func loadMovies(for type: MovieCategory) async {
-        guard await loadingState.checkAndSetLoading(for: type) else { return }
-        let result = await repository.fetchMovies(by: type, page: currentPageByCategory[type, default: 1])
+        let page = currentPageByCategory[type, default: 1]
+        
+        
+        guard await loadingState.checkAndSetLoading(for: type) else {
+        
+            return
+        }
+        
+        let result = await repository.fetchMovies(by: type, page: page)
         await MainActor.run {
             switch result {
             case .success(let info):
-                print(info.movies.count)
+          
+                
+                // ID 로깅 추가
+                let movieIds = info.movies.map { $0.id }
+          
+                
                 appendMoviesToPublishedModels(info.movies, for: type)
                 currentPageByCategory[type] = info.currentPage + 1
                 totalPagesByCategory[type] = info.totalPages
-            case .failure:
+            case .failure(let error):
+                
                 break
             }
         }
+        
         await loadingState.setFinished(for: type)
+        print("🏁 LOAD COMPLETE: \(type), page \(page)")
     }
     
     @MainActor
     private func appendMoviesToPublishedModels(_ newMovies: [Movie], for type: MovieCategory) {
         switch type {
         case .upcoming:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0) }
+            let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0, category: type) }
             upcomingBannerModels += mapped
             upcomingMovies += newMovies
         case .nowPlaying:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: true) }
+            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: type, isNowPlaying: true) }
             nowPlayingCardModels += mapped
             nowPlayingMovies += newMovies
         case .popular:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, isNowPlaying: false) }
+            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: type) }
             popularCardModels += mapped
             popularMovies += newMovies
         }
@@ -97,10 +114,21 @@ final class MovieListVM {
 
 actor MovieLoadingTracker {
     private var isLoading: [MovieCategory: Bool] = [:]
+    private var currentPage: [MovieCategory: Int] = [:]
     
     func checkAndSetLoading(for type: MovieCategory) -> Bool {
         if isLoading[type] == true { return false }
         isLoading[type] = true
+        return true
+    }
+    
+    func checkAndSetLoading(for type: MovieCategory, page: Int) -> Bool {
+        // 이미 로딩 중이거나 같은 페이지를 로드하려는 경우 방지
+        if isLoading[type] == true || currentPage[type] == page {
+            return false
+        }
+        isLoading[type] = true
+        currentPage[type] = page
         return true
     }
     
