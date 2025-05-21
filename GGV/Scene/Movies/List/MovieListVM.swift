@@ -34,7 +34,7 @@ final class MovieListVM {
     }
     
     func loadNextPageIfNeeded(for category: MovieCategory) async {
-        let page = currentPageByCategory[category, default: 1]
+        
         
         await loadMovies(for: category)
     }
@@ -55,14 +55,14 @@ final class MovieListVM {
           
                 
                 // ID 로깅 추가
-                let movieIds = info.movies.map { $0.id }
+                
           
                 
                 appendMoviesToPublishedModels(info.movies, for: type)
                 currentPageByCategory[type] = info.currentPage + 1
                 totalPagesByCategory[type] = info.totalPages
             case .failure(let error):
-                
+                print(error.localizedDescription)
                 break
             }
         }
