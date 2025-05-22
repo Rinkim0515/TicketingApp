@@ -145,6 +145,7 @@ actor MovieLoadingTracker {
 }
 
 // 병렬 데이터 로딩으로 성능 최적화
+//1페이지가 정상적으로 들어오는 경우  2페이지부터 병렬적으로 요청하는 메서드
 private func fetchRemainingPages(totalPages: Int) async -> [Movie] {
     var allMovies: [(Int, [Movie])] = []
     await withTaskGroup(of: (Int, [Movie]).self) { group in
