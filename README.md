@@ -26,15 +26,6 @@ GGV는 영화 정보를 탐색하고 예매할 수 있는 iOS 애플리케이션
 
 ---
 
-## 아키텍처
-
-이 애플리케이션은 MVVM 아키텍처와 함께 Clean Architecture의 원칙을 적용하여 설계되었습니다.
-
-### 주요 레이어:
-
-- **Presentation Layer**: View Controllers, Views, ViewModels
-- **Domain Layer**: 비즈니스 로직, Models
-- **Data Layer**: Repositories, Network Services
 
 
 ### 폴더 구조:
