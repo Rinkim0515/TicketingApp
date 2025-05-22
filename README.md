@@ -120,49 +120,145 @@ GGV/
 
 ## 코드 하이라이트
 
-### MVVM 패턴 구현
+### 관심사 분리 & MVVM 패턴 도입
 ```swift
-// ViewModel 예시
-final class MovieListVM {
-    @Published var nowPlayingCardModels: [MovieCardCellModel] = []
-    @Published var upcomingBannerModels: [MovieBannerCellModel] = []
-    @Published var popularCardModels: [MovieCardCellModel] = []
+// Repository Pattern으로 데이터 계층 분리
+final class MovieService {
+    static let shared = MovieService()
+    let movieNetwork = MovieNetwork.shared
     
-    func loadInitialSections() async {
-        async let now: () = loadNextPageIfNeeded(for: .nowPlaying)
-        async let pop: () = loadNextPageIfNeeded(for: .popular)
-        async let upc: () = loadNextPageIfNeeded(for: .upcoming)
-        _ = await [now, pop, upc]
+    func requestData(for movieID: Int) async -> Result<Movie, Error> {
+        do {
+            guard let dto = try await movieNetwork.fetchMovieDetailInfo(movieId: movieID) else {
+                return .failure(URLError(.badServerResponse))
+            }
+            return .success(MovieModelMapper.map(from: dto))
+        } catch {
+            return .failure(error)
+        }
     }
-    
-    // ... 기타 메서드
-```
-### Swift Concurrency를 활용한 비동기 처리
-```swift
-// 비동기 데이터 로딩 예시
-private func loadMovies(for type: MovieCategory) async {
-    guard await loadingState.checkAndSetLoading(for: type) else { return }
-    let result = await repository.fetchMovies(by: type, page: currentPageByCategory[type, default: 1])
-    await MainActor.run {
-        // UI 업데이트 코드
-    }
-    await loadingState.setFinished(for: type)
 }
 ```
-### Combine을 활용한 데이터 바인딩
+### Swift Concurrency & Actor Pattern
 ```swift
-// Combine을 활용한 ViewModel 바인딩 예시
-private func bindViewModel() {
-    Publishers.CombineLatest3(viewModel.$nowPlayingCardModels, 
-                             viewModel.$upcomingBannerModels, 
-                             viewModel.$popularCardModels)
-        .map { [weak self] nowPlaying, upcoming, popular -> (...) }
-        .compactMap { $0 }
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] tuple in
-            self?.applySnapshot(...)
+actor MovieLoadingTracker {
+    private var isLoading: [MovieCategory: Bool] = [:]
+    private var currentPage: [MovieCategory: Int] = [:]
+    
+    func checkAndSetLoading(for type: MovieCategory) -> Bool {
+        if isLoading[type] == true { return false }
+        isLoading[type] = true
+        return true
+    }
+}
+
+// 병렬 데이터 로딩으로 성능 최적화
+private func fetchRemainingPages(totalPages: Int) async -> [Movie] {
+    var allMovies: [(Int, [Movie])] = []
+    await withTaskGroup(of: (Int, [Movie]).self) { group in
+        for page in 2...totalPages {
+            group.addTask {
+                let result = await self.repository.fetchMovies(by: .nowPlaying, page: page)
+                // ...
+            }
         }
-        .store(in: &cancellables)
+    }
+}
+```
+### Generic Type으로 안전한  Data Mapping
+```swift
+struct MovieUIModelMapper {
+    static func mapToBannerModel(from movie: Movie, category: MovieCategory) -> MovieBannerCellModel {
+        return MovieBannerCellModel(
+            id: MovieBannerCellModel.Identifier(categoryId: category.rawValue, movieId: movie.id),
+            movieId: movie.id,
+            title: movie.title,
+            backdropPath: movie.backdropPath,
+            posterPath: movie.posterPath
+        )
+    }
+}
+
+// 복합 식별자로 데이터 무결성 보장
+struct Identifier: Hashable {
+    let categoryId: Int
+    let movieId: Int
+}
+```
+### Diffable DataSource 구현
+```swift
+private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
+    // 중복 제거 로직
+    var seenNowPlayingIds = Set<Int>()
+    var uniqueNowPlaying = [MovieListItem]()
+    
+    for item in nowPlaying {
+        switch item {
+        case .card(let model):
+            if !seenNowPlayingIds.contains(model.movieId) {
+                seenNowPlayingIds.insert(model.movieId)
+                uniqueNowPlaying.append(item)
+            }
+        }
+    }
+    
+    var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
+    snapshot.appendSections(MovieCategory.allCases)
+    snapshot.appendItems(uniqueNowPlaying, toSection: .nowPlaying)
+    dataSource?.apply(snapshot, animatingDifferences: false)
+}
+```
+### Combine 프레임워크 반응형 프로그래밍
+```swift
+private func bindViewModel() {
+    Publishers.CombineLatest3(
+        viewModel.$nowPlayingCardModels, 
+        viewModel.$upcomingBannerModels, 
+        viewModel.$popularCardModels
+    )
+    .map { [weak self] nowPlaying, upcoming, popular -> (nowPlayingItems: [MovieListItem], upcomingItems: [MovieListItem], popularItems: [MovieListItem])? in
+        // 데이터 변환 로직
+    }
+    .compactMap { $0 }
+    .receive(on: DispatchQueue.main)
+    .sink { [weak self] tuple in
+        self?.applySnapshot(nowPlaying: tuple.nowPlayingItems, upcoming: tuple.upcomingItems, popular: tuple.popularItems)
+    }
+    .store(in: &cancellables)
+}
+```
+### 프로토콜 지향 프로그래밍
+```swift
+protocol ReusableView {
+    static var id: String { get }
+}
+
+extension ReusableView {
+    static var id: String {
+        return String(describing: self)
+    }
+}
+
+final class BannerCell: UICollectionViewCell, ReusableView {
+    // 재사용 가능한 셀 구현
+}
+```
+### UICollectionView Compositional Layout
+```swift
+private func makeBannerSectionLayout() -> NSCollectionLayoutSection {
+    let itemSize = NSCollectionLayoutSize(
+        widthDimension: .fractionalWidth(1.0),
+        heightDimension: .fractionalHeight(1.0)
+    )
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    let groupSize = NSCollectionLayoutSize(
+        widthDimension: .fractionalWidth(0.92),
+        heightDimension: .fractionalWidth(0.52)
+    )
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    let section = NSCollectionLayoutSection(group: group)
+    section.orthogonalScrollingBehavior = .groupPagingCentered
+    return section
 }
 ```
 
