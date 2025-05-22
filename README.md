@@ -68,6 +68,7 @@ GGV/
 특히 최신 Swift 동시성 기능을 적극 활용하여 가독성 높은 비동기 코드를 작성했습니다.
 
 ## 주요 화면
+- 시연영상 : [https://youtube.com/shorts/6_oLBDl4cWs?si=owU2SslS4W5u5TtW]
 <table>
   <!-- 1. 화면 이름 -->
   <tr>
@@ -269,19 +270,25 @@ private func makeBannerSectionLayout() -> NSCollectionLayoutSection {
 - UICollectionView와 Compositional Layout을 활용한 복잡한 UI 구현
 - Actor를 활용한 상태 관리 및 동시성 제어
 ### 향후 개선 사항
-- Unit Test 및 UI Test 추가
-- 메모리 관리 최적화
-- SwiftUI로의 점진적 마이그레이션
-- CoreData를 활용한 로컬 데이터 저장 개선
-- 디자인 시스템 구축
+#### v3
+- 성능개선
+- 디자인 개선
+- 모델 재구성 (diffiable datasource 관련)
+- Mypage화면,Reservation화면 재구성 
+#### v4
+- 영화 데이터 캐싱
+- UI컴포넌트 기기별 대응 동적 사이즈 배치
+- Firebase 연동
+
+
 ### 개발자
 
 - 이름: [김리인]
 - 연락처: [kimrindev@gmail.com]
-- 포트폴리오: 
+- 포트폴리오: [https://cerulean-begonia-636.notion.site/GGV-1face05e8874801b99a5faa9f9c55ceb]
 
 
-}
+
 
 ---
 
