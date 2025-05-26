@@ -98,7 +98,7 @@ final class MainViewController: UIViewController {
         }
         
         // 세그먼트 컨트롤 커스텀 스타일링
-        let blueColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0)
+        let blueColor = UIColor.primaryBlue
         
         // 기본 스타일 제거
         segmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)

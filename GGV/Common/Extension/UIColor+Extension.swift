@@ -14,6 +14,8 @@ extension UIColor {
     static let lightPink = UIColor(hexCode: "ff99a3", alpha: 1.0)
     static let overlayBlue = UIColor.systemBlue.withAlphaComponent(0.9)
     
+    static let borderBlue: CGColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+    
     convenience init(hexCode: String, alpha: CGFloat = 1.0) {
         var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
         

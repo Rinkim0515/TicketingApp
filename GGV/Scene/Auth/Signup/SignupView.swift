@@ -79,7 +79,7 @@ class SignuPView: UIView {
  lazy var signupButton: UIButton = {
       let button = UIButton(type: .system)
       button.setTitle("Sign Up", for: .normal)
-      button.backgroundColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0)
+     button.backgroundColor = UIColor.primaryBlue
       button.setTitleColor(.white, for: .normal)
       button.layer.cornerRadius = 5
 

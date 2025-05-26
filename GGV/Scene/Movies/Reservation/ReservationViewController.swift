@@ -11,8 +11,8 @@ import UIKit
 
 final class ReservationViewController: UIViewController {
     var parentVC: MovieDetailViewController?
-    var numberCount: Int = 1
-    var price: Int = 14000
+    var numberCount: Int = Constants.Movie.minimumPeople
+    var price: Int = Constants.Movie.ticketPrice
     var saveDate: String? = "2024.07.29"
     var saveTime: String? = "오전 10시 35분"
     var movieTitle: String?
@@ -56,7 +56,7 @@ final class ReservationViewController: UIViewController {
     lazy var decreaseButton: UIButton = {
         let button = UIButton()
         button.setTitle(" - ", for: .normal)
-        button.backgroundColor = UIColor(hexCode: "99b8ff", alpha: 1.0)
+        button.backgroundColor = UIColor.lightBlue
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         button.layer.cornerRadius = 5
@@ -68,7 +68,7 @@ final class ReservationViewController: UIViewController {
     lazy var increaseButton: UIButton = {
         let button = UIButton()
         button.setTitle(" + ", for: .normal)
-        button.backgroundColor = UIColor(hexCode: "ff99a3", alpha: 1.0)
+        button.backgroundColor = UIColor.lightPink
         button.setTitleColor(.black, for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         button.layer.cornerRadius = 5
@@ -79,7 +79,7 @@ final class ReservationViewController: UIViewController {
     // 영화 가격
     let priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "14000원"
+        label.text = "\(Constants.Movie.ticketPrice)원"
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 25)
         label.backgroundColor = .white
@@ -199,7 +199,7 @@ final class ReservationViewController: UIViewController {
             self.numberCount -= 1
             peopleCountLabel.text = "\(numberCount)"
             
-            self.price -= 14000
+            self.price -= Constants.Movie.ticketPrice
             priceLabel.text = "\(price)원"
         }
     }
@@ -209,7 +209,7 @@ final class ReservationViewController: UIViewController {
         self.numberCount += 1
         peopleCountLabel.text = "\(numberCount)"
         
-        self.price += 14000
+        self.price += Constants.Movie.ticketPrice
         priceLabel.text = "\(price)원"
         
     }
@@ -243,7 +243,7 @@ final class ReservationViewController: UIViewController {
                 date: self.saveDate ?? "",
                 time: self.saveTime ?? "",
                 people: self.numberCount,
-                price: self.numberCount * 14000,
+                price: self.numberCount * Constants.Movie.ticketPrice,
                 movieTitle: self.movieTitle ?? "",
                 movieId: self.movieId,
                 posterPath: self.posterPath ?? ""

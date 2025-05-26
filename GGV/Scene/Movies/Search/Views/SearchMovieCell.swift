@@ -23,7 +23,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
         label.numberOfLines = 2
         label.textAlignment = .center
         
-        label.backgroundColor = .systemBlue.withAlphaComponent(0.9)
+        label.backgroundColor = UIColor.overlayBlue
         return label
     }()
     

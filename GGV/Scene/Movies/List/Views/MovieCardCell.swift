@@ -17,7 +17,7 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
         label.numberOfLines = 2
         label.textAlignment = .center
         label.textColor = .white
-        label.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9)
+        label.backgroundColor = UIColor.overlayBlue
         return label
     }()
     
@@ -34,7 +34,7 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
         contentView.backgroundColor = .white
         self.layer.cornerRadius = 8
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        self.layer.borderColor = UIColor.borderBlue
         self.clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)

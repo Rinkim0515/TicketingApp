@@ -16,7 +16,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
         label.font = UIFont.nanumSquare(size: 15, weight: .bold)
         label.textColor = .white
         label.numberOfLines = 0
-        label.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9)
+        label.backgroundColor = UIColor.overlayBlue
         label.textAlignment = .center
         return label
     }()
@@ -38,7 +38,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
     private func setupUI() {
         self.layer.cornerRadius = 8
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        self.layer.borderColor = UIColor.borderBlue
         self.clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.addSubview(titleLabel)

@@ -27,8 +27,4 @@ struct Constants {
         static let posterAspectRatio: CGFloat = 1.5
     }
     
-    struct Animation {
-        static let defaultDuration: TimeInterval = 0.3
-        static let transitionDuration: TimeInterval = 1.0
-    }
 }

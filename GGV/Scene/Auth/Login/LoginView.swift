@@ -34,7 +34,7 @@ final class LoginView: UIView {
   lazy var loginButton: UIButton = {
       let button = UIButton(type: .system)
       button.setTitle("로그인", for: .normal)
-      button.backgroundColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0)
+      button.backgroundColor = UIColor.primaryBlue
       button.setTitleColor(.white, for: .normal)
       button.layer.cornerRadius = 5
       button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
@@ -45,7 +45,7 @@ final class LoginView: UIView {
   lazy var signupButton: UIButton = {
       let button = UIButton(type: .system)
       button.setTitle("회원가입", for: .normal)
-      button.setTitleColor(UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0), for: .normal)
+      button.setTitleColor(UIColor.primaryBlue, for: .normal)
       button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
       return button
   }()
