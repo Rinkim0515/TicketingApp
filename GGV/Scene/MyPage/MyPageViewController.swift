@@ -21,54 +21,19 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
     }()
 
     // 사용자 id 라벨
-    let idLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 24, weight: .bold)
-        label.textAlignment = .left
-        return label
-    }()
+    let idLabel: UILabel = UIComponents.Label.title("", size: 24, weight: .bold)
 
-    let helloLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 18, weight: .bold)
-        label.textAlignment = .left
-        label.text = "안녕하세요."
-        return label
-    }()
+    let helloLabel: UILabel = UIComponents.Label.body("안녕하세요.", size: 18, weight: .bold)
     
-    let userInfoLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 16, weight: .bold)
-        label.numberOfLines = 0
-        label.textAlignment = .left
-        return label
-    }()
+    let userInfoLabel: UILabel = UIComponents.Label.body("", size: 16, weight: .bold)
+
     
-    let userInfoTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 20, weight: .bold)
-        label.text = "내 정보"
-        return label
-    }()
+    let userInfoTitleLabel: UILabel = UIComponents.Label.title("내 정보", size: 20, weight: .bold)
     
-    let bookingHistoryTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 20, weight: .bold)
-        label.text = "영화 예매 내역"
-        return label
-    }()
+    let bookingHistoryTitleLabel: UILabel = UIComponents.Label.title("영화 예매 내역", size: 20, weight: .bold)
 
     // 로그아웃 버튼
-    lazy var logoutButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("로그아웃", for: .normal)
-        button.backgroundColor = .systemRed
-        button.tintColor = .white
-        button.layer.cornerRadius = 5
-        button.titleLabel?.font = UIFont.nanumSquare(size: 16, weight: .bold)
-        button.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    lazy var logoutButton: UIButton = UIComponents.Button.system(title: "로그아웃", backgroundColor: .systemRed)
     
     // 컬렉션 뷰 레이아웃 설정
     let collectionViewLayout: UICollectionViewFlowLayout = {
@@ -84,26 +49,14 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
         collectionView.backgroundColor = .white
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(MyPageCollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(HistoryCell.self, forCellWithReuseIdentifier: HistoryCell.id)
         return collectionView
     }()
-  lazy var verticalStackView = {
-    let verticalStackView = UIStackView(arrangedSubviews: [idLabel, helloLabel])
-    verticalStackView.axis = .vertical
-    verticalStackView.spacing = 5
-    verticalStackView.alignment = .leading
-    return verticalStackView
-  }()
+  lazy var verticalStackView = UIComponents.StackView.vertical(spacing: 5, alignment: .leading)
 
 
   // 수평 스택 뷰 설정
-  lazy var horizontalStackView = {
-    let horizontalStackView = UIStackView(arrangedSubviews: [verticalStackView, profileImageView])
-    horizontalStackView.axis = .horizontal
-    horizontalStackView.spacing = 10
-    horizontalStackView.alignment = .center
-    return horizontalStackView
-  }()
+  lazy var horizontalStackView = UIComponents.StackView.horizontal(spacing: 10, alignment: .center)
     
     var bookingHistory = [[String: Any]]()
 
@@ -215,7 +168,7 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! MyPageCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HistoryCell.id, for: indexPath) as! HistoryCell
         
         let bookingData = bookingHistory[indexPath.item]
         cell.configure(temp: bookingData)

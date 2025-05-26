@@ -22,13 +22,7 @@ final class MainViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var welcomeUser: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .right
-        label.textColor = .black
-        label.font = UIFont.nanumSquare(size: 13, weight: .bold)
-        return label
-    }()
+    private lazy var welcomeUser: UILabel = UIComponents.Label.body("", size: 13, weight: .bold)
     
     private let segmentedControl = UISegmentedControl(items: ["영화 목록", "영화 검색", "마이페이지"])
     private let containerView = UIView()

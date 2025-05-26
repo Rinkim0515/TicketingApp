@@ -11,15 +11,7 @@ import Kingfisher
 
 final class MovieCardCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
-    private let titleLabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 15, weight: .bold)
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.textColor = .white
-        label.backgroundColor = UIColor.overlayBlue
-        return label
-    }()
+    private let titleLabel = UIComponents.Label.cell("", size: 15, weight: .bold)
     
     override init(frame: CGRect) {
         super.init(frame: frame)

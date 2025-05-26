@@ -9,46 +9,11 @@ import UIKit
 
 final class LoginView: UIView {
     
-  private let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "GGV")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-  
-  lazy var idTextField: UITextField = {
-      let textField = UITextField()
-      textField.placeholder = "id"
-      textField.borderStyle = .roundedRect
-      return textField
-  }()
-  
-  lazy var pwTextField: UITextField = {
-      let textField = UITextField()
-      textField.placeholder = "pw"
-      textField.borderStyle = .roundedRect
-      textField.isSecureTextEntry = true
-      return textField
-  }()
-  
-  lazy var loginButton: UIButton = {
-      let button = UIButton(type: .system)
-      button.setTitle("로그인", for: .normal)
-      button.backgroundColor = UIColor.primaryBlue
-      button.setTitleColor(.white, for: .normal)
-      button.layer.cornerRadius = 5
-      button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
-      
-      return button
-  }()
-
-  lazy var signupButton: UIButton = {
-      let button = UIButton(type: .system)
-      button.setTitle("회원가입", for: .normal)
-      button.setTitleColor(UIColor.primaryBlue, for: .normal)
-      button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
-      return button
-  }()
+  private let logoImageView: UIImageView = UIComponents.ImageView.create(imageName: "GGV")
+  lazy var idTextField: UITextField = UIComponents.TextField.standard(placeholder: "id")
+  lazy var pwTextField: UITextField = UIComponents.TextField.standard(placeholder: "pw", isSecure: true)
+  lazy var loginButton: UIButton = UIComponents.Button.primary(title: "로그인")
+  lazy var signupButton: UIButton = UIComponents.Button.secondary(title: "회원가입")
   
   override init(frame: CGRect) {
     super.init(frame: frame)

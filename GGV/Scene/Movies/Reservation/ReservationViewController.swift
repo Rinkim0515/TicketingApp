@@ -31,76 +31,12 @@ final class ReservationViewController: UIViewController {
         pkv.tag = 2
         return pkv
     }()
-    
-    // 영화 인원수 라벨
-    let peopleLabel: UILabel = {
-        let lb = UILabel()
-        lb.text = "상영 인원: "
-        lb.textColor = .black
-        lb.textAlignment = .left
-        lb.font = .boldSystemFont(ofSize: 25)
-        return lb
-    }()
-    
-    // 티켓 구매자 인원
-    let peopleCountLabel: UILabel = {
-        let label = UILabel()
-        label.text = "1"
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 25)
-        label.backgroundColor = .white
-        return label
-    }()
-    
-    // 마이너스 버튼
-    lazy var decreaseButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(" - ", for: .normal)
-        button.backgroundColor = UIColor.lightBlue
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
-        button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(minusButtonTapped), for: .touchDown)
-        return button
-    }()
-    
-    // 플러스 버튼
-    lazy var increaseButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(" + ", for: .normal)
-        button.backgroundColor = UIColor.lightPink
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
-        button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchDown)
-        return button
-    }()
-    
-    // 영화 가격
-    let priceLabel: UILabel = {
-        let label = UILabel()
-        label.text = "\(Constants.Movie.ticketPrice)원"
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 25)
-        label.backgroundColor = .white
-        return label
-    }()
-    
-    // 결제하기 버튼
-    lazy var payButton: UIButton = {
-        
-        
-        let button = UIButton(type: .system)
-        button.setTitle("결제하기", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.nanumSquare(size: 27, weight: .bold)
-        button.backgroundColor = .red
-        button.frame.size = CGSize.init(width: 150, height: 60)
-        
-        button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(pressPayButton), for: .touchUpInside)
-        return button
-    }()
+    let peopleLabel: UILabel = UIComponents.Label.body("상영 인원: ", size: 25, weight: .bold)
+    let peopleCountLabel: UILabel = UIComponents.Label.center("1", size: 25)
+    lazy var decreaseButton: UIButton = UIComponents.Button.icon(title: " - ", backgroundColor: .lightBlue, fontSize: 25)
+    lazy var increaseButton: UIButton = UIComponents.Button.icon(title: " + ", backgroundColor: .lightPink, fontSize: 25)
+    let priceLabel: UILabel = UIComponents.Label.center("14000원", size: 25)
+    lazy var payButton: UIButton = UIComponents.Button.system(title: "결제하기", backgroundColor: .red)
     
     // pickerView 안에 들어갈 날짜 더미데이터
     var dateGenerator: [String] {

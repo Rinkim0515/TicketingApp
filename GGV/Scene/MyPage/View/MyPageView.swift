@@ -12,63 +12,17 @@ import SnapKit
 import Kingfisher
 
 /// 마이페이지에서 예약 정보를 표시하는 컬렉션 뷰 셀
-final class MyPageCollectionViewCell: UICollectionViewCell {
+final class HistoryCell: UICollectionViewCell,ReusableView {
     
     // MARK: - UI Components
-    
-    // 포스터 이미지뷰
-    private lazy var posterImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 15
-        return imageView
-    }()
-    
-    // 영화 제목 라벨
-    private lazy var movieLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.numberOfLines = 2
-        return label
-    }()
-    
-    // 영화 상영 날짜
-    private lazy var movieDate: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 15)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    // 영화 상영 시간
-    private lazy var movieTime: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 15)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    // 영화 티켓 구매 인원수
-    private lazy var peopleCount: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 15)
-        label.textAlignment = .center
-        return label
-    }()
-    
-    // 가격
-    private lazy var moviePrice: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 15)
-        label.textAlignment = .center
-        return label
-    }()
+
+    private lazy var posterImageView: UIImageView = UIComponents.ImageView.create(contentMode: .scaleAspectFill)
+
+    private lazy var movieLabel: UILabel = UIComponents.Label.center("", size: 12)
+    private lazy var movieDate: UILabel = UIComponents.Label.center("", size: 15, weight: .bold)
+    private lazy var movieTime: UILabel = UIComponents.Label.center("", size: 15, weight: .bold)
+    private lazy var peopleCount: UILabel = UIComponents.Label.center("", size: 15, weight: .bold)
+    private lazy var moviePrice: UILabel = UIComponents.Label.center("", size: 15, weight: .bold)
     
     // MARK: - Initialization
     

@@ -10,7 +10,7 @@ import SnapKit
 
 final class SignupViewController: UIViewController {
     // MARK: - Properties
-    let signUpView = SignuPView()
+    let signupView = SignupView()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -21,21 +21,21 @@ final class SignupViewController: UIViewController {
     
     // MARK: - UI Setup
     private func configureBasic() {
-        view.addSubview(signUpView)
-        signUpView.snp.makeConstraints {
+        view.addSubview(signupView)
+        signupView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        signUpView.cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
-        signUpView.signupButton.addTarget(self, action: #selector(signupTapped), for: .touchUpInside)
+        signupView.cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+        signupView.signupButton.addTarget(self, action: #selector(signupTapped), for: .touchUpInside)
     }
     
     // MARK: - Event Handling
     @objc private func signupTapped() {
         // 입력값 유효성 검사
-        guard let username = signUpView.usernameTextField.text, !username.isEmpty,
-              let userbirth = signUpView.birthTextField.text, !userbirth.isEmpty,
-              let userid = signUpView.userIdTextField.text, !userid.isEmpty,
-              let password = signUpView.passwordTextField.text, !password.isEmpty else {
+        guard let username = signupView.usernameTextField.text, !username.isEmpty,
+              let userbirth = signupView.birthTextField.text, !userbirth.isEmpty,
+              let userid = signupView.userIdTextField.text, !userid.isEmpty,
+              let password = signupView.passwordTextField.text, !password.isEmpty else {
             showAlert(message: "모든 항목을 채워주세요.")
             return
         }

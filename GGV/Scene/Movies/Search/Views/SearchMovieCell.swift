@@ -9,23 +9,8 @@ import UIKit
 import SnapKit
 
 final class SearchMovieCell: UICollectionViewCell, ReusableView {
-    private let posterImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        return imageView
-    }()
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 18, weight: .bold)
-        label.textColor = .white
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        
-        label.backgroundColor = UIColor.overlayBlue
-        return label
-    }()
+    private let posterImageView: UIImageView = UIComponents.ImageView.create(contentMode: .scaleAspectFill)
+    private let titleLabel: UILabel = UIComponents.Label.cell("", size: 18, weight: .bold)
     
     
     override init(frame: CGRect) {

@@ -13,75 +13,16 @@ import SnapKit
 final class MovieDetailView: UIView {
     private let scrollView = UIScrollView()
     private let scrollContentView = UIView()
-    let posterView = {
-        let view = UIImageView()
-        view.backgroundColor = .gray
-        return view
-    }()
-    let movieNameLabel = {
-        let label = UILabel()
-        label.text = ""
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.font = UIFont.nanumSquare(size: 30, weight: .bold)
-        return label
-    }()
-    let movieDescription = {
-        let label = UILabel()
-        label.text = "영화 설명란"
-        label.numberOfLines = 30
-        label.font = UIFont.nanumSquare(size: 19, weight: .bold)
-        label.textColor = .black
-        return label
-    }()
-    private let ratingStackView = {
-        let uIStackView = UIStackView()
-        uIStackView.axis = .horizontal
-        uIStackView.distribution = .fillEqually
-        return uIStackView
-    }()
-    let ratingLabel = {
-        let label = UILabel()
-        label.text = "평점:"
-        label.textAlignment = .left
-        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
-        return label
-    }()
-    let ratingScore = {
-        let label = UILabel()
-        label.text = "별점: 7.8/10 점"
-        label.textAlignment = .right
-        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
-        return label
-    }()
-    private let releaseStackView = {
-        let uIStackView = UIStackView()
-        uIStackView.axis = .horizontal
-        uIStackView.distribution = .fillProportionally
-        return uIStackView
-    }()
-    let releaseLabel = {
-        let label = UILabel()
-        label.text = "출시일:"
-        label.textAlignment = .left
-        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
-        return label
-    }()
-    let releaseData = {
-        let label = UILabel()
-        label.text = "2021-07-07"
-        label.textAlignment = .right
-        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
-        return label
-    }()
-    let TicketingButton = {
-        let button = UIButton()
-        button.setTitle("예매하기", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.nanumSquare(size: 30, weight: .bold)
-        button.backgroundColor = .red
-        return button
-    }()
+    let posterView = UIComponents.ImageView.create(contentMode: .scaleAspectFill)
+    let movieNameLabel = UIComponents.Label.center("", size: 30, weight: .bold)
+    let movieDescription = UIComponents.Label.body("영화 설명란", size: 19, weight: .bold)
+    private let ratingStackView = UIComponents.StackView.horizontal()
+    let ratingLabel = UIComponents.Label.body("평점:", size: 22, weight: .bold)
+    let ratingScore = UIComponents.Label.body("별점: 7.8/10 점", size: 22, weight: .bold)
+    private let releaseStackView = UIComponents.StackView.horizontal()
+    let releaseLabel = UIComponents.Label.body("출시일:", size: 22, weight: .bold)
+    let releaseData = UIComponents.Label.body("2021-07-07", size: 22, weight: .bold)
+    let TicketingButton = UIComponents.Button.system(title: "예매하기", backgroundColor: .red)
     
     override init(frame: CGRect) {
         super.init(frame: .zero)

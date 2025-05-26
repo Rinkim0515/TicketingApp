@@ -11,15 +11,7 @@ import Kingfisher
 
 final class BannerCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.nanumSquare(size: 15, weight: .bold)
-        label.textColor = .white
-        label.numberOfLines = 0
-        label.backgroundColor = UIColor.overlayBlue
-        label.textAlignment = .center
-        return label
-    }()
+    let titleLabel: UILabel = UIComponents.Label.cell("", size: 15, weight: .bold)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
