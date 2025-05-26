@@ -43,6 +43,7 @@ final class MovieListViewController: UIViewController {
             await viewModel.loadInitialSections()
         }
     }
+    
     deinit {
         print("👍 \(String(describing: type(of: self))) deinit")
         cancellables.forEach { $0.cancel() }
@@ -103,79 +104,12 @@ final class MovieListViewController: UIViewController {
             .compactMap { $0 } // nil 값 필터링
             .receive(on: DispatchQueue.main) // RunLoop 대신 DispatchQueue 사용 (
             .sink { [weak self] tuple in
-                self?.applySnapshot(nowPlaying: tuple.nowPlayingItems, upcoming: tuple.upcomingItems, popular: tuple.popularItems)
+                let snapshot = self?.viewModel.applySnapshot(nowPlaying: tuple.nowPlayingItems, upcoming: tuple.upcomingItems, popular: tuple.popularItems)
+                self?.dataSource?.apply(snapshot ?? NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>(), animatingDifferences: true)
             }
             .store(in: &cancellables)
     }
     
-    // 추가 학습이 필요함
-    private func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) {
-        print("📸 SNAPSHOT: applying with nowPlaying: \(nowPlaying.count), upcoming: \(upcoming.count), popular: \(popular.count)")
-        
-        // 각 섹션별로 중복 제거
-        var uniqueNowPlaying = [MovieListItem]()
-        var uniqueUpcoming = [MovieListItem]()
-        var uniquePopular = [MovieListItem]()
-        
-        // 중복 체크를 위한 셋
-        var seenNowPlayingIds = Set<Int>()
-        var seenUpcomingIds = Set<Int>()
-        var seenPopularIds = Set<Int>()
-        
-        // NowPlaying 중복 제거
-        for item in nowPlaying {
-            switch item {
-            case .card(let model):
-                if !seenNowPlayingIds.contains(model.movieId) {
-                    seenNowPlayingIds.insert(model.movieId)
-                    uniqueNowPlaying.append(item)
-                } else {
-                    print("⚠️ DUPLICATE: filtered out duplicate nowPlaying movie ID \(model.movieId)")
-                }
-            default:
-                uniqueNowPlaying.append(item)
-            }
-        }
-        
-        // Upcoming 중복 제거
-        for item in upcoming {
-            switch item {
-            case .banner(let model):
-                if !seenUpcomingIds.contains(model.movieId) {
-                    seenUpcomingIds.insert(model.movieId)
-                    uniqueUpcoming.append(item)
-                } else {
-                    print("⚠️ DUPLICATE: filtered out duplicate upcoming movie ID \(model.movieId)")
-                }
-            default:
-                uniqueUpcoming.append(item)
-            }
-        }
-        
-        // Popular 중복 제거
-        for item in popular {
-            switch item {
-            case .card(let model):
-                if !seenPopularIds.contains(model.movieId) {
-                    seenPopularIds.insert(model.movieId)
-                    uniquePopular.append(item)
-                } else {
-                    print("⚠️ DUPLICATE: filtered out duplicate popular movie ID \(model.movieId)")
-                }
-            default:
-                uniquePopular.append(item)
-            }
-        }
-        
-        print("🧹 AFTER FILTERING: nowPlaying: \(uniqueNowPlaying.count), upcoming: \(uniqueUpcoming.count), popular: \(uniquePopular.count)")
-        
-        var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
-        snapshot.appendSections(MovieCategory.allCases)
-        snapshot.appendItems(uniqueUpcoming, toSection: .upcoming)
-        snapshot.appendItems(uniqueNowPlaying, toSection: .nowPlaying)
-        snapshot.appendItems(uniquePopular, toSection: .popular)
-        dataSource?.apply(snapshot, animatingDifferences: true) // 애니메이션 비활성화로 테스트
-    }
 }
 //MARK: - UICollectionView Delegate
 

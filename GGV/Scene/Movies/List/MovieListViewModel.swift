@@ -7,8 +7,7 @@
 
 import Foundation
 import Combine
-
-
+import UIKit
 
 final class MovieListViewModel {
     
@@ -87,6 +86,74 @@ final class MovieListViewModel {
         }
         
         print("🏁 LOAD COMPLETE: \(type), page \(page)")
+    }
+    
+    func applySnapshot(nowPlaying: [MovieListItem], upcoming: [MovieListItem], popular: [MovieListItem]) -> NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>{
+        print("📸 SNAPSHOT: applying with nowPlaying: \(nowPlaying.count), upcoming: \(upcoming.count), popular: \(popular.count)")
+        
+        // 각 섹션별로 중복 제거
+        var uniqueNowPlaying = [MovieListItem]()
+        var uniqueUpcoming = [MovieListItem]()
+        var uniquePopular = [MovieListItem]()
+        
+        // 중복 체크를 위한 셋
+        var seenNowPlayingIds = Set<Int>()
+        var seenUpcomingIds = Set<Int>()
+        var seenPopularIds = Set<Int>()
+        
+        // NowPlaying 중복 제거
+        for item in nowPlaying {
+            switch item {
+            case .card(let model):
+                if !seenNowPlayingIds.contains(model.movieId) {
+                    seenNowPlayingIds.insert(model.movieId)
+                    uniqueNowPlaying.append(item)
+                } else {
+                    print("⚠️ DUPLICATE: filtered out duplicate nowPlaying movie ID \(model.movieId)")
+                }
+            default:
+                uniqueNowPlaying.append(item)
+            }
+        }
+        
+        // Upcoming 중복 제거
+        for item in upcoming {
+            switch item {
+            case .banner(let model):
+                if !seenUpcomingIds.contains(model.movieId) {
+                    seenUpcomingIds.insert(model.movieId)
+                    uniqueUpcoming.append(item)
+                } else {
+                    print("⚠️ DUPLICATE: filtered out duplicate upcoming movie ID \(model.movieId)")
+                }
+            default:
+                uniqueUpcoming.append(item)
+            }
+        }
+        
+        // Popular 중복 제거
+        for item in popular {
+            switch item {
+            case .card(let model):
+                if !seenPopularIds.contains(model.movieId) {
+                    seenPopularIds.insert(model.movieId)
+                    uniquePopular.append(item)
+                } else {
+                    print("⚠️ DUPLICATE: filtered out duplicate popular movie ID \(model.movieId)")
+                }
+            default:
+                uniquePopular.append(item)
+            }
+        }
+        
+        print("🧹 AFTER FILTERING: nowPlaying: \(uniqueNowPlaying.count), upcoming: \(uniqueUpcoming.count), popular: \(uniquePopular.count)")
+        
+        var snapshot = NSDiffableDataSourceSnapshot<MovieCategory, MovieListItem>()
+        snapshot.appendSections(MovieCategory.allCases)
+        snapshot.appendItems(uniqueUpcoming, toSection: .upcoming)
+        snapshot.appendItems(uniqueNowPlaying, toSection: .nowPlaying)
+        snapshot.appendItems(uniquePopular, toSection: .popular)
+        return snapshot
     }
     
 
