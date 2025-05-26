@@ -35,7 +35,7 @@ final class MainViewController: UIViewController {
     private let selectionIndicator = UIView()
     
     // 뷰 컨트롤러들
-    private lazy var movieListVC = MovieListViewController(viewModel: MovieListVM())
+    private lazy var movieListVC = MovieListViewController(viewModel: MovieListViewModel())
     private lazy var searchVC = NowPlayingSearchViewController(viewModel: NowPlayingSerachViewModel())
     private lazy var myPageVC = MyPageViewController()
     

@@ -8,7 +8,21 @@
 import Foundation
 import Combine
 
-final class MovieListVM {
+struct MovieState {
+    let type: MovieCategory
+    var totalData: Int
+    var movies : [Movie]
+    var currentPage: Int
+    var isloading: Bool
+    var totalPages: Int
+}
+
+final class MovieListViewModel {
+    
+    private enum Constants {
+        static let initialPage = 1
+    }
+    
     private var nowPlayingMovies: [Movie] = []
     private var upcomingMovies: [Movie] = []
     private var popularMovies: [Movie] = []
@@ -17,14 +31,17 @@ final class MovieListVM {
     @Published var upcomingBannerModels: [MovieBannerCellModel] = []
     @Published var popularCardModels: [MovieCardCellModel] = []
     
+    private var domainMovieData: [MovieCategory: [Movie]] = [:]
     private let loadingState = MovieLoadingTracker()
     private var currentPageByCategory: [MovieCategory: Int] = [
-        .nowPlaying: 1,
-        .upcoming: 1,
-        .popular: 1
+        .nowPlaying: Constants.initialPage,
+        .upcoming: Constants.initialPage,
+        .popular: Constants.initialPage
     ]
+    
     private var totalPagesByCategory: [MovieCategory: Int] = [:]
     private let repository = MovieService.shared
+    
     
     func loadInitialSections() async {
         async let now: () = loadNextPageIfNeeded(for: .nowPlaying)
@@ -33,18 +50,14 @@ final class MovieListVM {
         _ = await [now, pop, upc]
     }
     
+    
     func loadNextPageIfNeeded(for category: MovieCategory) async {
-        
-        
         await loadMovies(for: category)
     }
     
     private func loadMovies(for type: MovieCategory) async {
-        let page = currentPageByCategory[type, default: 1]
-        
-        
+        let page = currentPageByCategory[type, default: Constants.initialPage]
         guard await loadingState.checkAndSetLoading(for: type) else {
-        
             return
         }
         
@@ -52,18 +65,11 @@ final class MovieListVM {
         await MainActor.run {
             switch result {
             case .success(let info):
-          
-                
-                // ID 로깅 추가
-                
-          
-                
                 appendMoviesToPublishedModels(info.movies, for: type)
                 currentPageByCategory[type] = info.currentPage + 1
                 totalPagesByCategory[type] = info.totalPages
             case .failure(let error):
-                print(error.localizedDescription)
-                break
+                handleLoadingError(error, for: type)
             }
         }
         
@@ -71,27 +77,49 @@ final class MovieListVM {
         print("🏁 LOAD COMPLETE: \(type), page \(page)")
     }
     
+    private func handleLoadingError(_ error: Error, for type: MovieCategory) {
+        print("❌ LOAD ERROR: \(type) - \(error.localizedDescription)")
+        // TODO: 에러 상태를 UI에 전달하는 로직 추가 예정
+    }
+    
     @MainActor
     private func appendMoviesToPublishedModels(_ newMovies: [Movie], for type: MovieCategory) {
         switch type {
         case .upcoming:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0, category: type) }
-            upcomingBannerModels += mapped
-            upcomingMovies += newMovies
+            appendUpcomingMovies(newMovies)
         case .nowPlaying:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: type, isNowPlaying: true) }
-            nowPlayingCardModels += mapped
-            nowPlayingMovies += newMovies
+            appendNowPlayingMovies(newMovies)
         case .popular:
-            let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: type) }
-            popularCardModels += mapped
-            popularMovies += newMovies
+            appendPopularMovies(newMovies)
         }
-        
-        
     }
+    
+    // MARK: - Private Helper Methods
+    @MainActor
+    private func appendUpcomingMovies(_ newMovies: [Movie]) {
+        let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0, category: .upcoming) }
+        upcomingBannerModels += mapped
+        upcomingMovies += newMovies
+    }
+    
+    @MainActor
+    private func appendNowPlayingMovies(_ newMovies: [Movie]) {
+        let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .nowPlaying, isNowPlaying: true) }
+        nowPlayingCardModels += mapped
+        nowPlayingMovies += newMovies
+    }
+    
+    @MainActor
+    private func appendPopularMovies(_ newMovies: [Movie]) {
+        let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .popular) }
+        popularCardModels += mapped
+        popularMovies += newMovies
+    }
+    
+    
+    
     func currentPage(for category: MovieCategory) -> Int {
-        return currentPageByCategory[category] ?? 1
+        return currentPageByCategory[category] ?? Constants.initialPage
     }
     private func movies(for section: MovieCategory) -> [Movie] {
         switch section {
@@ -102,7 +130,7 @@ final class MovieListVM {
     }
     func shouldLoadMore(for category: MovieCategory) -> Bool {
         guard let total = totalPagesByCategory[category] else { return false }
-        return currentPageByCategory[category, default: 1] <= total
+        return currentPageByCategory[category, default: Constants.initialPage] <= total
     }
     
     
