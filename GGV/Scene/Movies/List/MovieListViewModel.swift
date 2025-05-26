@@ -15,6 +15,17 @@ struct MovieState {
     var currentPage: Int
     var isLoading: Bool
     var totalPages: Int
+    
+    mutating func updateWithNewMovies(_ info: MovieListInfo) {
+        self.movies.append(contentsOf: info.movies)
+        self.currentPage = info.currentPage + 1
+        self.totalPages = info.totalPages ?? 1
+        self.totalData = info.totalResults ?? 1
+    }
+    
+    mutating func setLoading(_ loading: Bool) {
+        self.isLoading = loading
+    }
 }
 
 final class MovieListViewModel {
@@ -29,23 +40,12 @@ final class MovieListViewModel {
         .popular: MovieState(type: .popular, totalData: 0, movies: [], currentPage: Constants.initialPage, isLoading: false, totalPages: 0)
     ]
     
-    private var nowPlayingMovies: [Movie] = []
-    private var upcomingMovies: [Movie] = []
-    private var popularMovies: [Movie] = []
-    
     @Published var nowPlayingCardModels: [MovieCardCellModel] = []
     @Published var upcomingBannerModels: [MovieBannerCellModel] = []
     @Published var popularCardModels: [MovieCardCellModel] = []
     
-    
-    private let loadingState = MovieLoadingTracker()
     private let repository = MovieService.shared
     
-    init () {
-        
-    }
-    
-
     
     func loadInitialSections() async {
         async let now: () = loadNextPageIfNeeded(for: .nowPlaying)
@@ -59,41 +59,47 @@ final class MovieListViewModel {
     }
     
     private func loadMovies(for type: MovieCategory) async {
-        let page = movieStates[type]?.currentPage ?? Constants.initialPage
+        // 1. 상태 체크/설정만 메인스레드
+        await MainActor.run {
+            guard movieStates[type]?.isLoading != true else { return }
+            movieStates[type]?.setLoading(true)
+        }
         
-        guard await loadingState.checkAndSetLoading(for: type) else {
-             return
-         }
+        let page = await MainActor.run {
+            movieStates[type]?.currentPage ?? 1
+        }
         
+        // 2. API 호출은 백그라운드 (자동으로 백그라운드에서 실행됨)
         let result = await repository.fetchMovies(by: type, page: page)
+        
+        // 3. 결과 처리는 다시 메인스레드
         await MainActor.run {
             switch result {
             case .success(let info):
                 appendMoviesToPublishedModels(info.movies, for: type)
-                updateMovieState(info, for: type)
+                movieStates[type]?.updateWithNewMovies(info)
             case .failure(let error):
                 handleLoadingError(error, for: type)
             }
+            movieStates[type]?.setLoading(false)
         }
         
-        await loadingState.setFinished(for: type)
         print("🏁 LOAD COMPLETE: \(type), page \(page)")
     }
-
     
-    private func updateMovieState(_ info: MovieListInfo, for type: MovieCategory) {
-        guard var state = movieStates[type] else { return }
-        
-        state.movies.append(contentsOf: info.movies)
-        state.currentPage = info.currentPage + 1
-        state.totalPages = info.totalPages ?? Constants.initialPage
-        state.totalData = info.totalResults ?? Constants.initialPage
-        
-        movieStates[type] = state
+
+    @MainActor
+    private func shouldStartLoading(for type: MovieCategory) -> Bool {
+        guard movieStates[type]?.isLoading != true else { return false }
+        movieStates[type]?.setLoading(true)
+        return true
     }
     
-    //new
-    // MARK: - State Access Methods (New)
+    
+    private func updateMovieState(_ info: MovieListInfo, for type: MovieCategory) {
+        movieStates[type]?.updateWithNewMovies(info)
+    }
+    
     func getMovieState(for category: MovieCategory) -> MovieState? {
         return movieStates[category]
     }
@@ -101,9 +107,6 @@ final class MovieListViewModel {
     func isLoadingState(for category: MovieCategory) -> Bool {
         return movieStates[category]?.isLoading ?? false
     }
-    //
-
-    
 
     
     private func handleLoadingError(_ error: Error, for type: MovieCategory) {
@@ -128,21 +131,21 @@ final class MovieListViewModel {
     private func appendUpcomingMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0, category: .upcoming) }
         upcomingBannerModels += mapped
-        upcomingMovies += newMovies
+        
     }
     
     @MainActor
     private func appendNowPlayingMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .nowPlaying, isNowPlaying: true) }
         nowPlayingCardModels += mapped
-        nowPlayingMovies += newMovies
+        
     }
     
     @MainActor
     private func appendPopularMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .popular) }
         popularCardModels += mapped
-        popularMovies += newMovies
+        
     }
     
     
@@ -152,11 +155,7 @@ final class MovieListViewModel {
     }
     
     private func movies(for section: MovieCategory) -> [Movie] {
-        switch section {
-        case .upcoming: return upcomingMovies
-        case .nowPlaying: return nowPlayingMovies
-        case .popular: return popularMovies
-        }
+        return movieStates[section]?.movies ?? []
     }
     
     func shouldLoadMore(for category: MovieCategory) -> Bool {
@@ -169,34 +168,3 @@ final class MovieListViewModel {
 
 
 
-
-
-actor MovieLoadingTracker {
-    private var isLoading: [MovieCategory: Bool] = [:]
-    private var currentPage: [MovieCategory: Int] = [:]
-    
-    func checkAndSetLoading(for type: MovieCategory) -> Bool {
-        if isLoading[type] == true { return false }
-        isLoading[type] = true
-        return true
-    }
-    
-    func checkAndSetLoading(for type: MovieCategory, page: Int) -> Bool {
-        // 이미 로딩 중이거나 같은 페이지를 로드하려는 경우 방지
-        if isLoading[type] == true || currentPage[type] == page {
-            return false
-        }
-        isLoading[type] = true
-        currentPage[type] = page
-        return true
-    }
-    
-    func setFinished(for type: MovieCategory) {
-        isLoading[type] = false
-    }
-}
-
-// 상태 관리
-extension MovieListViewModel {
-    
-}
