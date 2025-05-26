@@ -13,7 +13,7 @@ struct MovieState {
     var totalData: Int
     var movies : [Movie]
     var currentPage: Int
-    var isloading: Bool
+    var isLoading: Bool
     var totalPages: Int
 }
 
@@ -23,6 +23,12 @@ final class MovieListViewModel {
         static let initialPage = 1
     }
     
+    private var movieStates: [MovieCategory: MovieState] = [
+        .nowPlaying: MovieState(type: .nowPlaying, totalData: 0, movies: [], currentPage: Constants.initialPage, isLoading: false, totalPages: 0),
+        .upcoming: MovieState(type: .upcoming, totalData: 0, movies: [], currentPage: Constants.initialPage, isLoading: false, totalPages: 0),
+        .popular: MovieState(type: .popular, totalData: 0, movies: [], currentPage: Constants.initialPage, isLoading: false, totalPages: 0)
+    ]
+    
     private var nowPlayingMovies: [Movie] = []
     private var upcomingMovies: [Movie] = []
     private var popularMovies: [Movie] = []
@@ -31,17 +37,15 @@ final class MovieListViewModel {
     @Published var upcomingBannerModels: [MovieBannerCellModel] = []
     @Published var popularCardModels: [MovieCardCellModel] = []
     
-    private var domainMovieData: [MovieCategory: [Movie]] = [:]
-    private let loadingState = MovieLoadingTracker()
-    private var currentPageByCategory: [MovieCategory: Int] = [
-        .nowPlaying: Constants.initialPage,
-        .upcoming: Constants.initialPage,
-        .popular: Constants.initialPage
-    ]
     
-    private var totalPagesByCategory: [MovieCategory: Int] = [:]
+    private let loadingState = MovieLoadingTracker()
     private let repository = MovieService.shared
     
+    init () {
+        
+    }
+    
+
     
     func loadInitialSections() async {
         async let now: () = loadNextPageIfNeeded(for: .nowPlaying)
@@ -50,24 +54,23 @@ final class MovieListViewModel {
         _ = await [now, pop, upc]
     }
     
-    
     func loadNextPageIfNeeded(for category: MovieCategory) async {
         await loadMovies(for: category)
     }
     
     private func loadMovies(for type: MovieCategory) async {
-        let page = currentPageByCategory[type, default: Constants.initialPage]
+        let page = movieStates[type]?.currentPage ?? Constants.initialPage
+        
         guard await loadingState.checkAndSetLoading(for: type) else {
-            return
-        }
+             return
+         }
         
         let result = await repository.fetchMovies(by: type, page: page)
         await MainActor.run {
             switch result {
             case .success(let info):
                 appendMoviesToPublishedModels(info.movies, for: type)
-                currentPageByCategory[type] = info.currentPage + 1
-                totalPagesByCategory[type] = info.totalPages
+                updateMovieState(info, for: type)
             case .failure(let error):
                 handleLoadingError(error, for: type)
             }
@@ -76,6 +79,32 @@ final class MovieListViewModel {
         await loadingState.setFinished(for: type)
         print("🏁 LOAD COMPLETE: \(type), page \(page)")
     }
+
+    
+    private func updateMovieState(_ info: MovieListInfo, for type: MovieCategory) {
+        guard var state = movieStates[type] else { return }
+        
+        state.movies.append(contentsOf: info.movies)
+        state.currentPage = info.currentPage + 1
+        state.totalPages = info.totalPages ?? Constants.initialPage
+        state.totalData = info.totalResults ?? Constants.initialPage
+        
+        movieStates[type] = state
+    }
+    
+    //new
+    // MARK: - State Access Methods (New)
+    func getMovieState(for category: MovieCategory) -> MovieState? {
+        return movieStates[category]
+    }
+    
+    func isLoadingState(for category: MovieCategory) -> Bool {
+        return movieStates[category]?.isLoading ?? false
+    }
+    //
+
+    
+
     
     private func handleLoadingError(_ error: Error, for type: MovieCategory) {
         print("❌ LOAD ERROR: \(type) - \(error.localizedDescription)")
@@ -117,10 +146,11 @@ final class MovieListViewModel {
     }
     
     
-    
+    // 페이지 관리
     func currentPage(for category: MovieCategory) -> Int {
-        return currentPageByCategory[category] ?? Constants.initialPage
+        return movieStates[category]?.currentPage ?? Constants.initialPage
     }
+    
     private func movies(for section: MovieCategory) -> [Movie] {
         switch section {
         case .upcoming: return upcomingMovies
@@ -128,9 +158,10 @@ final class MovieListViewModel {
         case .popular: return popularMovies
         }
     }
+    
     func shouldLoadMore(for category: MovieCategory) -> Bool {
-        guard let total = totalPagesByCategory[category] else { return false }
-        return currentPageByCategory[category, default: Constants.initialPage] <= total
+        guard let state = movieStates[category] else { return false }
+        return state.currentPage <= state.totalPages
     }
     
     
@@ -163,4 +194,9 @@ actor MovieLoadingTracker {
     func setFinished(for type: MovieCategory) {
         isLoading[type] = false
     }
+}
+
+// 상태 관리
+extension MovieListViewModel {
+    
 }
