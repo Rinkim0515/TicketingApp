@@ -18,7 +18,7 @@ final class SearchMovieCell: UICollectionViewCell, ReusableView {
     }()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 18)
+        label.font = UIFont.nanumSquare(size: 18, weight: .bold)
         label.textColor = .white
         label.numberOfLines = 2
         label.textAlignment = .center

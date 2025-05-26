@@ -9,6 +9,11 @@ import UIKit
 
 extension UIColor {
     
+    static let primaryBlue = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0)
+    static let lightBlue = UIColor(hexCode: "99b8ff", alpha: 1.0)
+    static let lightPink = UIColor(hexCode: "ff99a3", alpha: 1.0)
+    static let overlayBlue = UIColor.systemBlue.withAlphaComponent(0.9)
+    
     convenience init(hexCode: String, alpha: CGFloat = 1.0) {
         var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
         

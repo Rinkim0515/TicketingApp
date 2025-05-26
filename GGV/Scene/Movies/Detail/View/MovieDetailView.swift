@@ -23,14 +23,14 @@ final class MovieDetailView: UIView {
         label.text = ""
         label.numberOfLines = 2
         label.textAlignment = .center
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
+        label.font = UIFont.nanumSquare(size: 30, weight: .bold)
         return label
     }()
     let movieDescription = {
         let label = UILabel()
         label.text = "영화 설명란"
         label.numberOfLines = 30
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 19)
+        label.font = UIFont.nanumSquare(size: 19, weight: .bold)
         label.textColor = .black
         return label
     }()
@@ -44,14 +44,14 @@ final class MovieDetailView: UIView {
         let label = UILabel()
         label.text = "평점:"
         label.textAlignment = .left
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
         return label
     }()
     let ratingScore = {
         let label = UILabel()
         label.text = "별점: 7.8/10 점"
         label.textAlignment = .right
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
         return label
     }()
     private let releaseStackView = {
@@ -64,21 +64,21 @@ final class MovieDetailView: UIView {
         let label = UILabel()
         label.text = "출시일:"
         label.textAlignment = .left
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
         return label
     }()
     let releaseData = {
         let label = UILabel()
         label.text = "2021-07-07"
         label.textAlignment = .right
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 22)
+        label.font = UIFont.nanumSquare(size: 22, weight: .bold)
         return label
     }()
     let TicketingButton = {
         let button = UIButton()
         button.setTitle("예매하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "NanumSquareNeo-cBd", size: 30)
+        button.titleLabel?.font = UIFont.nanumSquare(size: 30, weight: .bold)
         button.backgroundColor = .red
         return button
     }()

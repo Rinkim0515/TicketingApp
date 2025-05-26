@@ -93,7 +93,7 @@ final class ReservationViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("결제하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 27)
+        button.titleLabel?.font = UIFont.nanumSquare(size: 27, weight: .bold)
         button.backgroundColor = .red
         button.frame.size = CGSize.init(width: 150, height: 60)
         

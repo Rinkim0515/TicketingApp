@@ -8,27 +8,29 @@
 import Foundation
 import Combine
 
-struct MovieState {
-    let type: MovieCategory
-    var totalData: Int
-    var movies : [Movie]
-    var currentPage: Int
-    var isLoading: Bool
-    var totalPages: Int
-    
-    mutating func updateWithNewMovies(_ info: MovieListInfo) {
-        self.movies.append(contentsOf: info.movies)
-        self.currentPage = info.currentPage + 1
-        self.totalPages = info.totalPages ?? 1
-        self.totalData = info.totalResults ?? 1
-    }
-    
-    mutating func setLoading(_ loading: Bool) {
-        self.isLoading = loading
-    }
-}
+
 
 final class MovieListViewModel {
+    
+    struct MovieState {
+        let type: MovieCategory
+        var totalData: Int
+        var movies : [Movie]
+        var currentPage: Int
+        var isLoading: Bool
+        var totalPages: Int
+        
+        mutating func updateWithNewMovies(_ info: MovieListInfo) {
+            self.movies.append(contentsOf: info.movies)
+            self.currentPage = info.currentPage + 1
+            self.totalPages = info.totalPages ?? 1
+            self.totalData = info.totalResults ?? 1
+        }
+        
+        mutating func setLoading(_ loading: Bool) {
+            self.isLoading = loading
+        }
+    }
     
     private enum Constants {
         static let initialPage = 1
@@ -96,10 +98,7 @@ final class MovieListViewModel {
     }
     
     
-    private func updateMovieState(_ info: MovieListInfo, for type: MovieCategory) {
-        movieStates[type]?.updateWithNewMovies(info)
-    }
-    
+    @MainActor
     func getMovieState(for category: MovieCategory) -> MovieState? {
         return movieStates[category]
     }
@@ -107,7 +106,6 @@ final class MovieListViewModel {
     func isLoadingState(for category: MovieCategory) -> Bool {
         return movieStates[category]?.isLoading ?? false
     }
-
     
     private func handleLoadingError(_ error: Error, for type: MovieCategory) {
         print("❌ LOAD ERROR: \(type) - \(error.localizedDescription)")
@@ -131,25 +129,22 @@ final class MovieListViewModel {
     private func appendUpcomingMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToBannerModel(from: $0, category: .upcoming) }
         upcomingBannerModels += mapped
-        
     }
     
     @MainActor
     private func appendNowPlayingMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .nowPlaying, isNowPlaying: true) }
         nowPlayingCardModels += mapped
-        
     }
     
     @MainActor
     private func appendPopularMovies(_ newMovies: [Movie]) {
         let mapped = newMovies.map { MovieUIModelMapper.mapToCardModel(from: $0, category: .popular) }
         popularCardModels += mapped
-        
     }
     
     
-    // 페이지 관리
+    @MainActor
     func currentPage(for category: MovieCategory) -> Int {
         return movieStates[category]?.currentPage ?? Constants.initialPage
     }

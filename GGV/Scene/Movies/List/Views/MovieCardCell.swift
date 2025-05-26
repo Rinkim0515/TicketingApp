@@ -13,7 +13,7 @@ final class MovieCardCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
     private let titleLabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
+        label.font = UIFont.nanumSquare(size: 15, weight: .bold)
         label.numberOfLines = 2
         label.textAlignment = .center
         label.textColor = .white

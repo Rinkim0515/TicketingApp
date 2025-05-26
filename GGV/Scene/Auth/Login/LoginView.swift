@@ -37,7 +37,8 @@ final class LoginView: UIView {
       button.backgroundColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0)
       button.setTitleColor(.white, for: .normal)
       button.layer.cornerRadius = 5
-      button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 17)
+      button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
+      
       return button
   }()
 
@@ -45,7 +46,7 @@ final class LoginView: UIView {
       let button = UIButton(type: .system)
       button.setTitle("회원가입", for: .normal)
       button.setTitleColor(UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1.0), for: .normal)
-      button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 17)
+      button.titleLabel?.font = UIFont.nanumSquare(size: 17, weight: .extraBold)
       return button
   }()
   

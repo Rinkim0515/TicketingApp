@@ -23,14 +23,14 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
     // 사용자 id 라벨
     let idLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-dEb", size: 24)
+        label.font = UIFont.nanumSquare(size: 24, weight: .bold)
         label.textAlignment = .left
         return label
     }()
 
     let helloLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 18)
+        label.font = UIFont.nanumSquare(size: 18, weight: .bold)
         label.textAlignment = .left
         label.text = "안녕하세요."
         return label
@@ -38,7 +38,7 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
     
     let userInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-bRg", size: 16)
+        label.font = UIFont.nanumSquare(size: 16, weight: .bold)
         label.numberOfLines = 0
         label.textAlignment = .left
         return label
@@ -46,14 +46,14 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
     
     let userInfoTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-dEb", size: 20)
+        label.font = UIFont.nanumSquare(size: 20, weight: .bold)
         label.text = "내 정보"
         return label
     }()
     
     let bookingHistoryTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-dEb", size: 20)
+        label.font = UIFont.nanumSquare(size: 20, weight: .bold)
         label.text = "영화 예매 내역"
         return label
     }()
@@ -65,7 +65,7 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
         button.backgroundColor = .systemRed
         button.tintColor = .white
         button.layer.cornerRadius = 5
-        button.titleLabel?.font = UIFont(name: "NanumSquareNeo-dEb", size: 16)
+        button.titleLabel?.font = UIFont.nanumSquare(size: 16, weight: .bold)
         button.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -218,7 +218,7 @@ final class MyPageViewController: UIViewController, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! MyPageCollectionViewCell
         
         let bookingData = bookingHistory[indexPath.item]
-        cell.configure2(temp: bookingData)
+        cell.configure(temp: bookingData)
         
         return cell
     }

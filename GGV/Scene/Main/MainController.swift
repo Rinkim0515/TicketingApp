@@ -26,7 +26,7 @@ final class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .right
         label.textColor = .black
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 13)
+        label.font = UIFont.nanumSquare(size: 13, weight: .bold)
         return label
     }()
     
@@ -36,7 +36,7 @@ final class MainViewController: UIViewController {
     
     // 뷰 컨트롤러들
     private lazy var movieListVC = MovieListViewController(viewModel: MovieListViewModel())
-    private lazy var searchVC = NowPlayingSearchViewController(viewModel: NowPlayingSerachViewModel())
+    private lazy var searchVC = NowPlayingSearchViewController(viewModel: NowPlayingSearchViewModel())
     private lazy var myPageVC = MyPageViewController()
     
     private var currentViewController: UIViewController?
@@ -111,11 +111,11 @@ final class MainViewController: UIViewController {
         // 텍스트 스타일 설정
         let normalTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.white.withAlphaComponent(0.7),
-            .font: UIFont(name: "NanumSquareNeo-dEb", size: 16) ?? .systemFont(ofSize: 16)
+            .font: UIFont.nanumSquare(size: 16, weight: .extraBold)
         ]
         let selectedTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.white,
-            .font: UIFont(name: "NanumSquareNeo-dEb", size: 16) ?? .systemFont(ofSize: 16)
+            .font: UIFont.nanumSquare(size: 16, weight: .extraBold)
         ]
         segmentedControl.setTitleTextAttributes(normalTextAttributes, for: .normal)
         segmentedControl.setTitleTextAttributes(selectedTextAttributes, for: .selected)

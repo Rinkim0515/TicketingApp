@@ -10,7 +10,7 @@ import SnapKit
 
 final class SignupViewController: UIViewController {
     // MARK: - Properties
-    let signUpView = SignUPView()
+    let signUpView = SignuPView()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -33,8 +33,8 @@ final class SignupViewController: UIViewController {
     @objc private func signupTapped() {
         // 입력값 유효성 검사
         guard let username = signUpView.usernameTextField.text, !username.isEmpty,
-              let userbirth = signUpView.userbirthTextField.text, !userbirth.isEmpty,
-              let userid = signUpView.useridTextField.text, !userid.isEmpty,
+              let userbirth = signUpView.birthTextField.text, !userbirth.isEmpty,
+              let userid = signUpView.userIdTextField.text, !userid.isEmpty,
               let password = signUpView.passwordTextField.text, !password.isEmpty else {
             showAlert(message: "모든 항목을 채워주세요.")
             return

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NowPlayingSerachViewModel {
+final class NowPlayingSearchViewModel {
      
     @Published var isLoading: Bool = false
     

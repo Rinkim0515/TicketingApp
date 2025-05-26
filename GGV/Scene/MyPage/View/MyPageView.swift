@@ -147,7 +147,7 @@ final class MyPageCollectionViewCell: UICollectionViewCell {
     }
     
     /// 딕셔너리로 셀 구성 (기존 메서드와의 호환성 유지)
-    func configure2(temp: [String: Any]) {
+    func configure(temp: [String: Any]) {
         movieLabel.text = temp["movieTitle"] as? String
         movieDate.text = temp["date"] as? String
         movieTime.text = temp["time"] as? String

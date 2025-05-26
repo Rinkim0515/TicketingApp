@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SignUPView: UIView {
+class SignuPView: UIView {
   
   private let titleLabel: UILabel = {
       let label = UILabel()
@@ -39,7 +39,7 @@ class SignUPView: UIView {
         return label
     }()
   
-  let userbirthTextField: UITextField = {
+  let birthTextField: UITextField = {
       let textField = UITextField()
       textField.placeholder = "birth"
       textField.borderStyle = .roundedRect
@@ -53,7 +53,7 @@ class SignUPView: UIView {
         return label
     }()
   
-  let useridTextField: UITextField = {
+  let userIdTextField: UITextField = {
       let textField = UITextField()
       textField.placeholder = "ID"
       textField.borderStyle = .roundedRect
@@ -112,9 +112,9 @@ class SignUPView: UIView {
       nameLabel,
       usernameTextField,
       birthLabel,
-      userbirthTextField,
+      birthTextField,
       idLabel,
-      useridTextField,
+      userIdTextField,
       pwLabel,
       passwordTextField,
       signupButton,
@@ -147,7 +147,7 @@ class SignUPView: UIView {
           $0.leading.equalTo(usernameTextField.snp.leading)
       }
       
-    userbirthTextField.snp.makeConstraints{
+    birthTextField.snp.makeConstraints{
       $0.top.equalTo(birthLabel.snp.bottom)
       $0.centerX.equalTo(safeAreaLayoutGuide)
       $0.width.equalTo(300)
@@ -155,11 +155,11 @@ class SignUPView: UIView {
     }
       
       idLabel.snp.makeConstraints {
-          $0.top.equalTo(userbirthTextField.snp.bottom).offset(20)
+          $0.top.equalTo(birthTextField.snp.bottom).offset(20)
           $0.leading.equalTo(usernameTextField.snp.leading)
       }
       
-    useridTextField.snp.makeConstraints{
+    userIdTextField.snp.makeConstraints{
       $0.top.equalTo(idLabel.snp.bottom)
       $0.centerX.equalTo(safeAreaLayoutGuide)
       $0.width.equalTo(300)
@@ -167,7 +167,7 @@ class SignUPView: UIView {
     }
       
       pwLabel.snp.makeConstraints {
-          $0.top.equalTo(useridTextField.snp.bottom).offset(20)
+          $0.top.equalTo(userIdTextField.snp.bottom).offset(20)
           $0.leading.equalTo(usernameTextField.snp.leading)
       }
       

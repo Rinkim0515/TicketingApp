@@ -9,11 +9,6 @@
 
 import Foundation
 
-struct Constants {
-    static let API_KEY = "4e7d627f53b0470f38e13533b907923c"
-    static let BASE_URL = "https://api.themoviedb.org/3/movie/"
-}
-
 final class MovieNetwork {
     static let shared = MovieNetwork() // 싱글톤 패턴
     

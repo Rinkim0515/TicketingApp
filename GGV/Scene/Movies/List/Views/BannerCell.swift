@@ -13,7 +13,7 @@ final class BannerCell: UICollectionViewCell, ReusableView {
     private let imageView = UIImageView()
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "NanumSquareNeo-cBd", size: 15)
+        label.font = UIFont.nanumSquare(size: 15, weight: .bold)
         label.textColor = .white
         label.numberOfLines = 0
         label.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.9)

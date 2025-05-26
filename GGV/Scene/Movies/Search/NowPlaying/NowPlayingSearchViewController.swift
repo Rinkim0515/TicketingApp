@@ -14,10 +14,10 @@ import Combine
 final class NowPlayingSearchViewController: UIViewController {
     private let movieSearchView = SearchView()
     private var cancellables = Set<AnyCancellable>()
-    private let viewModel: NowPlayingSerachViewModel
+    private let viewModel: NowPlayingSearchViewModel
     
     //MARK: - lifeCycle
-    init(viewModel: NowPlayingSerachViewModel){ //@MainActor에 대한 부분 찾아봐야함
+    init(viewModel: NowPlayingSearchViewModel){ //@MainActor에 대한 부분 찾아봐야함
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

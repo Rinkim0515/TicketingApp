@@ -22,7 +22,7 @@ final class HeaderView: UICollectionReusableView, ReusableView {
 
     private func setupUI() {
         addSubview(titleLabel)
-        titleLabel.font = UIFont(name: "NanumSquareNeo-cBd", size: 20)
+        titleLabel.font = UIFont.nanumSquare(size: 20, weight: .bold)
         titleLabel.textColor = .label
         titleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
